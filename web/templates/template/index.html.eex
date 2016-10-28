@@ -1,0 +1,34 @@
+<h2>Listing templates</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Day</th>
+      <th>Breakfast</th>
+      <th>Lunch</th>
+      <th>Dinner</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for template <- @templates do %>
+    <tr>
+      <td><%= template.user_id %></td>
+      <td><%= template.day %></td>
+      <td><%= template.breakfast %></td>
+      <td><%= template.lunch %></td>
+      <td><%= template.dinner %></td>
+
+      <td class="text-right">
+        <%= link "Show", to: template_path(@conn, :show, template), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: template_path(@conn, :edit, template), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: template_path(@conn, :delete, template), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<%= link "New template", to: template_path(@conn, :new) %>

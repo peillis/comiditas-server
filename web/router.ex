@@ -13,10 +13,14 @@ defmodule Comiditas.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Comiditas do
+  scope "/admin", Comiditas do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    resources "/groups", GroupController
+    resources "/users", UserController
+    resources "/mealdates", MealdateController
+    resources "/templates", TemplateController
   end
 
   # Other scopes may use custom stacks.

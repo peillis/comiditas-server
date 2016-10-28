@@ -1,0 +1,35 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= label f, :day, class: "control-label" %>
+    <%= number_input f, :day, class: "form-control" %>
+    <%= error_tag f, :day %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :breakfast, class: "control-label" %>
+    <%= text_input f, :breakfast, class: "form-control" %>
+    <%= error_tag f, :breakfast %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :lunch, class: "control-label" %>
+    <%= text_input f, :lunch, class: "form-control" %>
+    <%= error_tag f, :lunch %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :dinner, class: "control-label" %>
+    <%= text_input f, :dinner, class: "form-control" %>
+    <%= error_tag f, :dinner %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Submit", class: "btn btn-primary" %>
+  </div>
+<% end %>
