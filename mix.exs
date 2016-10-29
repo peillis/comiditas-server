@@ -31,6 +31,8 @@ defmodule Comiditas.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
    [
+     {:comeonin, "~> 2.5"},
+     {:guardian, "~> 0.13.0"},
      {:ja_serializer, "~> 0.11.1"},
      {:phoenix, "~> 1.2.1"},
      {:phoenix_pubsub, "~> 1.0"},

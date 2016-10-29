@@ -29,6 +29,11 @@ config :plug, :mimes, %{
   "application/vnd.api+json" => ["json-api"]
 }
 
+config :guardian, Guardian,
+  ttl: { 30, :days },
+  secret_key: "whatever",
+  serializer: Comiditas.GuardianSerializer
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

@@ -16,7 +16,24 @@ defmodule Comiditas.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :email, :password, :password_hash])
-    |> validate_required([:name, :email, :password, :password_hash])
+    |> cast(params, [:name, :email])
+    |> validate_required([:name, :email])
+  end
+
+  def registration_changeset(struct, params) do
+    struct
+    |> changeset(params)
+    |> cast(params, [:password])
+    |> validate_length(:password, min: 6, max: 100)
+    |> put_pass_hash()
+  end
+
+  defp put_pass_hash(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
+        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
+      _ ->
+        changeset
+    end
   end
 end
