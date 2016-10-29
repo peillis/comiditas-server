@@ -3,9 +3,16 @@ defmodule Comiditas.MealdateController do
 
   alias Comiditas.Mealdate
 
+  require Logger
+
   def index(conn, _params) do
     mealdates = Repo.all(Mealdate)
-    render(conn, "index.html", mealdates: mealdates)
+    case get_format(conn) do
+      "html" ->
+        render(conn, "index.html", mealdates: mealdates)
+      "json" ->
+        render conn, data: Repo.all(Mealdate)
+    end
   end
 
   def new(conn, _params) do
