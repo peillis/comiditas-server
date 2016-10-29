@@ -23,6 +23,11 @@ defmodule Comiditas.Router do
     resources "/templates", TemplateController
   end
 
+  scope "/api", Comiditas do
+    pipe_through :api
+    get "/mealdates", ApiController, :mealdates
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Comiditas do
   #   pipe_through :api
