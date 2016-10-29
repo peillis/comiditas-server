@@ -13,7 +13,10 @@ defmodule Comiditas.MealdateController do
       _ ->
         conn
         |> Plug.Conn.put_resp_header("Access-Control-Allow-Origin", "*")
-        |> render data: Repo.all(Mealdate)
+        |> render %{
+          :data => Repo.all(Mealdate),
+          :opts => [{:meta, %{:total_pages => 10}}]
+        }
     end
   end
 
