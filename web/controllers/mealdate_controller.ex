@@ -10,8 +10,10 @@ defmodule Comiditas.MealdateController do
     case get_format(conn) do
       "html" ->
         render(conn, "index.html", mealdates: mealdates)
-      "json" ->
-        render conn, data: Repo.all(Mealdate)
+      _ ->
+        conn
+        |> Plug.Conn.put_resp_header("Access-Control-Allow-Origin", "*")
+        |> render data: Repo.all(Mealdate)
     end
   end
 
