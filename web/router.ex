@@ -35,11 +35,8 @@ defmodule Comiditas.Router do
 
   scope "/api", Comiditas do
     pipe_through :api
+    post "/login", SessionController, :create
     resources "/mealdates", MealdateController
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", Comiditas do
-  #   pipe_through :api
-  # end
 end
