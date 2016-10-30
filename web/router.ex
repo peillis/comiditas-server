@@ -33,9 +33,13 @@ defmodule Comiditas.Router do
     end
   end
 
+  scope "/login", Comiditas do
+    pipe_through :api
+    post "/", SessionController, :create
+  end
+
   scope "/api", Comiditas do
     pipe_through :api
-    post "/login", SessionController, :create
     resources "/mealdates", MealdateController
   end
 
