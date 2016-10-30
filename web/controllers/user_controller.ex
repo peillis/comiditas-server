@@ -3,8 +3,11 @@ defmodule Comiditas.UserController do
 
   alias Comiditas.User
 
+  require IEx
+
   def index(conn, _params) do
     users = Repo.all(User)
+    user = Guardian.Plug.current_resource(conn)
     render(conn, "index.html", users: users)
   end
 
