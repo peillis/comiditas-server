@@ -14,7 +14,7 @@ defmodule Comiditas.MealdateController do
       _ ->
         user = Guardian.Plug.current_resource(conn)
         conn
-        |> Plug.Conn.put_resp_header("Access-Control-Allow-Origin", "*")
+        |> put_resp_header("Access-Control-Allow-Origin", "*")
         |> render %{
           :data => Repo.all(Mealdate),
           :opts => [{:meta, %{:total_pages => 10}}]
