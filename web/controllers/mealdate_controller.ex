@@ -4,6 +4,7 @@ defmodule Comiditas.MealdateController do
   alias Comiditas.Mealdate
 
   require Logger
+  require IEx
 
   def index(conn, _params) do
     mealdates = Repo.all(Mealdate)
@@ -11,6 +12,7 @@ defmodule Comiditas.MealdateController do
       "html" ->
         render(conn, "index.html", mealdates: mealdates)
       _ ->
+        user = Guardian.Plug.current_resource(conn)
         conn
         |> Plug.Conn.put_resp_header("Access-Control-Allow-Origin", "*")
         |> render %{

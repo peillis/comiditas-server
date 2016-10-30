@@ -9,14 +9,20 @@ defmodule Comiditas.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json", "json-api"]
-  end
-
   pipeline :browser_auth do
     plug Guardian.Plug.VerifySession
     plug Guardian.Plug.LoadResource
     plug Guardian.Plug.EnsureAuthenticated, handler: Comiditas.Auth
+  end
+
+  pipeline :api do
+    plug :accepts, ["json", "json-api"]
+  end
+
+  pipeline :api_auth do
+    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    plug Guardian.Plug.LoadResource
+    plug Guardian.Plug.EnsureAuthenticated, handler: Comiditas.ApiAuth
   end
 
   scope "/", Comiditas do
@@ -39,7 +45,7 @@ defmodule Comiditas.Router do
   end
 
   scope "/api", Comiditas do
-    pipe_through :api
+    pipe_through [:api, :api_auth]
     resources "/mealdates", MealdateController
   end
 
