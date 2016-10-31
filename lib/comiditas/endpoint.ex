@@ -2,6 +2,7 @@ defmodule Comiditas.Endpoint do
   use Phoenix.Endpoint, otp_app: :comiditas
 
   socket "/socket", Comiditas.UserSocket
+  plug Comiditas.CORS
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -29,6 +30,7 @@ defmodule Comiditas.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
+
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.

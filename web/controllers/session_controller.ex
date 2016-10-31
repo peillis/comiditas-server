@@ -37,12 +37,10 @@ defmodule Comiditas.SessionController do
             new_conn
             |> put_resp_header("x-expires", to_string(exp))
             |> put_resp_header("authorization", "Bearer #{jwt}")
-            |> put_resp_header("Access-Control-Allow-Origin", "*")
             |> render "login.json", jwt: jwt, exp: exp
           {:error, error} ->
             conn
             |> put_status(401)
-            |> put_resp_header("Access-Control-Allow-Origin", "*")
             |> render "error.json", message: "Could not login"
         end
     end

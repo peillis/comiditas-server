@@ -18,7 +18,7 @@ defmodule Comiditas.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Comiditas, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
+     applications: [:corsica, :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex]]
   end
 
@@ -32,6 +32,7 @@ defmodule Comiditas.Mixfile do
   defp deps do
    [
      {:comeonin, "~> 2.5"},
+     {:corsica, "~> 0.5"},
      {:guardian, "~> 0.13.0"},
      {:ja_serializer, "~> 0.11.1"},
      {:phoenix, "~> 1.2.1"},
