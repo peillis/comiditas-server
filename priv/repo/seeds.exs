@@ -14,7 +14,6 @@ alias Comiditas.Repo
 
 alias Comiditas.Group
 alias Comiditas.User
-alias Comiditas.Template
 alias Comiditas.Mealdate
 
 group = Repo.insert!(%Group{name: "salces"})
