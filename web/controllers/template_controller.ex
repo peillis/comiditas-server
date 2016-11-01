@@ -4,8 +4,15 @@ defmodule Comiditas.TemplateController do
   alias Comiditas.Template
 
   def index(conn, _params) do
-    templates = Repo.all(Template)
-    render(conn, "index.html", templates: templates)
+    case get_format(conn) do
+      "html" ->
+        templates = Repo.all(Template)
+        render(conn, "index.html", templates: templates)
+      _ ->
+        user = Guardian.Plug.current_resource(conn)
+        templates = Repo.all(Ecto.assoc(user, :templates))
+        conn |> render %{:data => templates}
+    end
   end
 
   def new(conn, _params) do
