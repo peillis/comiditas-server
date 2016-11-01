@@ -19,7 +19,11 @@ alias Comiditas.Mealdate
 
 group = Repo.insert!(%Group{name: "salces"})
 
-user = Repo.insert!(%User{email: "e@doofinder.com", group_id: group.id})
+cs = User.registration_changeset(%User{},
+    %{email: "e@h.es", password: "kikoki", name: "enrique"})
+cs = cs |> Ecto.Changeset.put_assoc(:group, group)
+
+user = Repo.insert!(cs)
 
 Repo.insert!(%Mealdate{user_id: user.id,
   date: Ecto.Date.cast!("2016-09-12"),

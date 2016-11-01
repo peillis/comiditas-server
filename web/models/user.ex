@@ -1,12 +1,15 @@
 defmodule Comiditas.User do
   use Comiditas.Web, :model
 
+  alias Comiditas.Template
+
   schema "users" do
     field :name, :string
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
     belongs_to :group, Comiditas.Group
+    has_many :templates, Comiditas.Template
 
     timestamps()
   end
@@ -18,6 +21,8 @@ defmodule Comiditas.User do
     struct
     |> cast(params, [:name, :email])
     |> validate_required([:name, :email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
   end
 
   def registration_changeset(struct, params) do
@@ -26,6 +31,7 @@ defmodule Comiditas.User do
     |> cast(params, [:password])
     |> validate_length(:password, min: 6, max: 100)
     |> put_pass_hash()
+    |> set_templates()
   end
 
   defp put_pass_hash(changeset) do
@@ -36,4 +42,12 @@ defmodule Comiditas.User do
         changeset
     end
   end
+
+  defp set_templates(changeset) do
+    templates = Enum.map([0, 1, 2, 3, 4, 5, 6], fn(x) ->
+      %{day: x, breakfast: "yes", lunch: "yes", dinner: "yes"}
+    end)
+    changeset |> Ecto.Changeset.put_assoc(:templates, templates)
+  end
+
 end

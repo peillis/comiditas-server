@@ -3,7 +3,7 @@ defmodule Comiditas.Group do
 
   schema "groups" do
     field :name, :string
-
+    has_many :users, Comiditas.User
     timestamps()
   end
 
