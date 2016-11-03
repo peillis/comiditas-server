@@ -11,7 +11,7 @@ defmodule Comiditas.MealdateController do
     case get_format(conn) do
       "html" ->
         render(conn, "index.html", mealdates: mealdates)
-      _ ->
+      "json-api" ->
         user = Guardian.Plug.current_resource(conn)
         conn
         |> render %{
@@ -61,6 +61,26 @@ defmodule Comiditas.MealdateController do
         |> redirect(to: mealdate_path(conn, :show, mealdate))
       {:error, changeset} ->
         render(conn, "edit.html", mealdate: mealdate, changeset: changeset)
+    end
+  end
+
+  # update for json
+  def update(conn, %{"id" => id, "data" => data}) do
+    attrs = JaSerializer.Params.to_attributes(data)
+    user = Guardian.Plug.current_resource(conn)
+    mealdate = Repo.one(from m in Mealdate, where: m.date==^id and m.user_id==^user.id)
+
+    changeset = Mealdate.changeset(mealdate, attrs)
+
+    case Repo.update(changeset) do
+      {:ok, template} ->
+        conn
+        |> put_status(201)
+        |> render(:show, data: template)
+      {:error, changeset} ->
+        conn
+        |> put_status(422)
+        |> render(:errors, data: changeset)
     end
   end
 
