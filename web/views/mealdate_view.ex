@@ -3,4 +3,6 @@ defmodule Comiditas.MealdateView do
   use JaSerializer.PhoenixView
 
   attributes [:date, :breakfast, :lunch, :dinner]
+
+  def id(mealdate, _conn), do: mealdate.date
 end
