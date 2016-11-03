@@ -8,7 +8,7 @@ defmodule Comiditas.TemplateController do
       "html" ->
         templates = Repo.all(Template)
         render(conn, "index.html", templates: templates)
-      _ ->
+      "json-api" ->
         user = Guardian.Plug.current_resource(conn)
         templates = Repo.all(Ecto.assoc(user, :templates))
         conn |> render %{:data => templates}
@@ -35,7 +35,11 @@ defmodule Comiditas.TemplateController do
 
   def show(conn, %{"id" => id}) do
     template = Repo.get!(Template, id)
-    render(conn, "show.html", template: template)
+    case get_format(conn) do
+      "html" -> render(conn, "show.html", template: template)
+      "json-api" -> render(conn, :show, data: template)
+    end
+
   end
 
   def edit(conn, %{"id" => id}) do
@@ -58,6 +62,7 @@ defmodule Comiditas.TemplateController do
     end
   end
 
+  # update for json
   def update(conn, %{"id" => id, "data" => data}) do
     attrs = JaSerializer.Params.to_attributes(data)
     template = Repo.get!(Template, id)
