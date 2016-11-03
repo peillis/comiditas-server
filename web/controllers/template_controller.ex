@@ -58,6 +58,23 @@ defmodule Comiditas.TemplateController do
     end
   end
 
+  def update(conn, %{"id" => id, "data" => data}) do
+    attrs = JaSerializer.Params.to_attributes(data)
+    template = Repo.get!(Template, id)
+    changeset = Template.changeset(template, attrs)
+
+    case Repo.update(changeset) do
+      {:ok, template} ->
+        conn
+        |> put_status(201)
+        |> render(:show, data: template)
+      {:error, changeset} ->
+        conn
+        |> put_status(422)
+        |> render(:errors, data: changeset)
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     template = Repo.get!(Template, id)
 
