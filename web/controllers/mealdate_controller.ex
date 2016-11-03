@@ -21,7 +21,6 @@ defmodule Comiditas.MealdateController do
         mealdates = Enum.map(from..to, fn(x) ->
           date = Timex.shift(Timex.today, days: x-1)
           date_str = Timex.format!(date, "%F", :strftime)
-          Logger.debug(date_str)
           case Mealdate.get(date_str, user) do
             nil ->
               %Mealdate{breakfast: "no", lunch: "no", dinner: "no",
