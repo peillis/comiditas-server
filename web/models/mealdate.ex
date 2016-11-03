@@ -19,4 +19,9 @@ defmodule Comiditas.Mealdate do
     |> cast(params, [:date, :breakfast, :lunch, :dinner])
     |> validate_required([:date, :breakfast, :lunch, :dinner])
   end
+
+  def get(date, user) do
+    Comiditas.Repo.one(from m in Comiditas.Mealdate,
+        where: m.date==^date and m.user_id==^user.id)
+  end
 end

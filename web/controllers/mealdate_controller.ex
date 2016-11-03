@@ -1,21 +1,37 @@
 defmodule Comiditas.MealdateController do
   use Comiditas.Web, :controller
+  use Timex
 
   alias Comiditas.Mealdate
 
   require Logger
   require IEx
 
-  def index(conn, _params) do
+  def index(conn, params) do
     mealdates = Repo.all(Mealdate)
     case get_format(conn) do
       "html" ->
         render(conn, "index.html", mealdates: mealdates)
       "json-api" ->
         user = Guardian.Plug.current_resource(conn)
+        page = String.to_integer(params["page"]) || 1
+        per_page = String.to_integer(params["per_page"]) || 10
+        from = ((page - 1) * per_page) + 1
+        to = page * per_page
+        mealdates = Enum.map(from..to, fn(x) ->
+          date = Timex.shift(Timex.today, days: x-1)
+          date_str = Timex.format!(date, "%F", :strftime)
+          Logger.debug(date_str)
+          case Mealdate.get(date_str, user) do
+            nil ->
+              %Mealdate{breakfast: "no", lunch: "no", dinner: "no",
+                  date: date_str}
+            mealdate -> mealdate
+          end
+        end)
         conn
         |> render %{
-          :data => Repo.all(Mealdate),
+          :data => mealdates,
           :opts => [{:meta, %{:total_pages => 10}}]
         }
     end
