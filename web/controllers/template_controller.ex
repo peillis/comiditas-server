@@ -1,6 +1,7 @@
 defmodule Comiditas.TemplateController do
   use Comiditas.Web, :controller
 
+  import Ecto.Query
   alias Comiditas.Template
 
   def index(conn, _params) do
@@ -10,7 +11,7 @@ defmodule Comiditas.TemplateController do
         render(conn, "index.html", templates: templates)
       "json-api" ->
         user = Guardian.Plug.current_resource(conn)
-        templates = Repo.all(Ecto.assoc(user, :templates))
+        templates = Repo.all(Ecto.assoc(user, :templates) |> order_by(:day))
         conn |> render %{:data => templates}
     end
   end
