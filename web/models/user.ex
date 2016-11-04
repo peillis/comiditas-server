@@ -44,7 +44,7 @@ defmodule Comiditas.User do
   end
 
   defp set_templates(changeset) do
-    templates = Enum.map([0, 1, 2, 3, 4, 5, 6], fn(x) ->
+    templates = Enum.map([1, 2, 3, 4, 5, 6, 7], fn(x) ->
       %{day: x, breakfast: "yes", lunch: "yes", dinner: "yes"}
     end)
     changeset |> Ecto.Changeset.put_assoc(:templates, templates)

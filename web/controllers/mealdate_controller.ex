@@ -3,6 +3,7 @@ defmodule Comiditas.MealdateController do
   use Timex
 
   alias Comiditas.Mealdate
+  alias Comiditas.Template
 
   require Logger
   require IEx
@@ -21,12 +22,7 @@ defmodule Comiditas.MealdateController do
         mealdates = Enum.map(from..to, fn(x) ->
           date = Timex.shift(Timex.today, days: x-1)
           date_str = Timex.format!(date, "%F", :strftime)
-          case Mealdate.get(date_str, user) do
-            nil ->
-              %Mealdate{breakfast: "no", lunch: "no", dinner: "no",
-                  date: date_str}
-            mealdate -> mealdate
-          end
+          Mealdate.get_or_template(date_str, user)
         end)
         conn
         |> render %{
@@ -83,11 +79,17 @@ defmodule Comiditas.MealdateController do
   def update(conn, %{"id" => id, "data" => data}) do
     attrs = JaSerializer.Params.to_attributes(data)
     user = Guardian.Plug.current_resource(conn)
-    mealdate = Repo.one(from m in Mealdate, where: m.date==^id and m.user_id==^user.id)
-
+    mealdate = Mealdate.get_or_template(id, user)
     changeset = Mealdate.changeset(mealdate, attrs)
 
-    case Repo.update(changeset) do
+    result = case mealdate.id do
+      nil ->
+        Repo.insert(changeset)
+      _->
+        Repo.update(changeset)
+    end
+
+    case result do
       {:ok, template} ->
         conn
         |> put_status(201)
