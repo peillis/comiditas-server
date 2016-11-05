@@ -48,6 +48,7 @@ defmodule Comiditas.Router do
     pipe_through [:api, :api_auth]
     resources "/mealdates", MealdateController
     resources "/templates", TemplateController
+    get "/checkouts/:id", CheckoutController, :show
   end
 
 end

@@ -51,8 +51,15 @@ defmodule Comiditas.MealdateController do
   end
 
   def show(conn, %{"id" => id}) do
-    mealdate = Repo.get!(Mealdate, id)
-    render(conn, "show.html", mealdate: mealdate)
+    case get_format(conn) do
+      "html" ->
+        mealdate = Repo.get!(Mealdate, id)
+        render(conn, "show.html", mealdate: mealdate)
+      "json-api" ->
+        user = Guardian.Plug.current_resource(conn)
+        mealdate = Mealdate.get_or_template(id, user)
+        render(conn, :show, data: mealdate)
+    end
   end
 
   def edit(conn, %{"id" => id}) do
