@@ -43,7 +43,6 @@ defmodule Comiditas.UserController do
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Repo.get!(User, id)
     changeset = User.changeset(user, user_params)
-    IEx.pry
 
     case Repo.update(changeset) do
       {:ok, user} ->
