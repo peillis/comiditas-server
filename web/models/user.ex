@@ -9,7 +9,7 @@ defmodule Comiditas.User do
     field :password, :string, virtual: true
     field :password_hash, :string
     belongs_to :group, Comiditas.Group
-    has_many :templates, Comiditas.Template
+    has_many :templates, Comiditas.Template, on_delete: :delete_all
 
     timestamps()
   end
@@ -19,7 +19,7 @@ defmodule Comiditas.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :email])
+    |> cast(params, [:name, :email, :group_id])
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
