@@ -3,7 +3,7 @@ defmodule Comiditas.CheckoutView do
   use JaSerializer.PhoenixView
 
 
-  attributes [:date, :breakfast, :lunch, :dinner]
+  attributes [:date, :breakfast, :lunch, :dinner, :packs]
 
   def id(checkout, _conn), do: checkout.date
 end

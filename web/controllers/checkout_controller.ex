@@ -1,5 +1,6 @@
 defmodule Comiditas.CheckoutController do
   use Comiditas.Web, :controller
+  use Timex
 
   alias Comiditas.Repo
   alias Comiditas.User
@@ -28,13 +29,18 @@ defmodule Comiditas.CheckoutController do
         :yes => [],
         :second => [],
       },
+      :packs => %{
+        :breakfast => [],
+        :lunch => [],
+        :dinner => []
+      },
       :date => id
     }
     users = Repo.all(from u in User, where: u.group_id==^user.group_id)
 
     checkout = Enum.reduce(users, checkout, fn(x, checkout) ->
       mealdate = Mealdate.get_or_template(id, x)
-      Enum.reduce([:lunch, :dinner, :breakfast], checkout, fn(meal, checkout) ->
+      checkout = Enum.reduce([:lunch, :dinner], checkout, fn(meal, checkout) ->
         case Map.fetch!(mealdate, meal) do
           "pack" ->
             update_in(checkout, [meal, :pack], &(&1 ++ [x.name]))
@@ -44,6 +50,31 @@ defmodule Comiditas.CheckoutController do
             update_in(checkout, [meal, :yes], &(&1 ++ [x.name]))
           "2" ->
             update_in(checkout, [meal, :second], &(&1 ++ [x.name]))
+          _ -> checkout
+        end
+      end)
+      # now get the mealdate of the following date
+      next_date_str = id
+        |> Timex.parse!("%F", :strftime)
+        |> Timex.shift(days: 1)
+        |> Timex.format!("%F", :strftime)
+      next_mealdate = Mealdate.get_or_template(next_date_str, x)
+      checkout = case Map.fetch!(next_mealdate, :breakfast) do
+        "pack" ->
+          update_in(checkout, [:breakfast, :pack], &(&1 ++ [x.name]))
+          |> update_in([:packs, :breakfast], &(&1 ++ [x.name]))
+        "1" ->
+          update_in(checkout, [:breakfast, :first], &(&1 ++ [x.name]))
+        "yes" ->
+          update_in(checkout, [:breakfast, :yes], &(&1 ++ [x.name]))
+        "2" ->
+          update_in(checkout, [:breakfast, :second], &(&1 ++ [x.name]))
+        _ -> checkout
+      end
+      checkout = Enum.reduce([:lunch, :dinner], checkout, fn(meal, checkout) ->
+        case Map.fetch!(next_mealdate, meal) do
+          "pack" ->
+            update_in(checkout, [:packs, meal], &(&1 ++ [x.name]))
           _ -> checkout
         end
       end)
