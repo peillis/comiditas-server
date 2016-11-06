@@ -93,14 +93,25 @@ defmodule Comiditas.MealdateController do
       nil ->
         Repo.insert(changeset)
       _->
-        Repo.update(changeset)
+        case Repo.update(changeset) do
+          {:ok, mealdate} ->
+            # now check if it's the same as the template
+            template = Template.get(id, user)
+            if template.breakfast == mealdate.breakfast
+              and template.lunch == mealdate.lunch
+              and template.dinner == mealdate.dinner do
+                Repo.delete!(mealdate)
+            end
+            {:ok, mealdate}
+          {:error, changeset} -> {:error, changeset}
+        end
     end
 
     case result do
-      {:ok, template} ->
+      {:ok, mealdate} ->
         conn
         |> put_status(201)
-        |> render(:show, data: template)
+        |> render(:show, data: mealdate)
       {:error, changeset} ->
         conn
         |> put_status(422)
