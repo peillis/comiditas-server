@@ -10,6 +10,7 @@ defmodule Comiditas.Mealdate do
     field :breakfast, :string
     field :lunch, :string
     field :dinner, :string
+    field :notes, :binary
     belongs_to :user, Comiditas.User
 
     timestamps()
@@ -20,7 +21,7 @@ defmodule Comiditas.Mealdate do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:date, :breakfast, :lunch, :dinner])
+    |> cast(params, [:date, :breakfast, :lunch, :dinner, :notes])
     |> validate_required([:date, :breakfast, :lunch, :dinner])
   end
 

@@ -97,10 +97,11 @@ defmodule Comiditas.MealdateController do
           {:ok, mealdate} ->
             # now check if it's the same as the template
             template = Template.get(id, user)
-            if template.breakfast == mealdate.breakfast
-              and template.lunch == mealdate.lunch
-              and template.dinner == mealdate.dinner do
-                Repo.delete!(mealdate)
+            if is_nil(mealdate.notes)
+                and template.breakfast == mealdate.breakfast
+                and template.lunch == mealdate.lunch
+                and template.dinner == mealdate.dinner do
+              Repo.delete!(mealdate)
             end
             {:ok, mealdate}
           {:error, changeset} -> {:error, changeset}
