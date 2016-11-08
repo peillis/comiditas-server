@@ -34,11 +34,14 @@ defmodule Comiditas.CheckoutController do
         :lunch => [],
         :dinner => []
       },
+      :notes => [],
+      :tomorrow_notes => [],
       :date => id
     }
     users = Repo.all(from u in User, where: u.group_id==^user.group_id)
 
     checkout = Enum.reduce(users, checkout, fn(x, checkout) ->
+      # get data from today
       mealdate = Mealdate.get_or_template(id, x)
       checkout = Enum.reduce([:lunch, :dinner], checkout, fn(meal, checkout) ->
         case Map.fetch!(mealdate, meal) do
@@ -53,7 +56,11 @@ defmodule Comiditas.CheckoutController do
           _ -> checkout
         end
       end)
-      # now get the mealdate of the following date
+      checkout = case Map.fetch!(mealdate, :notes) do
+        nil -> checkout
+        notes -> update_in(checkout, [:notes], &(&1 ++ [%{:name => x.name, :notes => notes}]))
+      end
+      # now get the mealdate of tomorrow
       next_date_str = id
         |> Timex.parse!("%F", :strftime)
         |> Timex.shift(days: 1)
@@ -78,6 +85,10 @@ defmodule Comiditas.CheckoutController do
           _ -> checkout
         end
       end)
+      checkout = case Map.fetch!(next_mealdate, :notes) do
+        nil -> checkout
+        notes -> update_in(checkout, [:tomorrow_notes], &(&1 ++ [%{:name => x.name, :notes => notes}]))
+      end
     end)
     render conn, :show, data: checkout
   end
