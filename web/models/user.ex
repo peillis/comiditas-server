@@ -10,6 +10,7 @@ defmodule Comiditas.User do
     field :password_hash, :string
     belongs_to :group, Comiditas.Group
     has_many :templates, Comiditas.Template, on_delete: :delete_all
+    has_many :mealdates, Comiditas.Mealdate, on_delete: :delete_all
 
     timestamps()
   end
