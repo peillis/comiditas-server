@@ -1,0 +1,17 @@
+version: '3'
+services:
+  db:
+    image: postgres:11.6
+    ports:
+      - "5432:5432"
+  web:
+    build: .
+    environment:
+      - MIX_ENV=dev
+    command: mix phx.server
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db

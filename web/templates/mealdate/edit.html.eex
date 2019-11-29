@@ -1,6 +1,0 @@
-<h2>Edit mealdate</h2>
-
-<%= render "form.html", changeset: @changeset,
-                        action: mealdate_path(@conn, :update, @mealdate) %>
-
-<%= link "Back", to: mealdate_path(@conn, :index) %>
