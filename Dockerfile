@@ -13,6 +13,3 @@ RUN mix local.hex --force
 RUN mix local.rebar --force
 COPY . /app
 WORKDIR /app
-RUN mix deps.get
-RUN npm install
-RUN mix compile

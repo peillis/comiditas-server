@@ -8,7 +8,10 @@ services:
     build: .
     environment:
       - MIX_ENV=dev
-    command: mix phx.server
+    command: >
+      sh -c "mix deps.get &&
+             cd assets && npm install &&
+             cd .. && mix phx.server"
     volumes:
       - .:/app
     ports:
