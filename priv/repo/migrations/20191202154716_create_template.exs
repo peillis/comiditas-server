@@ -11,6 +11,7 @@ defmodule Comiditas.Repo.Migrations.CreateTemplate do
 
       timestamps()
     end
+
     create index(:templates, [:user_id])
     create unique_index(:templates, [:user_id, :day])
   end

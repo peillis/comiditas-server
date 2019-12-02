@@ -12,6 +12,7 @@ defmodule Comiditas.Repo.Migrations.CreateMealdate do
 
       timestamps()
     end
+
     create index(:mealdates, [:user_id])
     create unique_index(:mealdates, [:user_id, :date])
   end
