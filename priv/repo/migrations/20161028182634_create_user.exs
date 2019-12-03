@@ -10,7 +10,7 @@ defmodule Comiditas.Repo.Migrations.CreateUser do
 
       timestamps()
     end
-    create index(:users, [:group_id])
 
+    create index(:users, [:group_id])
   end
 end

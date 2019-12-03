@@ -83,8 +83,18 @@ defmodule Comiditas.ComidasTest do
   describe "users" do
     alias Comiditas.Comidas.User
 
-    @valid_attrs %{email: "some email", group_id: 42, name: "some name", password_hash: "some password_hash"}
-    @update_attrs %{email: "some updated email", group_id: 43, name: "some updated name", password_hash: "some updated password_hash"}
+    @valid_attrs %{
+      email: "some email",
+      group_id: 42,
+      name: "some name",
+      password_hash: "some password_hash"
+    }
+    @update_attrs %{
+      email: "some updated email",
+      group_id: 43,
+      name: "some updated name",
+      password_hash: "some updated password_hash"
+    }
     @invalid_attrs %{email: nil, group_id: nil, name: nil, password_hash: nil}
 
     def user_fixture(attrs \\ %{}) do
