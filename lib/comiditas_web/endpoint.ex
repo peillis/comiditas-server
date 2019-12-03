@@ -25,6 +25,13 @@ defmodule ComiditasWeb.Endpoint do
     plug Phoenix.CodeReloader
   end
 
+  plug Plug.Static,
+    at: "/torch",
+    from: {:torch, "priv/static"},
+    gzip: true,
+    cache_control_for_etags: "public, max-age=86400",
+    headers: [{"access-control-allow-origin", "*"}]
+
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 

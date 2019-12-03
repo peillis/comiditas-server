@@ -44,6 +44,7 @@ defmodule Comiditas.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
+      {:torch, "~> 2.0"},
       {:timex, "~> 3.6"}
     ]
   end
