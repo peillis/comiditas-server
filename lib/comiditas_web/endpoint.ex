@@ -1,6 +1,8 @@
 defmodule ComiditasWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :comiditas
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", ComiditasWeb.UserSocket,
     websocket: true,
     longpoll: false
