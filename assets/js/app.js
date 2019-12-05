@@ -17,7 +17,15 @@ import "phoenix_html"
 // import socket from "./socket"
 
 import {Socket} from "phoenix"
-import LiveSocket from "phoenix_live_view"
+import {LiveSocket, debug} from "phoenix_live_view"
 
-let liveSocket = new LiveSocket("/live", Socket)
+let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug})
 liveSocket.connect()
+
+// window.liveSocket = liveSocket;
+// view = liveSocket.views[document.getElementsByClassName('phx-connected')[0].id]
+// view.channel.push('event', {
+//     event: 'my_test',
+//     type: null,
+//     value: 3
+//   }, 20000).receive("ok", resp => { view.update(resp.diff) })
