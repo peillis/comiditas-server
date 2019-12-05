@@ -19,5 +19,4 @@ defmodule Comiditas.Mealdate do
     |> cast(params, [:date, :breakfast, :lunch, :dinner, :notes])
     |> validate_required([:date, :breakfast, :lunch, :dinner])
   end
-
 end

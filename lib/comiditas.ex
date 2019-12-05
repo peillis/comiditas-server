@@ -19,13 +19,12 @@ defmodule Comiditas do
     Mealdate
     |> where([m], m.date >= ^today)
     |> where(user_id: 5)
-    |> Repo.all
+    |> Repo.all()
   end
 
   def get_template(_user_id) do
     Template
     |> where(user_id: 5)
-    |> Repo.all
+    |> Repo.all()
   end
-
 end

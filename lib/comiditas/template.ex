@@ -18,5 +18,4 @@ defmodule Comiditas.Template do
     |> cast(params, [:day, :breakfast, :lunch, :dinner])
     |> validate_required([:day, :breakfast, :lunch, :dinner])
   end
-
 end
