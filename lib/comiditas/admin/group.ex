@@ -1,10 +1,10 @@
-defmodule Comiditas.Comidas.Group do
+defmodule Comiditas.Admin.Group do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "groups" do
     field :name, :string
-    has_many :users, Comiditas.Comidas.Users
+    has_many :users, Comiditas.Admin.User
 
     timestamps()
   end

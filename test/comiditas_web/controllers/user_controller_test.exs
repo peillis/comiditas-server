@@ -1,7 +1,7 @@
 defmodule ComiditasWeb.UserControllerTest do
   use ComiditasWeb.ConnCase
 
-  alias Comiditas.Comidas
+  alias Comiditas.Admin
 
   @create_attrs %{
     email: "some email",
@@ -18,7 +18,7 @@ defmodule ComiditasWeb.UserControllerTest do
   @invalid_attrs %{email: nil, group_id: nil, name: nil, password_hash: nil}
 
   def fixture(:user) do
-    {:ok, user} = Comidas.create_user(@create_attrs)
+    {:ok, user} = Admin.create_user(@create_attrs)
     user
   end
 

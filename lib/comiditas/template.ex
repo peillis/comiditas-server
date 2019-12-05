@@ -7,7 +7,7 @@ defmodule Comiditas.Template do
     field :breakfast, :string
     field :lunch, :string
     field :dinner, :string
-    belongs_to :user, Comiditas.Comidas.User
+    belongs_to :user, Comiditas.Admin.User
 
     timestamps()
   end

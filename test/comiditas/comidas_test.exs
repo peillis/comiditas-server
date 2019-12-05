@@ -1,10 +1,10 @@
-defmodule Comiditas.ComidasTest do
+defmodule Comiditas.AdminTest do
   use Comiditas.DataCase
 
-  alias Comiditas.Comidas
+  alias Comiditas.Admin
 
   describe "groups" do
-    alias Comiditas.Comidas.Group
+    alias Comiditas.Admin.Group
 
     @valid_attrs %{name: "some name"}
     @update_attrs %{name: "some updated name"}
@@ -14,7 +14,7 @@ defmodule Comiditas.ComidasTest do
       {:ok, group} =
         attrs
         |> Enum.into(@valid_attrs)
-        |> Comidas.create_group()
+        |> Admin.create_group()
 
       group
     end
@@ -24,7 +24,7 @@ defmodule Comiditas.ComidasTest do
         group_fixture()
       end
 
-      {:ok, %{groups: groups} = page} = Comidas.paginate_groups(%{})
+      {:ok, %{groups: groups} = page} = Admin.paginate_groups(%{})
 
       assert length(groups) == 15
       assert page.page_number == 1
@@ -38,50 +38,50 @@ defmodule Comiditas.ComidasTest do
 
     test "list_groups/0 returns all groups" do
       group = group_fixture()
-      assert Comidas.list_groups() == [group]
+      assert Admin.list_groups() == [group]
     end
 
     test "get_group!/1 returns the group with given id" do
       group = group_fixture()
-      assert Comidas.get_group!(group.id) == group
+      assert Admin.get_group!(group.id) == group
     end
 
     test "create_group/1 with valid data creates a group" do
-      assert {:ok, %Group{} = group} = Comidas.create_group(@valid_attrs)
+      assert {:ok, %Group{} = group} = Admin.create_group(@valid_attrs)
       assert group.name == "some name"
     end
 
     test "create_group/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Comidas.create_group(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Admin.create_group(@invalid_attrs)
     end
 
     test "update_group/2 with valid data updates the group" do
       group = group_fixture()
-      assert {:ok, group} = Comidas.update_group(group, @update_attrs)
+      assert {:ok, group} = Admin.update_group(group, @update_attrs)
       assert %Group{} = group
       assert group.name == "some updated name"
     end
 
     test "update_group/2 with invalid data returns error changeset" do
       group = group_fixture()
-      assert {:error, %Ecto.Changeset{}} = Comidas.update_group(group, @invalid_attrs)
-      assert group == Comidas.get_group!(group.id)
+      assert {:error, %Ecto.Changeset{}} = Admin.update_group(group, @invalid_attrs)
+      assert group == Admin.get_group!(group.id)
     end
 
     test "delete_group/1 deletes the group" do
       group = group_fixture()
-      assert {:ok, %Group{}} = Comidas.delete_group(group)
-      assert_raise Ecto.NoResultsError, fn -> Comidas.get_group!(group.id) end
+      assert {:ok, %Group{}} = Admin.delete_group(group)
+      assert_raise Ecto.NoResultsError, fn -> Admin.get_group!(group.id) end
     end
 
     test "change_group/1 returns a group changeset" do
       group = group_fixture()
-      assert %Ecto.Changeset{} = Comidas.change_group(group)
+      assert %Ecto.Changeset{} = Admin.change_group(group)
     end
   end
 
   describe "users" do
-    alias Comiditas.Comidas.User
+    alias Comiditas.Admin.User
 
     @valid_attrs %{
       email: "some email",
@@ -101,7 +101,7 @@ defmodule Comiditas.ComidasTest do
       {:ok, user} =
         attrs
         |> Enum.into(@valid_attrs)
-        |> Comidas.create_user()
+        |> Admin.create_user()
 
       user
     end
@@ -111,7 +111,7 @@ defmodule Comiditas.ComidasTest do
         user_fixture()
       end
 
-      {:ok, %{users: users} = page} = Comidas.paginate_users(%{})
+      {:ok, %{users: users} = page} = Admin.paginate_users(%{})
 
       assert length(users) == 15
       assert page.page_number == 1
@@ -125,16 +125,16 @@ defmodule Comiditas.ComidasTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Comidas.list_users() == [user]
+      assert Admin.list_users() == [user]
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Comidas.get_user!(user.id) == user
+      assert Admin.get_user!(user.id) == user
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Comidas.create_user(@valid_attrs)
+      assert {:ok, %User{} = user} = Admin.create_user(@valid_attrs)
       assert user.email == "some email"
       assert user.group_id == 42
       assert user.name == "some name"
@@ -142,12 +142,12 @@ defmodule Comiditas.ComidasTest do
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Comidas.create_user(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Admin.create_user(@invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
-      assert {:ok, user} = Comidas.update_user(user, @update_attrs)
+      assert {:ok, user} = Admin.update_user(user, @update_attrs)
       assert %User{} = user
       assert user.email == "some updated email"
       assert user.group_id == 43
@@ -157,19 +157,19 @@ defmodule Comiditas.ComidasTest do
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Comidas.update_user(user, @invalid_attrs)
-      assert user == Comidas.get_user!(user.id)
+      assert {:error, %Ecto.Changeset{}} = Admin.update_user(user, @invalid_attrs)
+      assert user == Admin.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
       user = user_fixture()
-      assert {:ok, %User{}} = Comidas.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Comidas.get_user!(user.id) end
+      assert {:ok, %User{}} = Admin.delete_user(user)
+      assert_raise Ecto.NoResultsError, fn -> Admin.get_user!(user.id) end
     end
 
     test "change_user/1 returns a user changeset" do
       user = user_fixture()
-      assert %Ecto.Changeset{} = Comidas.change_user(user)
+      assert %Ecto.Changeset{} = Admin.change_user(user)
     end
   end
 end
