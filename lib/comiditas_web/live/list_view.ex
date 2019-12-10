@@ -6,7 +6,8 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def mount(_session, socket) do
-    {:ok, assign(socket, deploy_step: "Ready!")}
+    my_list = ["hey", "there", "you", "go"]
+    {:ok, assign(socket, deploy_step: "Ready!", my_list: my_list)}
   end
 
   def handle_event("github_deploy", _value, socket) do

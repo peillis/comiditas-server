@@ -2,3 +2,7 @@
 
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+.circle {
+    font-size: 9px;
+}
