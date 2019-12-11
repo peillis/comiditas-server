@@ -6,7 +6,7 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def mount(_session, socket) do
-    my_list = ["hey", "there", "you", "go"]
+    my_list = ["hey", "there", "you", "go", "1", "1", "1", "1", "1"]
     {:ok, assign(socket, deploy_step: "Ready!", my_list: my_list)}
   end
 
