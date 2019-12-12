@@ -3,17 +3,6 @@
     <button phx-click="github_deploy">Deploy to GitHub</button>
   </div>
   Status: <%= @deploy_step %>
-  <svg version="1.1" width="2em" height="2em" style="overflow: visible" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <circle cx="6em" cy="6em" r="2em" fill="black"></circle>
-    <circle cx="6em" cy="2em" r="2em" fill="green"></circle>
-    <circle cx="2.2em" cy="4.7em" r="2em" fill="cyan"></circle>
-    <circle cx="9.8em" cy="4.7em" r="2em" fill="blue"></circle>
-    <circle cx="3.6em" cy="9.2em" r="2em" fill="lightgray"></circle>
-    <circle cx="8.4em" cy="9.2em" r="2em" fill="red"></circle>
-    <text x="0.85em" y="2.15em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">1</text>
-    <text x="3.75em" y="2.15em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">2</text>
-    <text x="2.3em" y="1.15em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
-  </svg>
   <table>
     <thead>
       <tr>
@@ -25,27 +14,62 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>
+          M 15
+        </td>
+        <td class="circle">
+          <svg id="last" version="1.1" width="4em" height="4em" style="z-index: 2; overflow: visible" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="white"></circle>
+            <circle cx="2em" cy="-2em" r="2em" fill="green"></circle>
+            <circle cx="-1.8em" cy="0.7em" r="2em" fill="lightskyblue"></circle>
+            <circle cx="5.8em" cy="0.7em" r="2em" fill="blue"></circle>
+            <circle cx="-0.4em" cy="5.2em" r="2em" fill="lightgray"></circle>
+            <circle cx="4.4em" cy="5.2em" r="2em" fill="red"></circle>
+            <text x="-0.70em" y="0.63em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">1</text>
+            <text x="2.25em" y="0.63em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">2</text>
+            <text x="0.77em" y="-0.35em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
+            <text x="-0.15em" y="2.37em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">P</text>
+            <text x="1.7em" y="2.37em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">N</text>
+          </svg>
+        </td>
+        <td class="circle">
+          <svg version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="green"></circle>
+            <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
+          </svg>
+        </td>
+        <td class="circle">
+          <svg version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="green"></circle>
+            <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
+          </svg>
+        </td>
+        <td>
+          <i class="material-icons">description</i>
+        </td>
+      </tr>
       <%= for key <- @my_list do %>
       <tr>
         <td>
           M 15
         </td>
         <td class="circle">
-          <svg version="1.1" width="6em" height="6em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-selection="yes" fill="black">
-            <circle cx="3em" cy="3em" r="3em"></circle>
-            <text x="1.15em" y="1.50em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700"></text>
+          <svg version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="green"></circle>
+            <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
           </svg>
         </td>
         <td class="circle">
-          <svg version="1.1" width="6em" height="6em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-selection="yes" fill="green">
-            <circle cx="3em" cy="3em" r="3em"></circle>
-            <text x="1.15em" y="1.50em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
+          <svg version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="green"></circle>
+            <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
           </svg>
         </td>
         <td class="circle">
-          <svg version="1.1" width="6em" height="6em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-selection="yes" fill="green">
-            <circle cx="3em" cy="3em" r="3em"></circle>
-            <text x="1.15em" y="1.50em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
+          <svg version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <circle cx="2em" cy="2em" r="2em" fill="green"></circle>
+            <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">Y</text>
           </svg>
         </td>
         <td>
