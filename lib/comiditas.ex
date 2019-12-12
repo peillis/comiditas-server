@@ -13,18 +13,52 @@ defmodule Comiditas do
   alias Comiditas.Repo
   alias Comiditas.Template
 
+  def today() do
+    Timex.today() |> Timex.shift(months: -3)
+  end
+
   def get_mealdates(_user_id) do
-    today = Timex.today()
-    # Repo.all(from m in Mealdate, where: m.date >= ^today and m.user_id==5)
     Mealdate
-    |> where([m], m.date >= ^today)
+    |> where([m], m.date >= ^today())
     |> where(user_id: 5)
     |> Repo.all()
   end
 
-  def get_template(_user_id) do
+  def get_templates(_user_id) do
     Template
     |> where(user_id: 5)
     |> Repo.all()
+  end
+
+  def generate_dates() do
+    Enum.each(0..10, fn(x) ->
+
+    end)
+  end
+
+  def get_date(date, mealdates, templates) do
+    case Enum.find(mealdates, fn x -> x.date == date end) do
+      nil ->
+        get_date_from_templates(date, templates)
+      md ->
+        %{
+          date: date,
+          breakfast: md.breakfast,
+          lunch: md.lunch,
+          dinner: md.dinner,
+          notes: md.notes
+        }
+    end
+  end
+
+  def get_date_from_templates(date, templates) do
+    tpl = Enum.find(templates, fn x -> x.day == Timex.weekday(date) end)
+    %{
+      date: date,
+      breakfast: tpl.breakfast,
+      lunch: tpl.lunch,
+      dinner: tpl.dinner,
+      notes: nil
+    }
   end
 end

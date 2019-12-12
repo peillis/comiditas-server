@@ -17,5 +17,4 @@ defmodule ComiditasWeb.Live.ListView do
   def handle_event("my_test", _value, socket) do
     {:noreply, assign(socket, deploy_step: "Hey test")}
   end
-
 end
