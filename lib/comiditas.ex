@@ -17,22 +17,23 @@ defmodule Comiditas do
     Timex.today() |> Timex.shift(months: -3)
   end
 
-  def get_mealdates(_user_id) do
+  def get_mealdates(user_id) do
     Mealdate
     |> where([m], m.date >= ^today())
-    |> where(user_id: 5)
+    |> where(user_id: ^user_id)
     |> Repo.all()
   end
 
-  def get_templates(_user_id) do
+  def get_templates(user_id) do
     Template
-    |> where(user_id: 5)
+    |> where(user_id: ^user_id)
     |> Repo.all()
   end
 
-  def generate_dates() do
-    Enum.each(0..10, fn(x) ->
-
+  def generate_dates(n, mealdates, templates) do
+    Enum.reduce(n-1..0, [], fn(x, acc) ->
+      date = today() |> Timex.shift(days: x)
+      [get_date(date, mealdates, templates) | acc]
     end)
   end
 

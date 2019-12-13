@@ -6,7 +6,9 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def mount(_session, socket) do
-    my_list = ["hey", "there", "you", "go", "1", "1", "1", "1", "1"]
+    mds = Comiditas.get_mealdates(5)
+    tps = Comiditas.get_templates(5)
+    my_list = Comiditas.generate_dates(10, mds, tps)
     {:ok, assign(socket, deploy_step: "Ready!", my_list: my_list)}
   end
 
