@@ -1,17 +1,11 @@
-<tr>
-  <td>
-    <%= @day.date %>
-  </td>
-  <td class="circle">
-    <%= draw(@day.breakfast) %>
-  </td>
-  <td class="circle">
-    <%= draw(@day.lunch) %>
-  </td>
-  <td class="circle">
-    <%= draw(@day.dinner) %>
-  </td>
-  <td>
-    <i class="material-icons">description</i>
-  </td>
-</tr>
+  <tr>
+    <td>
+      <%= @day.date %>
+    </td>
+    <%= circle(@day.breakfast, @day.date, "breakfast", @day.selected) %>
+    <%= circle(@day.lunch, @day.date, "lunch", @day.selected) %>
+    <%= circle(@day.dinner, @day.date, "dinner", @day.selected) %>
+    <td>
+      <i class="material-icons">description</i>
+    </td>
+  </tr>

@@ -6,6 +6,19 @@
 .circle {
     font-size: 13px;
 }
+.selector {
+    font-size: 9px;
+}
 th, td {
     text-align: center;
+}
+
+a, td, svg text {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+a, td, svg text::selection {
+    background: none;
 }

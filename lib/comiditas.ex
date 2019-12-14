@@ -47,7 +47,8 @@ defmodule Comiditas do
           breakfast: md.breakfast,
           lunch: md.lunch,
           dinner: md.dinner,
-          notes: md.notes
+          notes: md.notes,
+          selected: 0
         }
     end
   end
@@ -59,7 +60,8 @@ defmodule Comiditas do
       breakfast: tpl.breakfast,
       lunch: tpl.lunch,
       dinner: tpl.dinner,
-      notes: nil
+      notes: nil,
+      selected: 0
     }
   end
 end

@@ -24,20 +24,20 @@ liveSocket.connect()
 
 window.liveSocket = liveSocket;
 
-let change = () => {
+let add_more = () => {
     let layer = document.getElementsByClassName('main')[0].parentElement
     let view = liveSocket.views[layer.id]
     view.channel.push('event', {
-        event: 'my_test',
+        event: 'view_more',
         type: null,
         value: 3
     }, 20000).receive("ok", resp => { view.update(resp.diff) })
 }
-window.change = change
+
+window.add_more = add_more
 
 window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-        console.log('hey')
-        change()
+        add_more()
     }
 };
