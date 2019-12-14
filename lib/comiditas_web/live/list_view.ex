@@ -1,15 +1,16 @@
 defmodule ComiditasWeb.Live.ListView do
   use Phoenix.LiveView
+  alias Comiditas.UserServer
 
   def render(assigns) do
     ComiditasWeb.PageView.render("list.html", assigns)
   end
 
   def mount(_session, socket) do
-    mds = Comiditas.get_mealdates(5)
-    tps = Comiditas.get_templates(5)
-    my_list = Comiditas.generate_dates(10, mds, tps)
-    {:ok, assign(socket, deploy_step: "Ready!", my_list: my_list)}
+    {:ok, pid} = UserServer.start_link(5)
+    list = UserServer.get_list(pid)
+
+    {:ok, assign(socket, deploy_step: "Ready!", list: list, pid: pid)}
   end
 
   def handle_event("github_deploy", _value, socket) do

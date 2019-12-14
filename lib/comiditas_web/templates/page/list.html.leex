@@ -49,8 +49,8 @@
           <i class="material-icons">description</i>
         </td>
       </tr>
-      <%= for key <- @my_list do %>
-        <%= render ComiditasWeb.PageView, "_row.html" %>
+      <%= for day <- @list do %>
+        <%= render ComiditasWeb.PageView, "_row.html", day: day %>
       <% end %>
     </tbody>
   </table>
