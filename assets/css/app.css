@@ -6,14 +6,17 @@
 .circle {
     font-size: 13px;
 }
-.selector {
-    font-size: 9px;
+#selector {
+    font-size: 13px;
+    overflow: visible;
+    position: fixed;
+    display: none;
 }
 th, td {
     text-align: center;
 }
 
-a, td, svg text {
+a, td, svg text, * {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;

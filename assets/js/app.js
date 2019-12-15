@@ -19,7 +19,36 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket, debug} from "phoenix_live_view"
 
-let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug})
+let Hooks = {}
+Hooks.TableHook = {
+    updated() {
+        let selected = document.getElementById('selected')
+        if (selected) {
+            showSelector(selected)
+        }
+    },
+    mounted() {
+        console.log('mounted')
+    }
+}
+
+let showSelector = (selected) => {
+    let selector = document.getElementById('selector')
+    let rect = selected.getBoundingClientRect()
+    selector.style.top = rect.top
+    selector.style.left = rect.left
+    selector.style.display = 'inline-block'
+    selected.style.display = 'none'
+}
+
+let hideSelector = () => {
+    let selected = document.getElementById('selected')
+    let selector = document.getElementById('selector')
+    selector.style.display = 'none'
+    selected.style.display = 'inline-block'
+}
+
+let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})
 liveSocket.connect()
 
 window.liveSocket = liveSocket;
@@ -40,4 +69,5 @@ window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
         add_more()
     }
+    hideSelector()
 };
