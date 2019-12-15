@@ -44,8 +44,10 @@ let showSelector = (selected) => {
 let hideSelector = () => {
     let selected = document.getElementById('selected')
     let selector = document.getElementById('selector')
-    selector.style.display = 'none'
-    selected.style.display = 'inline-block'
+    if (selector) {
+        selector.style.display = 'none'
+        selected.style.display = 'inline-block'
+    }
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})

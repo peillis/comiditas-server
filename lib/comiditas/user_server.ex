@@ -13,7 +13,7 @@ defmodule Comiditas.UserServer do
   def init(user_id) do
     mealdates = Comiditas.get_mealdates(user_id)
     templates = Comiditas.get_templates(user_id)
-    list = Comiditas.generate_dates(10, mealdates, templates)
+    list = Comiditas.generate_days(10, mealdates, templates)
     {:ok, list}
   end
 

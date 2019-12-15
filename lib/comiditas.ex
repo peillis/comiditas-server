@@ -24,44 +24,59 @@ defmodule Comiditas do
     |> Repo.all()
   end
 
+  def find_mealdate(date, mealdates) do
+    Enum.find(mealdates, &(&1.date == date))
+  end
+
   def get_templates(user_id) do
     Template
     |> where(user_id: ^user_id)
     |> Repo.all()
   end
 
-  def generate_dates(n, mealdates, templates) do
-    Enum.reduce(n-1..0, [], fn(x, acc) ->
+  def find_template(date, templates) do
+    Enum.find(templates, &(&1.day == Timex.weekday(date)))
+  end
+
+  def generate_days(n, mealdates, templates) do
+    Enum.reduce((n - 1)..0, [], fn x, acc ->
       date = today() |> Timex.shift(days: x)
-      [get_date(date, mealdates, templates) | acc]
+      [get_day(date, mealdates, templates) | acc]
     end)
   end
 
-  def get_date(date, mealdates, templates) do
-    case Enum.find(mealdates, fn x -> x.date == date end) do
-      nil ->
-        get_date_from_templates(date, templates)
-      md ->
-        %{
-          date: date,
-          breakfast: md.breakfast,
-          lunch: md.lunch,
-          dinner: md.dinner,
-          notes: md.notes,
-          selected: 0
-        }
-    end
-  end
+  def get_day(date, mealdates, templates) do
+    tpl =
+      case find_mealdate(date, mealdates) do
+        nil ->
+          find_template(date, templates)
+          |> Map.put(:id, nil)
+          |> Map.put(:notes, nil)
 
-  def get_date_from_templates(date, templates) do
-    tpl = Enum.find(templates, fn x -> x.day == Timex.weekday(date) end)
+        md ->
+          md
+      end
+
     %{
+      id: tpl.id,
       date: date,
       breakfast: tpl.breakfast,
       lunch: tpl.lunch,
       dinner: tpl.dinner,
-      notes: nil,
-      selected: 0
+      notes: tpl.notes,
+      selected: nil
     }
+  end
+
+  def change_day(day, templates) do
+    tpl = find_template(day.date, templates)
+
+    if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
+         day.dinner == tpl.dinner do
+      IO.inspect("borra")
+    else
+      # require IEx; IEx.pry
+      IO.inspect("guarda")
+    end
   end
 end
