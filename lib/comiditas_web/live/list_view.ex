@@ -1,6 +1,8 @@
 defmodule ComiditasWeb.Live.ListView do
   use Phoenix.LiveView
 
+  alias Comiditas.Util
+
   def render(assigns) do
     ComiditasWeb.PageView.render("list.html", assigns)
   end
@@ -12,7 +14,17 @@ defmodule ComiditasWeb.Live.ListView do
     list = Comiditas.generate_days(10, mealdates, templates)
 
     {:ok,
-     assign(socket, deploy_step: "Ready!", list: list, mealdates: mealdates, templates: templates)}
+     assign(socket, deploy_step: "Ready!", user_id: user_id, list: list, mealdates: mealdates, templates: templates)}
+  end
+
+  def refresh(socket) do
+    user_id = 5
+    mealdates = Comiditas.get_mealdates(user_id)
+    templates = Comiditas.get_templates(user_id)
+    list = Comiditas.generate_days(10, mealdates, templates)
+    socket
+    |> assign(user_id: user_id, list: list)
+    |> assign(mealdates: mealdates, templates: templates)
   end
 
   def handle_event("github_deploy", _value, socket) do
@@ -63,15 +75,14 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("change", %{"date" => date, "meal" => meal, "val" => value}, socket) do
-    IO.inspect("#{date} #{meal} #{value}")
-    list = socket.assigns.list
-    # day = Enum.find(list, &(&1.selected != nil))
-    # to_change = String.to_atom(day.selected)
-    # day = Map.put(day, to_change, value)
-    # Comiditas.change_day(day, socket.assigns.templates)
+  def handle_event("change", %{"date" => date, "meal" => meal, "val" => val}, socket) do
+    IO.inspect("#{date} #{meal} #{val}")
+    user_id = socket.assigns.user_id
+    date = Util.str_to_date(date)
+    templates = socket.assigns.templates
+    Comiditas.change_day(user_id, date, meal, val, templates)
 
-    {:noreply, assign(socket, list: list)}
+    {:noreply, socket}
   end
 
 end

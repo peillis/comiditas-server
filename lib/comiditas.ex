@@ -68,15 +68,15 @@ defmodule Comiditas do
     }
   end
 
-  def change_day(day, templates) do
-    tpl = find_template(day.date, templates)
+  def change_day(user_id, date, meal, val, templates) do
+    tpl = find_template(date, templates)
 
-    if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
-         day.dinner == tpl.dinner do
-      IO.inspect("borra")
-    else
-      # require IEx; IEx.pry
-      IO.inspect("guarda")
-    end
+    # if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
+    #      day.dinner == tpl.dinner do
+    #   IO.inspect("borra")
+    # else
+    #   # require IEx; IEx.pry
+    #   IO.inspect("guarda")
+    # end
   end
 end
