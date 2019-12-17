@@ -2,9 +2,9 @@
     <td>
       <%= @day.date %>
     </td>
-    <%= circle(@day.breakfast, @day.date, "breakfast", @day.selected) %>
-    <%= circle(@day.lunch, @day.date, "lunch", @day.selected) %>
-    <%= circle(@day.dinner, @day.date, "dinner", @day.selected) %>
+    <%= circle(@day.breakfast, @day.date, "breakfast") %>
+    <%= circle(@day.lunch, @day.date, "lunch") %>
+    <%= circle(@day.dinner, @day.date, "dinner") %>
     <td>
       <i class="material-icons">description</i>
     </td>

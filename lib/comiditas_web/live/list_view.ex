@@ -1,7 +1,8 @@
 defmodule ComiditasWeb.Live.ListView do
   use Phoenix.LiveView
 
-  alias Comiditas.Util
+  alias Comiditas.{GroupServer, Util}
+  alias ComiditasWeb.Endpoint
 
   def render(assigns) do
     ComiditasWeb.PageView.render("list.html", assigns)
@@ -9,22 +10,17 @@ defmodule ComiditasWeb.Live.ListView do
 
   def mount(_session, socket) do
     user_id = 5
-    mealdates = Comiditas.get_mealdates(user_id)
-    templates = Comiditas.get_templates(user_id)
-    list = Comiditas.generate_days(10, mealdates, templates)
+    pid =
+      case GroupServer.start_link(user_id) do
+        {:ok, pid} -> pid
+        {:error, {:already_started, pid}} -> pid
+      end
+    # list = GroupServer.get_days_of_user(pid, 10, user_id)
+    Endpoint.subscribe("user:#{user_id}")
+    GroupServer.get_days_of_user(pid, 10, user_id)
 
     {:ok,
-     assign(socket, deploy_step: "Ready!", user_id: user_id, list: list, mealdates: mealdates, templates: templates)}
-  end
-
-  def refresh(socket) do
-    user_id = 5
-    mealdates = Comiditas.get_mealdates(user_id)
-    templates = Comiditas.get_templates(user_id)
-    list = Comiditas.generate_days(10, mealdates, templates)
-    socket
-    |> assign(user_id: user_id, list: list)
-    |> assign(mealdates: mealdates, templates: templates)
+     assign(socket, deploy_step: "Ready!", pid: pid, user_id: user_id, list: [])}
   end
 
   def handle_event("github_deploy", _value, socket) do
@@ -40,34 +36,12 @@ defmodule ComiditasWeb.Live.ListView do
 
     list =
       if len < 300 do
-        Comiditas.generate_days(len, socket.assigns.mealdates, socket.assigns.templates)
+        GroupServer.get_days_of_user(socket.assigns.pid, len, socket.assigns.user_id)
       else
         socket.assigns.list
       end
 
     {:noreply, assign(socket, list: list)}
-  end
-
-  def handle_event("select", %{"date" => date, "meal" => meal}, socket) do
-    IO.inspect(date)
-    IO.inspect(meal)
-    list = socket.assigns.list
-
-    d =
-      date
-      |> Timex.parse!("{YYYY}-{0M}-{0D}")
-      |> Timex.to_date()
-
-    new_list =
-      Enum.map(list, fn x ->
-        case x.date do
-          ^d -> %{x | selected: meal}
-          _ -> %{x | selected: nil}
-        end
-      end)
-
-    # require IEx; IEx.pry
-    {:noreply, assign(socket, list: new_list)}
   end
 
   def handle_event("multi_select", _value, socket) do
@@ -79,10 +53,18 @@ defmodule ComiditasWeb.Live.ListView do
     IO.inspect("#{date} #{meal} #{val}")
     user_id = socket.assigns.user_id
     date = Util.str_to_date(date)
-    templates = socket.assigns.templates
+    templates = []
     Comiditas.change_day(user_id, date, meal, val, templates)
 
     {:noreply, socket}
+  end
+
+  def handle_info(%{topic: topic, payload: state}, socket) do
+    if topic == "user:#{socket.assigns.user_id}" do
+      {:noreply, assign(socket, list: state.list)}
+    else
+      {:noreply, socket}
+    end
   end
 
 end

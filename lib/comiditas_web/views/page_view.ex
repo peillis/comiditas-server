@@ -1,7 +1,7 @@
 defmodule ComiditasWeb.PageView do
   use ComiditasWeb, :view
 
-  def circle(value, date, meal, selected) do
+  def circle(value, date, meal) do
     ~e"""
     <td class="circle">
       <svg class="buttons" data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
