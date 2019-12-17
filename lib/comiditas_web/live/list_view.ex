@@ -10,17 +10,17 @@ defmodule ComiditasWeb.Live.ListView do
 
   def mount(_session, socket) do
     user_id = 5
+
     pid =
       case GroupServer.start_link(user_id) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
       end
-    # list = GroupServer.get_days_of_user(pid, 10, user_id)
+
     Endpoint.subscribe("user:#{user_id}")
     GroupServer.get_days_of_user(pid, 10, user_id)
 
-    {:ok,
-     assign(socket, deploy_step: "Ready!", pid: pid, user_id: user_id, list: [])}
+    {:ok, assign(socket, deploy_step: "Ready!", pid: pid, user_id: user_id, list: [])}
   end
 
   def handle_event("github_deploy", _value, socket) do
@@ -66,5 +66,4 @@ defmodule ComiditasWeb.Live.ListView do
       {:noreply, socket}
     end
   end
-
 end

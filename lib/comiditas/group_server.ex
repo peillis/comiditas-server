@@ -18,7 +18,7 @@ defmodule Comiditas.GroupServer do
   @impl true
   def init(group_id) do
     users = Comiditas.get_users(group_id)
-    user_ids = Enum.map(users, &(&1.id))
+    user_ids = Enum.map(users, & &1.id)
     mealdates = Comiditas.get_mealdates_of_group(user_ids)
     templates = Comiditas.get_templates_of_group(user_ids)
 
