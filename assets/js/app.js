@@ -22,9 +22,9 @@ import {LiveSocket, debug} from "phoenix_live_view"
 let Hooks = {}
 Hooks.TableHook = {
     updated() {
-        let selected = document.getElementById('selected')
-        if (selected) {
-            showSelector(selected)
+        let buttons = document.getElementsByClassName('buttons')
+        for (let b of buttons) {
+            b.addEventListener('click', select)
         }
     },
     mounted() {
@@ -32,22 +32,29 @@ Hooks.TableHook = {
     }
 }
 
-let showSelector = (selected) => {
+let showSelector = (node, date, meal) => {
     let selector = document.getElementById('selector')
-    let rect = selected.getBoundingClientRect()
+    let rect = node.getBoundingClientRect()
+    let buttons = selector.children
+    for (let b of buttons) {
+        b.setAttribute('phx-value-date', date)
+        b.setAttribute('phx-value-meal', meal)
+    }
     selector.style.top = rect.top
     selector.style.left = rect.left
     selector.style.display = 'inline-block'
-    selected.style.display = 'none'
 }
 
 let hideSelector = () => {
-    let selected = document.getElementById('selected')
     let selector = document.getElementById('selector')
-    if (selector) {
-        selector.style.display = 'none'
-        selected.style.display = 'inline-block'
-    }
+    selector.style.display = 'none'
+}
+
+let select = (event) => {
+    let elem = event.target.parentNode
+    let date = elem.dataset.date
+    let meal = elem.dataset.meal
+    showSelector(elem, date, meal)
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})
@@ -64,8 +71,6 @@ let add_more = () => {
         value: 3
     }, 20000).receive("ok", resp => { view.update(resp.diff) })
 }
-
-window.add_more = add_more
 
 window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {

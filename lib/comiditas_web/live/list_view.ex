@@ -63,20 +63,15 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("change", %{"val" => value}, socket) do
-    IO.inspect(value)
+  def handle_event("change", %{"date" => date, "meal" => meal, "val" => value}, socket) do
+    IO.inspect("#{date} #{meal} #{value}")
     list = socket.assigns.list
-    day = Enum.find(list, &(&1.selected != nil))
-    to_change = String.to_atom(day.selected)
-    day = Map.put(day, to_change, value)
-    Comiditas.change_day(day, socket.assigns.templates)
+    # day = Enum.find(list, &(&1.selected != nil))
+    # to_change = String.to_atom(day.selected)
+    # day = Map.put(day, to_change, value)
+    # Comiditas.change_day(day, socket.assigns.templates)
 
-    {:noreply, assign(socket, list: remove_selected(list))}
+    {:noreply, assign(socket, list: list)}
   end
 
-  def remove_selected(list) do
-    Enum.map(list, fn x ->
-      %{x | selected: nil}
-    end)
-  end
 end
