@@ -6,6 +6,9 @@
 .circle {
     font-size: 13px;
 }
+.weekday-6, .weekday-7 {
+    background-color: whitesmoke;
+}
 #selector {
     font-size: 13px;
     overflow: visible;
@@ -16,7 +19,7 @@ th, td {
     text-align: center;
 }
 
-a, td, svg text, * {
+svg text, * {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
