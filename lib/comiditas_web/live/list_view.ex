@@ -4,6 +4,9 @@ defmodule ComiditasWeb.Live.ListView do
   alias Comiditas.{GroupServer, Util}
   alias ComiditasWeb.Endpoint
 
+  @items 10
+  @max_items 300
+
   def render(assigns) do
     ComiditasWeb.PageView.render("list.html", assigns)
   end
@@ -18,7 +21,7 @@ defmodule ComiditasWeb.Live.ListView do
       end
 
     Endpoint.subscribe("user:#{user_id}")
-    GroupServer.get_days_of_user(pid, 10, user_id)
+    GroupServer.gen_days_of_user(pid, @items, user_id)
 
     {:ok, assign(socket, deploy_step: "Ready!", pid: pid, user_id: user_id, list: [])}
   end
@@ -32,16 +35,12 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def handle_event("view_more", _value, socket) do
-    len = length(socket.assigns.list) + 10
+    len = length(socket.assigns.list) + @items
+    if len < @max_items do
+      GroupServer.gen_days_of_user(socket.assigns.pid, len, socket.assigns.user_id)
+    end
 
-    list =
-      if len < 300 do
-        GroupServer.get_days_of_user(socket.assigns.pid, len, socket.assigns.user_id)
-      else
-        socket.assigns.list
-      end
-
-    {:noreply, assign(socket, list: list)}
+    {:noreply, socket}
   end
 
   def handle_event("multi_select", _value, socket) do
