@@ -15,6 +15,10 @@ defmodule Comiditas.GroupServer do
     GenServer.cast(pid, {:gen_days_of_user, n, user_id})
   end
 
+  def change_day(pid, list, date, meal, val) do
+    GenServer.cast(pid, {:change_day, list, date, meal, val})
+  end
+
   @impl true
   def init(group_id) do
     users = Comiditas.get_users(group_id)
@@ -34,6 +38,16 @@ defmodule Comiditas.GroupServer do
   def handle_cast({:gen_days_of_user, n, user_id}, state) do
     days = Comiditas.generate_days(n, state.mds, state.tps, user_id)
     Endpoint.broadcast("user:#{user_id}", "list", %{list: days})
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:change_day, list, date, meal, value}, state) do
+    day =
+      list
+      |> Enum.find(&(&1.date == date))
+      |> Map.put(meal, value)
+    IO.inspect day
     {:noreply, state}
   end
 end
