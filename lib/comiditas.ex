@@ -74,16 +74,18 @@ defmodule Comiditas do
     struct(Mealdate, to_map)
   end
 
-  def change_day(user_id, date, meal, val, templates) do
-    tpl = find_template(date, templates)
-
-    # if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
-    #      day.dinner == tpl.dinner do
-    #   IO.inspect("borra")
-    # else
-    #   # require IEx; IEx.pry
-    #   IO.inspect("guarda")
-    # end
+  def save_day(changeset, tpl) do
+    {:ok, day} = Repo.insert_or_update(changeset)
+    if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
+         day.dinner == tpl.dinner do
+      Repo.delete(day)
+      {:deleted, Map.put(day, :id, nil)}
+    else
+      case changeset.data.id do
+        nil -> {:created, day}
+        _ -> {:updated, day}
+      end
+    end
   end
 
   def get_users(group_id) do

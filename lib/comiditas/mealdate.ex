@@ -17,6 +17,6 @@ defmodule Comiditas.Mealdate do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:date, :breakfast, :lunch, :dinner, :notes])
-    |> validate_required([:date, :breakfast, :lunch, :dinner])
+    |> validate_required([:date, :breakfast, :lunch, :dinner, :user_id])
   end
 end

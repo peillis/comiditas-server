@@ -36,6 +36,7 @@ defmodule ComiditasWeb.Live.ListView do
 
   def handle_event("view_more", _value, socket) do
     len = length(socket.assigns.list) + @items
+
     if len < @max_items do
       GroupServer.gen_days_of_user(socket.assigns.pid, len, socket.assigns.user_id)
     end
@@ -49,10 +50,11 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def handle_event("change", %{"date" => date, "meal" => meal, "val" => val}, socket) do
+    date = Util.str_to_date(date)
     GroupServer.change_day(
       socket.assigns.pid,
       socket.assigns.list,
-      Util.str_to_date(date),
+      date,
       String.to_atom(meal),
       val
     )

@@ -1,6 +1,7 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
+  alias Comiditas.Mealdate
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do
@@ -16,7 +17,9 @@ defmodule Comiditas.GroupServer do
   end
 
   def change_day(pid, list, date, meal, val) do
-    GenServer.cast(pid, {:change_day, list, date, meal, val})
+    day = Enum.find(list, &(&1.date == date))
+    GenServer.call(pid, {:change_day, day, date, meal, val})
+    GenServer.cast(pid, {:gen_days_of_user, length(list), day.user_id})
   end
 
   @impl true
@@ -36,18 +39,32 @@ defmodule Comiditas.GroupServer do
 
   @impl true
   def handle_cast({:gen_days_of_user, n, user_id}, state) do
-    days = Comiditas.generate_days(n, state.mds, state.tps, user_id)
-    Endpoint.broadcast("user:#{user_id}", "list", %{list: days})
+    list = Comiditas.generate_days(n, state.mds, state.tps, user_id)
+    Endpoint.broadcast("user:#{user_id}", "list", %{list: list})
     {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:change_day, list, date, meal, value}, state) do
-    day =
-      list
-      |> Enum.find(&(&1.date == date))
-      |> Map.put(meal, value)
-    IO.inspect day
-    {:noreply, state}
+  def handle_call({:change_day, day, date, meal, value}, _from, state) do
+    changeset = Mealdate.changeset(day, Map.put(%{}, meal, value))
+    tpl = Enum.find(state.tps, &(&1.user_id == day.user_id and &1.day == day.weekday))
+    mds =
+      case Comiditas.save_day(changeset, tpl) do
+        {:deleted, day} -> Enum.filter(state.mds, &(!(&1.date == date and &1.user_id == day.user_id)))
+        {:updated, day} -> replace_in_list(state.mds, day)
+        {:created, day} -> [day | state.mds]
+      end
+
+    {:reply, day, %{state | mds: mds}}
+  end
+
+  defp replace_in_list(list, elem) do
+    Enum.map(list, fn x ->
+      if x.date == elem.date and x.user_id == elem.user_id do
+        elem
+      else
+        x
+      end
+    end)
   end
 end
