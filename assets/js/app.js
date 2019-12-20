@@ -73,7 +73,7 @@ let add_more = () => {
 }
 
 window.onscroll = function(ev) {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+    if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
         add_more()
     }
     hideSelector()

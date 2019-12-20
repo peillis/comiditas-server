@@ -4,7 +4,7 @@ defmodule ComiditasWeb.Live.ListView do
   alias Comiditas.{GroupServer, Util}
   alias ComiditasWeb.Endpoint
 
-  @items 10
+  @items 15
   @max_items 300
 
   def render(assigns) do
@@ -23,15 +23,7 @@ defmodule ComiditasWeb.Live.ListView do
     Endpoint.subscribe("user:#{user_id}")
     GroupServer.gen_days_of_user(pid, @items, user_id)
 
-    {:ok, assign(socket, deploy_step: "Ready!", pid: pid, user_id: user_id, list: [])}
-  end
-
-  def handle_event("github_deploy", _value, socket) do
-    {:noreply, assign(socket, deploy_step: "Starting deploy...")}
-  end
-
-  def handle_event("my_test", _value, socket) do
-    {:noreply, assign(socket, deploy_step: "Hey test")}
+    {:ok, assign(socket, pid: pid, user_id: user_id, list: [])}
   end
 
   def handle_event("view_more", _value, socket) do

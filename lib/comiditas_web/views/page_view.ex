@@ -1,6 +1,18 @@
 defmodule ComiditasWeb.PageView do
   use ComiditasWeb, :view
 
+  def print_weekday(weekday) do
+    case weekday do
+      1 -> "Mon"
+      2 -> "Tue"
+      3 -> "Wed"
+      4 -> "Thu"
+      5 -> "Fri"
+      6 -> "Sat"
+      7 -> "Sun"
+    end
+  end
+
   def circle(value, date, meal) do
     ~e"""
     <td class="circle">
@@ -16,7 +28,7 @@ defmodule ComiditasWeb.PageView do
   def color("no"), do: "red"
   def color("1"), do: "lightskyblue"
   def color("2"), do: "blue"
-  def color("pack"), do: "lightgray"
+  def color("pack"), do: "gray"
   def text("yes"), do: "Y"
   def text("no"), do: "N"
   def text("1"), do: "1"

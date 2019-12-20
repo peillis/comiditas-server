@@ -3,11 +3,48 @@
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 
+body {
+    margin: 0;
+}
+.container {
+    padding: 0;
+}
+.tabs {
+    position: fixed;
+    bottom: 0em;
+    display: flex;
+    width: 100%;
+    text-align: center;
+    background-color: whitesmoke;
+    height: 4em;
+}
+.tabs i {
+    margin-top: 0.5em;
+    font-size: 29px;
+}
+td i.material-icons {
+    font-size: 35px;
+}
+td {
+    padding-right: 0.5em;
+}
+.tab-item {
+    flex: 1;
+}
+.day {
+    font-weight: 700;
+    color: gray;
+    padding-left: 0.5em !important;
+}
+.day strong {
+    color: black;
+    font-size: 27px;
+}
 .circle {
     font-size: 13px;
 }
 .weekday-6, .weekday-7 {
-    background-color: whitesmoke;
+    background-color: lightgray;
 }
 #selector {
     font-size: 13px;

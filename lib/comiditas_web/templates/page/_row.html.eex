@@ -1,6 +1,7 @@
   <tr class="weekday-<%= @day.weekday %>">
-    <td>
-      <%= @day.date %>
+    <td class="day">
+      <%= print_weekday(@day.weekday) %><br/>
+      <strong><%= @day.date.day %></strong>
     </td>
     <%= circle(@day.breakfast, @day.date, "breakfast") %>
     <%= circle(@day.lunch, @day.date, "lunch") %>
