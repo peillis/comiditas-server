@@ -23,8 +23,8 @@
         
           <div class="field">
             <label>Password hash</label>
-            <%= filter_select(:user, :password_hash, @conn.params) %>
-            <%= filter_string_input(:user, :password_hash, @conn.params) %>
+            <%= filter_select(:user, :password, @conn.params) %>
+            <%= filter_string_input(:user, :password, @conn.params) %>
           </div>
         
         
@@ -52,7 +52,7 @@
             
               <th><%= table_link(@conn, "Email", :email) %></th>
             
-              <th><%= table_link(@conn, "Password hash", :password_hash) %></th>
+              <th><%= table_link(@conn, "Password hash", :password) %></th>
             
               <th><%= table_link(@conn, "Group", :group_id) %></th>
             
@@ -67,7 +67,7 @@
               
                 <td><%= user.email %></td>
               
-                <td><%= user.password_hash %></td>
+                <td><%= user.password %></td>
               
                 <td><%= user.group_id %></td>
               

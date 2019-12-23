@@ -33,7 +33,11 @@ defmodule Comiditas.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:argon2_elixir, "~> 2.1"},
+      {:bcrypt_elixir, "~> 2.0"},
       {:ecto_sql, "~> 3.1"},
+      {:gettext, "~> 0.11"},
+      {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:phoenix, "~> 1.4.11"},
       {:phoenix_pubsub, "~> 1.1"},
@@ -42,7 +46,6 @@ defmodule Comiditas.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.4"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
       {:torch, "~> 2.0"},
       {:timex, "~> 3.6"}

@@ -20,6 +20,10 @@ config :comiditas, ComiditasWeb.Endpoint,
     signing_salt: "1Ru6vfK2g5cLBb0CHzo8SXcswtPrmo05I8aD9/wqSXTdy8i4MLMT5viEtOEp6lhi"
   ]
 
+config :comiditas, Comiditas.Guardian,
+  issuer: "comiditas",
+  secret_key: "xjYRbu2tw5nu/292yorxw8gdjznoFTAS+bhA6efkImlaxJ+LEE23pwufV/2h5oqi"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

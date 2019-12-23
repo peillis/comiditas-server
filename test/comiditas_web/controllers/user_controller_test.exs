@@ -7,15 +7,15 @@ defmodule ComiditasWeb.UserControllerTest do
     email: "some email",
     group_id: 42,
     name: "some name",
-    password_hash: "some password_hash"
+    password: "some password"
   }
   @update_attrs %{
     email: "some updated email",
     group_id: 43,
     name: "some updated name",
-    password_hash: "some updated password_hash"
+    password: "some updated password"
   }
-  @invalid_attrs %{email: nil, group_id: nil, name: nil, password_hash: nil}
+  @invalid_attrs %{email: nil, group_id: nil, name: nil, password: nil}
 
   def fixture(:user) do
     {:ok, user} = Admin.create_user(@create_attrs)

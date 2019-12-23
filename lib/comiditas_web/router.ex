@@ -14,12 +14,31 @@ defmodule ComiditasWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Our pipeline implements "maybe" authenticated. We'll use the `:ensure_auth` below for when we need to make sure someone is logged in.
+  pipeline :auth do
+    plug ComiditasWeb.Pipeline
+  end
+
+  # We use ensure_auth to fail if there is no one logged in
+  pipeline :ensure_auth do
+    plug Guardian.Plug.EnsureAuthenticated
+  end
+
   scope "/", ComiditasWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     get "/", PageController, :index
 
-    live "/list", Live.ListView
+    get "/login", SessionController, :new
+    post "/login", SessionController, :login
+    get "/logout", SessionController, :logout
+  end
+
+  scope "/", ComiditasWeb do
+    pipe_through [:browser, :auth, :ensure_auth]
+
+    # live "/list", Live.ListView
+    get "/list", PageController, :list
 
     scope "/admin" do
       resources "/groups", GroupController

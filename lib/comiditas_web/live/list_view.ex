@@ -11,19 +11,17 @@ defmodule ComiditasWeb.Live.ListView do
     ComiditasWeb.PageView.render("list.html", assigns)
   end
 
-  def mount(_session, socket) do
-    user_id = 5
-
+  def mount(session, socket) do
     pid =
-      case GroupServer.start_link(user_id) do
+      case GroupServer.start_link(session.user.group_id) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
       end
 
-    Endpoint.subscribe("user:#{user_id}")
-    GroupServer.gen_days_of_user(pid, @items, user_id)
+    Endpoint.subscribe("user:#{session.user.id}")
+    GroupServer.gen_days_of_user(pid, @items, session.user.id)
 
-    {:ok, assign(socket, pid: pid, user_id: user_id, list: [])}
+    {:ok, assign(socket, pid: pid, user_id: session.user.id, list: [])}
   end
 
   def handle_event("view_more", _value, socket) do

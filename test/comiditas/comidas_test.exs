@@ -87,15 +87,15 @@ defmodule Comiditas.AdminTest do
       email: "some email",
       group_id: 42,
       name: "some name",
-      password_hash: "some password_hash"
+      password: "some password"
     }
     @update_attrs %{
       email: "some updated email",
       group_id: 43,
       name: "some updated name",
-      password_hash: "some updated password_hash"
+      password: "some updated password"
     }
-    @invalid_attrs %{email: nil, group_id: nil, name: nil, password_hash: nil}
+    @invalid_attrs %{email: nil, group_id: nil, name: nil, password: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -138,7 +138,7 @@ defmodule Comiditas.AdminTest do
       assert user.email == "some email"
       assert user.group_id == 42
       assert user.name == "some name"
-      assert user.password_hash == "some password_hash"
+      assert user.password == "some password"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -152,7 +152,7 @@ defmodule Comiditas.AdminTest do
       assert user.email == "some updated email"
       assert user.group_id == 43
       assert user.name == "some updated name"
-      assert user.password_hash == "some updated password_hash"
+      assert user.password == "some updated password"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

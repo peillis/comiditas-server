@@ -9,6 +9,10 @@ body {
 .container {
     padding: 0;
 }
+.login {
+    max-width: 20em;
+    margin: auto;
+}
 .tabs {
     position: fixed;
     bottom: 0em;

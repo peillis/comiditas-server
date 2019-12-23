@@ -24,7 +24,7 @@
       
         <li>
           <div class="torch-show-label">Password hash:</div>
-          <div class="torch-show-data"><%= @user.password_hash %></div>
+          <div class="torch-show-data"><%= @user.password %></div>
         </li>
       
         <li>
