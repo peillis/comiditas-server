@@ -26,7 +26,7 @@ defmodule ComiditasWeb.SessionController do
 
   defp login_reply({:ok, user}, conn) do
     conn
-    |> Guardian.Plug.sign_in(user)
+    |> Guardian.Plug.sign_in(user, %{}, ttl: {52, :weeks})
     |> redirect(to: "/list")
   end
 
