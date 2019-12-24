@@ -19,7 +19,8 @@ defmodule Comiditas.GroupServer do
   def change_day(pid, list, date, meal, val) do
     day = Enum.find(list, &(&1.date == date))
     GenServer.call(pid, {:change_day, day, date, meal, val})
-    GenServer.cast(pid, {:gen_days_of_user, length(list), day.user_id})
+    gen_days_of_user(pid, length(list), day.user_id)
+    totals(pid, date)
   end
 
   def totals(pid, date) do
