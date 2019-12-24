@@ -37,20 +37,24 @@ defmodule Comiditas do
     Enum.find(templates, &(&1.day == Timex.weekday(date)))
   end
 
-  def generate_days(n, mealdates, templates, user_id) do
-    mds = Enum.filter(mealdates, &(&1.user_id == user_id))
-    tps = Enum.filter(templates, &(&1.user_id == user_id))
-    generate_days(n, mds, tps)
+  def generate_days(n, mealdates, templates, user_id, date \\ today()) do
+    mds = filter(mealdates, user_id)
+    tps = filter(templates, user_id)
+    generate_days_for_user(n, mds, tps, date)
   end
 
-  def generate_days(n, mealdates, templates) do
+  defp filter(objects, user_id) do
+    Enum.filter(objects, &(&1.user_id == user_id))
+  end
+
+  defp generate_days_for_user(n, mealdates, templates, date) do
     Enum.reduce((n - 1)..0, [], fn x, acc ->
-      date = today() |> Timex.shift(days: x)
+      date = Timex.shift(date, days: x)
       [get_day(date, mealdates, templates) | acc]
     end)
   end
 
-  def get_day(date, mealdates, templates) do
+  defp get_day(date, mealdates, templates) do
     case find_mealdate(date, mealdates) do
       nil ->
         date
@@ -61,6 +65,10 @@ defmodule Comiditas do
         md
     end
     |> Map.put(:weekday, Timex.weekday(date))
+  end
+
+  def get_day(date, mealdates, templates, user_id) do
+    get_day(date, filter(mealdates, user_id), filter(templates, user_id))
   end
 
   def template_to_mealdate(template, date) do
@@ -76,6 +84,7 @@ defmodule Comiditas do
 
   def save_day(changeset, tpl) do
     {:ok, day} = Repo.insert_or_update(changeset)
+
     if !day.notes and day.breakfast == tpl.breakfast and day.lunch == tpl.lunch and
          day.dinner == tpl.dinner do
       Repo.delete(day)

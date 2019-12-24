@@ -41,6 +41,7 @@ defmodule ComiditasWeb.Live.ListView do
 
   def handle_event("change", %{"date" => date, "meal" => meal, "val" => val}, socket) do
     date = Util.str_to_date(date)
+
     GroupServer.change_day(
       socket.assigns.pid,
       socket.assigns.list,

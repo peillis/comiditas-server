@@ -316,10 +316,12 @@ defmodule Comiditas.Admin do
 
   def authenticate_user(email, plain_text_password) do
     query = from u in User, where: u.email == ^email
+
     case Repo.one(query) do
       nil ->
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
+
       user ->
         if Bcrypt.verify_pass(plain_text_password, user.password) do
           {:ok, user}

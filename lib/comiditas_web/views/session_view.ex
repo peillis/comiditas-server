@@ -1,3 +1,3 @@
-defmodule  ComiditasWeb.SessionView do
+defmodule ComiditasWeb.SessionView do
   use ComiditasWeb, :view
 end

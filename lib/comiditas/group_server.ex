@@ -22,14 +22,22 @@ defmodule Comiditas.GroupServer do
     GenServer.cast(pid, {:gen_days_of_user, length(list), day.user_id})
   end
 
+  def totals(pid, date) do
+    GenServer.cast(pid, {:totals, date})
+  end
+
   @impl true
   def init(group_id) do
-    users = Comiditas.get_users(group_id)
+    users =
+      group_id
+      |> Comiditas.get_users()
+      |> Enum.map(&Map.take(&1, [:id, :name]))
+
     user_ids = Enum.map(users, & &1.id)
     mealdates = Comiditas.get_mealdates_of_group(user_ids)
     templates = Comiditas.get_templates_of_group(user_ids)
 
-    {:ok, %{mds: mealdates, tps: templates}}
+    {:ok, %{mds: mealdates, tps: templates, users: users}}
   end
 
   @impl true
@@ -48,14 +56,47 @@ defmodule Comiditas.GroupServer do
   def handle_call({:change_day, day, date, meal, value}, _from, state) do
     changeset = Mealdate.changeset(day, Map.put(%{}, meal, value))
     tpl = Enum.find(state.tps, &(&1.user_id == day.user_id and &1.day == day.weekday))
+
     mds =
       case Comiditas.save_day(changeset, tpl) do
-        {:deleted, day} -> Enum.filter(state.mds, &(!(&1.date == date and &1.user_id == day.user_id)))
-        {:updated, day} -> replace_in_list(state.mds, day)
-        {:created, day} -> [day | state.mds]
+        {:deleted, day} ->
+          Enum.filter(state.mds, &(!(&1.date == date and &1.user_id == day.user_id)))
+
+        {:updated, day} ->
+          replace_in_list(state.mds, day)
+
+        {:created, day} ->
+          [day | state.mds]
       end
 
     {:reply, day, %{state | mds: mds}}
+  end
+
+  @impl true
+  def handle_cast({:totals, date}, state) do
+    result =
+      state.users
+      |> Enum.map(fn x ->
+        day = Comiditas.get_day(date, state.mds, state.tps, x.id)
+        Map.merge(x, day)
+      end)
+
+    totals = %{
+      pack: get_list_of_names(result, "pack"),
+      first: get_list_of_names(result, "1"),
+      yes: get_list_of_names(result, "yes"),
+      second: get_list_of_names(result, "2")
+    }
+
+    Endpoint.broadcast("day:#{date}", "totals", totals)
+
+    {:noreply, state}
+  end
+
+  defp get_list_of_names(results, value) do
+    results
+    |> Enum.filter(&(&1.lunch == value))
+    |> Enum.map(& &1.name)
   end
 
   defp replace_in_list(list, elem) do
