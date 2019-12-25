@@ -39,6 +39,7 @@ defmodule ComiditasWeb.Router do
 
     # live "/list", Live.ListView
     get "/list", PageController, :list
+    get "/totals", PageController, :totals
 
     scope "/admin" do
       resources "/groups", GroupController

@@ -20,11 +20,12 @@ body {
     width: 100%;
     text-align: center;
     background-color: whitesmoke;
-    height: 4em;
+    height: 5em;
 }
 .tabs i {
     margin-top: 0.5em;
-    font-size: 29px;
+    font-size: 2.5em;
+    display: block;
 }
 td i.material-icons {
     font-size: 35px;
@@ -68,4 +69,18 @@ svg text, * {
 }
 a, td, svg text::selection {
     background: none;
+}
+
+/* totals  */
+.totals {
+    padding: 1em;
+    font-weight: 700;
+    font-size: 1.8em;
+}
+.totals .td_meal {
+    font-size: 0.5em;
+    font-weight: 400;
+}
+.totals thead {
+    font-size: 0.35em;
 }

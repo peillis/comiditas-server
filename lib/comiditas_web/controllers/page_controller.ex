@@ -10,4 +10,9 @@ defmodule ComiditasWeb.PageController do
     user = Guardian.Plug.current_resource(conn)
     live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user})
   end
+
+  def totals(conn, _) do
+    user = Guardian.Plug.current_resource(conn)
+    live_render(conn, ComiditasWeb.Live.TotalsView, session: %{user: user})
+  end
 end

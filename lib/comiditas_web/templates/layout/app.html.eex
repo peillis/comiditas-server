@@ -14,6 +14,11 @@
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= render @view_module, @view_template, assigns %>
     </main>
+    <div class="tabs">
+      <a href="/list" class="tab-item active"><i class="material-icons">view_list</i></a>
+      <a href="#/settings" class="tab-item"><i class="material-icons">settings</i></a>
+      <a href="/totals" class="tab-item"><i class="material-icons">done_all</i></a>
+    </div>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
