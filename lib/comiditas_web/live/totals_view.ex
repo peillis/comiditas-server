@@ -19,7 +19,10 @@ defmodule ComiditasWeb.Live.TotalsView do
     Endpoint.subscribe("day:#{date}")
     GroupServer.totals(pid, date)
 
-    zero = %{pack: [], first: [], yes: [], second: []}
+    zero =
+      ["pack", "1", "yes", "2"]
+      |> Enum.map(&({&1, []}))
+      |> Enum.into(%{})
     totals = %{lunch: zero, dinner: zero, breakfast: zero}
 
     {:ok, assign(socket, pid: pid, date: date, totals: totals)}

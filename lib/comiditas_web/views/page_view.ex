@@ -36,10 +36,10 @@ defmodule ComiditasWeb.PageView do
 
   def print_totals(meal) do
     ~e"""
-    <td><%= print_value(meal.pack) %></td>
-    <td><%= print_value(meal.first) %></td>
-    <td><%= print_value(meal.yes) %></td>
-    <td><%= print_value(meal.second) %></td>
+    <td><%= print_value(meal["pack"]) %></td>
+    <td><%= print_value(meal["1"]) %></td>
+    <td><%= print_value(meal["yes"]) %></td>
+    <td><%= print_value(meal["2"]) %></td>
     """
   end
 
