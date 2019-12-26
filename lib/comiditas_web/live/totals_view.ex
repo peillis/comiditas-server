@@ -10,6 +10,7 @@ defmodule ComiditasWeb.Live.TotalsView do
 
   def mount(session, socket) do
     group_id = session.user.group_id
+
     pid =
       case GroupServer.start_link(group_id) do
         {:ok, pid} -> pid
@@ -22,8 +23,9 @@ defmodule ComiditasWeb.Live.TotalsView do
 
     zero =
       ["pack", "1", "yes", "2"]
-      |> Enum.map(&({&1, []}))
+      |> Enum.map(&{&1, []})
       |> Enum.into(%{})
+
     totals = %{lunch: zero, dinner: zero, breakfast: zero}
 
     {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals)}

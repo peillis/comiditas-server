@@ -82,7 +82,11 @@ defmodule Comiditas.GroupServer do
         Map.merge(x, day)
       end)
 
-    Endpoint.broadcast(Comiditas.totals_topic(state.group_id, date), "totals", build_totals(result))
+    Endpoint.broadcast(
+      Comiditas.totals_topic(state.group_id, date),
+      "totals",
+      build_totals(result)
+    )
 
     {:noreply, state}
   end
@@ -90,10 +94,9 @@ defmodule Comiditas.GroupServer do
   defp build_totals(result) do
     Enum.map([:lunch, :dinner, :breakfast], fn meal ->
       {meal,
-        ["pack", "1", "yes", "2"]
-        |> Enum.map(&({&1, get_list_of_names(result, meal, &1)}))
-        |> Enum.into(%{})
-      }
+       ["pack", "1", "yes", "2"]
+       |> Enum.map(&{&1, get_list_of_names(result, meal, &1)})
+       |> Enum.into(%{})}
     end)
     |> Enum.into(%{})
   end
