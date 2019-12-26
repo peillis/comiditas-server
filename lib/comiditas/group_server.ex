@@ -38,7 +38,7 @@ defmodule Comiditas.GroupServer do
     mealdates = Comiditas.get_mealdates_of_group(user_ids)
     templates = Comiditas.get_templates_of_group(user_ids)
 
-    {:ok, %{mds: mealdates, tps: templates, users: users}}
+    {:ok, %{mds: mealdates, tps: templates, users: users, group_id: group_id}}
   end
 
   @impl true
@@ -82,7 +82,7 @@ defmodule Comiditas.GroupServer do
         Map.merge(x, day)
       end)
 
-    Endpoint.broadcast("day:#{date}", "totals", build_totals(result))
+    Endpoint.broadcast("group:#{state.group_id}-day:#{date}", "totals", build_totals(result))
 
     {:noreply, state}
   end

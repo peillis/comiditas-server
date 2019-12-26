@@ -9,14 +9,15 @@ defmodule ComiditasWeb.Live.TotalsView do
   end
 
   def mount(session, socket) do
+    group_id = session.user.group_id
     pid =
-      case GroupServer.start_link(session.user.group_id) do
+      case GroupServer.start_link(group_id) do
         {:ok, pid} -> pid
         {:error, {:already_started, pid}} -> pid
       end
 
     date = Comiditas.today()
-    Endpoint.subscribe("day:#{date}")
+    Endpoint.subscribe("group:#{group_id}-day:#{date}")
     GroupServer.totals(pid, date)
 
     zero =
@@ -25,11 +26,11 @@ defmodule ComiditasWeb.Live.TotalsView do
       |> Enum.into(%{})
     totals = %{lunch: zero, dinner: zero, breakfast: zero}
 
-    {:ok, assign(socket, pid: pid, date: date, totals: totals)}
+    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals)}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
-    if topic == "day:#{socket.assigns.date}" do
+    if topic == "group:#{socket.assigns.group_id}-day:#{socket.assigns.date}" do
       {:noreply, assign(socket, totals: state)}
     else
       {:noreply, socket}
