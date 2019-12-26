@@ -49,7 +49,7 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_cast({:gen_days_of_user, n, user_id}, state) do
     list = Comiditas.generate_days(n, state.mds, state.tps, user_id)
-    Endpoint.broadcast("user:#{user_id}", "list", %{list: list})
+    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
     {:noreply, state}
   end
 

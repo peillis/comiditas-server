@@ -20,6 +20,10 @@ defmodule Comiditas do
     "group:#{group_id}-day:#{date}"
   end
 
+  def user_topic(user_id) do
+    "user:#{user_id}"
+  end
+
   def get_mealdates(user_id) do
     Mealdate
     |> where([m], m.date >= ^today())

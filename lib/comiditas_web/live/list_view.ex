@@ -18,7 +18,7 @@ defmodule ComiditasWeb.Live.ListView do
         {:error, {:already_started, pid}} -> pid
       end
 
-    Endpoint.subscribe("user:#{session.user.id}")
+    Endpoint.subscribe(Comiditas.user_topic(session.user.id))
     GroupServer.gen_days_of_user(pid, @items, session.user.id)
 
     {:ok, assign(socket, pid: pid, user_id: session.user.id, list: [])}
@@ -54,7 +54,7 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
-    if topic == "user:#{socket.assigns.user_id}" do
+    if topic == Comiditas.user_topic(socket.assigns.user_id) do
       {:noreply, assign(socket, list: state.list)}
     else
       {:noreply, socket}
