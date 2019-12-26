@@ -10,14 +10,9 @@ defmodule ComiditasWeb.Live.TotalsView do
 
   def mount(session, socket) do
     group_id = session.user.group_id
-
-    pid =
-      case GroupServer.start_link(group_id) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
-      end
-
+    pid = Util.get_pid(group_id)
     date = Comiditas.today()
+
     Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
     GroupServer.totals(pid, date)
 

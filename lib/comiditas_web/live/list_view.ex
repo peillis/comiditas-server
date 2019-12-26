@@ -12,11 +12,7 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def mount(session, socket) do
-    pid =
-      case GroupServer.start_link(session.user.group_id) do
-        {:ok, pid} -> pid
-        {:error, {:already_started, pid}} -> pid
-      end
+    pid = Util.get_pid(session.user.group_id)
 
     Endpoint.subscribe(Comiditas.user_topic(session.user.id))
     GroupServer.gen_days_of_user(pid, @items, session.user.id)

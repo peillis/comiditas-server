@@ -21,6 +21,7 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:change_day, day, date, meal, val})
     gen_days_of_user(pid, length(list), day.user_id)
     totals(pid, date)
+    totals(pid, Timex.shift(date, days: -1))
   end
 
   def totals(pid, date) do
@@ -38,6 +39,11 @@ defmodule Comiditas.GroupServer do
     mealdates = Comiditas.get_mealdates_of_users(user_ids)
     templates = Comiditas.get_templates_of_users(user_ids)
 
+    users =
+      users
+      |> Enum.map(&(Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)})))
+      |> Enum.map(&(Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)})))
+
     {:ok, %{mds: mealdates, tps: templates, users: users, group_id: group_id}}
   end
 
@@ -48,7 +54,8 @@ defmodule Comiditas.GroupServer do
 
   @impl true
   def handle_cast({:gen_days_of_user, n, user_id}, state) do
-    list = Comiditas.generate_days(n, state.mds, state.tps, user_id)
+    user = find_user(state.users, user_id)
+    list = Comiditas.generate_days(n, user.mds, user.tps)
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
     {:noreply, state}
   end
@@ -56,26 +63,32 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call({:change_day, day, date, meal, value}, _from, state) do
     changeset = Mealdate.changeset(day, Map.put(%{}, meal, value))
-    tpl = Enum.find(state.tps, &(&1.user_id == day.user_id and &1.day == day.weekday))
+    user = find_user(state.users, day.user_id)
+    tpl = Enum.find(user.tps, &(&1.day == day.weekday))
 
     mds =
       case Comiditas.save_day(changeset, tpl) do
         {:deleted, day} ->
-          Enum.filter(state.mds, &(!(&1.date == date and &1.user_id == day.user_id)))
+          Enum.filter(user.mds, &(!(&1.date == date)))
 
         {:updated, day} ->
-          replace_in_list(state.mds, day)
+          replace_in_list(user.mds, day)
 
         {:created, day} ->
-          [day | state.mds]
+          [day | user.mds]
       end
 
-    {:reply, day, %{state | mds: mds}}
+    new_user = %{user | mds: mds}
+    users =
+      state.users
+      |> Enum.filter(&(&1.id != day.user_id))
+
+    {:reply, day, %{state | users: [new_user | users]}}
   end
 
   @impl true
   def handle_cast({:totals, date}, state) do
-    totals = Totals.get_totals(state.users, state.mds, state.tps, state.group_id, date)
+    totals = Totals.get_totals(state.users, date)
 
     Endpoint.broadcast(
       Comiditas.totals_topic(state.group_id, date),
@@ -86,9 +99,13 @@ defmodule Comiditas.GroupServer do
     {:noreply, state}
   end
 
+  def find_user(users, user_id) do
+    Enum.find(users, &(&1.id == user_id))
+  end
+
   defp replace_in_list(list, elem) do
     Enum.map(list, fn x ->
-      if x.date == elem.date and x.user_id == elem.user_id do
+      if x.date == elem.date do
         elem
       else
         x

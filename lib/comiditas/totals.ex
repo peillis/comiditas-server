@@ -1,12 +1,16 @@
 defmodule Comiditas.Totals do
 
-  def get_totals(users, mds, tps, group_id, date) do
+  def get_totals(users, date) do
     users
-    |> Enum.map(fn x ->
-      day = Comiditas.get_day(date, mds, tps, x.id)
-      Map.merge(x, day)
-    end)
+    |> Enum.map(&Map.merge(&1, get_user_meals(&1, date, [:lunch, :dinner])))
+    |> Enum.map(&Map.merge(&1, get_user_meals(&1, Timex.shift(date, days: 1), [:breakfast])))
     |> build_totals()
+  end
+
+  defp get_user_meals(user, date, fields) do
+    date
+    |> Comiditas.get_day(user.mds, user.tps)
+    |> Map.take(fields)
   end
 
   defp build_totals(result) do
