@@ -24,21 +24,16 @@ defmodule Comiditas do
     "user:#{user_id}"
   end
 
-  def get_mealdates(user_id) do
-    Mealdate
-    |> where([m], m.date >= ^today())
-    |> where(user_id: ^user_id)
-    |> Repo.all()
+  def values() do
+    ["pack", "1", "yes", "2"]
+  end
+
+  def values_all() do
+    values() ++ ["no"]
   end
 
   def find_mealdate(date, mealdates) do
     Enum.find(mealdates, &(&1.date == date))
-  end
-
-  def get_templates(user_id) do
-    Template
-    |> where(user_id: ^user_id)
-    |> Repo.all()
   end
 
   def find_template(date, templates) do
@@ -111,14 +106,14 @@ defmodule Comiditas do
     |> Repo.all()
   end
 
-  def get_mealdates_of_group(user_ids) do
+  def get_mealdates_of_users(user_ids) do
     Mealdate
     |> where([m], m.date >= ^today())
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
   end
 
-  def get_templates_of_group(user_ids) do
+  def get_templates_of_users(user_ids) do
     Template
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()

@@ -22,7 +22,7 @@ defmodule ComiditasWeb.Live.TotalsView do
     GroupServer.totals(pid, date)
 
     zero =
-      ["pack", "1", "yes", "2"]
+      Comiditas.values()
       |> Enum.map(&{&1, []})
       |> Enum.into(%{})
 

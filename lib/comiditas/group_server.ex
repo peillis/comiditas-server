@@ -1,7 +1,7 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
-  alias Comiditas.Mealdate
+  alias Comiditas.{Mealdate, Totals}
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do
@@ -35,8 +35,8 @@ defmodule Comiditas.GroupServer do
       |> Enum.map(&Map.take(&1, [:id, :name]))
 
     user_ids = Enum.map(users, & &1.id)
-    mealdates = Comiditas.get_mealdates_of_group(user_ids)
-    templates = Comiditas.get_templates_of_group(user_ids)
+    mealdates = Comiditas.get_mealdates_of_users(user_ids)
+    templates = Comiditas.get_templates_of_users(user_ids)
 
     {:ok, %{mds: mealdates, tps: templates, users: users, group_id: group_id}}
   end
@@ -75,36 +75,15 @@ defmodule Comiditas.GroupServer do
 
   @impl true
   def handle_cast({:totals, date}, state) do
-    result =
-      state.users
-      |> Enum.map(fn x ->
-        day = Comiditas.get_day(date, state.mds, state.tps, x.id)
-        Map.merge(x, day)
-      end)
+    totals = Totals.get_totals(state.users, state.mds, state.tps, state.group_id, date)
 
     Endpoint.broadcast(
       Comiditas.totals_topic(state.group_id, date),
       "totals",
-      build_totals(result)
+      totals
     )
 
     {:noreply, state}
-  end
-
-  defp build_totals(result) do
-    Enum.map([:lunch, :dinner, :breakfast], fn meal ->
-      {meal,
-       ["pack", "1", "yes", "2"]
-       |> Enum.map(&{&1, get_list_of_names(result, meal, &1)})
-       |> Enum.into(%{})}
-    end)
-    |> Enum.into(%{})
-  end
-
-  defp get_list_of_names(results, meal, value) do
-    results
-    |> Enum.filter(&(Map.get(&1, meal) == value))
-    |> Enum.map(& &1.name)
   end
 
   defp replace_in_list(list, elem) do

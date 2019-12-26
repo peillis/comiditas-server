@@ -20,7 +20,7 @@ defmodule Comiditas.MixProject do
   def application do
     [
       mod: {Comiditas.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :hackney, :tzdata]
     ]
   end
 

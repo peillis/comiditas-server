@@ -44,6 +44,6 @@ defmodule ComiditasWeb.PageView do
   end
 
   def print_value(val) do
-    if length(val) > 0, do: length(val), else: nil
+    if length(val) > 0, do: "#{length(val)}", else: ""
   end
 end
