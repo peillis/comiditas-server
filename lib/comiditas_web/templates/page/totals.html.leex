@@ -13,24 +13,15 @@
     <tbody>
       <tr>
         <td class="td_meal">Lunch</td>
-        <td></td>
-        <td></td>
-        <td>23</td>
-        <td></td>
+        <%= print_totals(@totals.lunch) %>
       </tr>
       <tr>
         <td class="td_meal">Dinner</td>
-        <td></td>
-        <td></td>
-        <td>23</td>
-        <td></td>
+        <%= print_totals(@totals.dinner) %>
       </tr>
       <tr>
         <td class="td_meal">Breakfast</td>
-        <td></td>
-        <td></td>
-        <td>23</td>
-        <td></td>
+        <%= print_totals(@totals.breakfast) %>
       </tr>
     </tbody>
   </table>

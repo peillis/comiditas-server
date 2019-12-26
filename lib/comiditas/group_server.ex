@@ -27,6 +27,10 @@ defmodule Comiditas.GroupServer do
     GenServer.cast(pid, {:totals, date})
   end
 
+  def totals_test(pid, date) do
+    GenServer.call(pid, {:totals, date})
+  end
+
   @impl true
   def init(group_id) do
     users =
@@ -82,21 +86,55 @@ defmodule Comiditas.GroupServer do
         Map.merge(x, day)
       end)
 
-    totals = %{
-      pack: get_list_of_names(result, "pack"),
-      first: get_list_of_names(result, "1"),
-      yes: get_list_of_names(result, "yes"),
-      second: get_list_of_names(result, "2")
-    }
+    totals =
+      Enum.map([:lunch, :dinner, :breakfast], fn meal ->
+        {meal,
+          %{
+            pack: get_list_of_names(result, meal, "pack"),
+            first: get_list_of_names(result, meal, "1"),
+            yes: get_list_of_names(result, meal, "yes"),
+            second: get_list_of_names(result, meal, "2")
+          }
+        }
+      end)
+      |> Enum.into(%{})
+
 
     Endpoint.broadcast("day:#{date}", "totals", totals)
 
     {:noreply, state}
   end
 
-  defp get_list_of_names(results, value) do
+  @impl true
+  def handle_call({:totals, date}, _from, state) do
+    result =
+      state.users
+      |> Enum.map(fn x ->
+        day = Comiditas.get_day(date, state.mds, state.tps, x.id)
+        Map.merge(x, day)
+      end)
+
+    totals =
+      Enum.map([:lunch, :dinner, :breakfast], fn meal ->
+        {meal,
+          %{
+            pack: get_list_of_names(result, meal, "pack"),
+            first: get_list_of_names(result, meal, "1"),
+            yes: get_list_of_names(result, meal, "yes"),
+            second: get_list_of_names(result, meal, "2")
+          }
+        }
+      end)
+      |> Enum.into(%{})
+
+    Endpoint.broadcast("day:#{date}", "totals", totals)
+
+    {:reply, totals, state}
+  end
+
+  defp get_list_of_names(results, meal, value) do
     results
-    |> Enum.filter(&(&1.lunch == value))
+    |> Enum.filter(&(Map.get(&1, meal) == value))
     |> Enum.map(& &1.name)
   end
 

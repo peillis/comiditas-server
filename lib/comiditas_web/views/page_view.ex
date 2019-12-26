@@ -47,4 +47,17 @@ defmodule ComiditasWeb.PageView do
   def text("1"), do: "1"
   def text("2"), do: "2"
   def text("pack"), do: "P"
+
+  def print_totals(meal) do
+    ~e"""
+    <td><%= print_value(meal.pack) %></td>
+    <td><%= print_value(meal.first) %></td>
+    <td><%= print_value(meal.yes) %></td>
+    <td><%= print_value(meal.second) %></td>
+    """
+  end
+
+  def print_value(val) do
+    if length(val) > 0, do: length(val), else: nil
+  end
 end

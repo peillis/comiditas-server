@@ -15,14 +15,19 @@ defmodule ComiditasWeb.Live.TotalsView do
         {:error, {:already_started, pid}} -> pid
       end
 
-    Endpoint.subscribe("totals:#{Comiditas.today}")
+    date = Comiditas.today()
+    Endpoint.subscribe("day:#{date}")
+    GroupServer.totals(pid, date)
 
-    {:ok, assign(socket, pid: pid, totals: %{})}
+    zero = %{pack: [], first: [], yes: [], second: []}
+    totals = %{lunch: zero, dinner: zero, breakfast: zero}
+
+    {:ok, assign(socket, pid: pid, date: date, totals: totals)}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
-    if topic == "totals:#{Comiditas.today}" do
-      {:noreply, assign(socket, list: state.list)}
+    if topic == "day:#{socket.assigns.date}" do
+      {:noreply, assign(socket, totals: state)}
     else
       {:noreply, socket}
     end
