@@ -17,7 +17,7 @@ defmodule ComiditasWeb.Live.TotalsView do
       end
 
     date = Comiditas.today()
-    Endpoint.subscribe("group:#{group_id}-day:#{date}")
+    Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
     GroupServer.totals(pid, date)
 
     zero =
@@ -30,7 +30,7 @@ defmodule ComiditasWeb.Live.TotalsView do
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
-    if topic == "group:#{socket.assigns.group_id}-day:#{socket.assigns.date}" do
+    if topic == Comiditas.totals_topic(socket.assigns.group_id, socket.assigns.date) do
       {:noreply, assign(socket, totals: state)}
     else
       {:noreply, socket}

@@ -82,7 +82,7 @@ defmodule Comiditas.GroupServer do
         Map.merge(x, day)
       end)
 
-    Endpoint.broadcast("group:#{state.group_id}-day:#{date}", "totals", build_totals(result))
+    Endpoint.broadcast(Comiditas.totals_topic(state.group_id, date), "totals", build_totals(result))
 
     {:noreply, state}
   end

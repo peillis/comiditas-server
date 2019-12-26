@@ -16,6 +16,10 @@ defmodule Comiditas do
     Timex.today() |> Timex.shift(months: -3)
   end
 
+  def totals_topic(group_id, date) do
+    "group:#{group_id}-day:#{date}"
+  end
+
   def get_mealdates(user_id) do
     Mealdate
     |> where([m], m.date >= ^today())
