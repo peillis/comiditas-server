@@ -3,6 +3,8 @@ defmodule ComiditasWeb.SessionController do
 
   alias Comiditas.{Admin, Admin.User, Guardian}
 
+  plug(:put_layout, {ComiditasWeb.LayoutView, "not_logged.html"})
+
   def new(conn, _) do
     changeset = Admin.change_user(%User{})
     maybe_user = Guardian.Plug.current_resource(conn)
