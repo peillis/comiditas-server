@@ -23,8 +23,8 @@
         </li>
       
         <li>
-          <div class="torch-show-label">Password hash:</div>
-          <div class="torch-show-data"><%= @user.password %></div>
+          <div class="torch-show-label">Power User:</div>
+          <div class="torch-show-data"><%= @user.power_user %></div>
         </li>
       
         <li>

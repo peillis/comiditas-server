@@ -24,6 +24,12 @@
       <%= text_input f, :password %>
       <%= error_tag f, :password %>
     </div>
+
+    <div class="torch-form-group">
+      <%= label f, :power_user %>
+      <%= checkbox f, :power_user %>
+      <%= error_tag f, :power_user %>
+    </div>
   
     <div class="torch-form-group">
       <%= label f, :group_id %>
