@@ -15,12 +15,12 @@
       <%= render @view_module, @view_template, assigns %>
     </main>
     <div class="tabs">
-      <a href="/list" class="tab-item active"><i class="material-icons">view_list</i></a>
-      <a href="#/settings" class="tab-item"><i class="material-icons">settings</i></a>
-      <%= if @conn.assigns.power_user do %>
-      <a href="/users" class="tab-item"><i class="material-icons">person</i></a>
+      <a href="<%= Routes.page_path(@conn, :list, uid: @conn.params["uid"]) %>" class="tab-item active"><i class="material-icons">view_list</i></a>
+      <a href="<%= Routes.page_path(@conn, :settings, uid: @conn.params["uid"]) %>" class="tab-item"><i class="material-icons">settings</i></a>
+      <%= if @power_user do %>
+      <a href="<%= Routes.page_path(@conn, :users, uid: @conn.params["uid"]) %>" class="tab-item"><i class="material-icons">person</i></a>
       <% end %>
-      <a href="/totals" class="tab-item"><i class="material-icons">done_all</i></a>
+      <a href="<%= Routes.page_path(@conn, :totals, uid: @conn.params["uid"]) %>" class="tab-item"><i class="material-icons">done_all</i></a>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha256-eVNjHw5UeU0jUqPPpZHAkU1z4U+QFBBY488WvueTm88=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>

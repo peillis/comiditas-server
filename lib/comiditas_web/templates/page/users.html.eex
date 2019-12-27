@@ -1,0 +1,13 @@
+<div class="main">
+  <table>
+    <tbody id="my_table" phx-hook="TableHook">
+      <%= for u <- @users do %>
+      <tr>
+        <td><a href="<%= Routes.page_path(@conn, :list, uid: u.id) %>"><%= u.name %></a></td>
+        <td><i class="material-icons">edit</i></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br/><br/><br/>
+</div>

@@ -10,7 +10,7 @@ defmodule ComiditasWeb.SessionController do
     maybe_user = Guardian.Plug.current_resource(conn)
 
     if maybe_user do
-      redirect(conn, to: "/list")
+      redirect(conn, to: Routes.page_path(conn, :list, uid: maybe_user.id))
     else
       render(conn, "new.html", changeset: changeset, action: Routes.session_path(conn, :login))
     end
@@ -30,7 +30,7 @@ defmodule ComiditasWeb.SessionController do
   defp login_reply({:ok, user}, conn) do
     conn
     |> Guardian.Plug.sign_in(user, %{}, ttl: {52, :weeks})
-    |> redirect(to: "/list")
+    |> redirect(to: Routes.page_path(conn, :list, uid: user.id))
   end
 
   defp login_reply({:error, reason}, conn) do

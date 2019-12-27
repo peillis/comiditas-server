@@ -6,15 +6,28 @@ defmodule ComiditasWeb.PageController do
     render(conn, "index.html")
   end
 
-  def list(conn, _) do
+  def list(conn, %{"uid" => uid}) do
     user = Guardian.Plug.current_resource(conn)
     conn = assign(conn, :power_user, user.power_user)
-    live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user})
+    live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user, uid: uid})
+  end
+
+  def settings(conn, %{"uid" => uid}) do
+    user = Guardian.Plug.current_resource(conn)
+    conn = assign(conn, :power_user, user.power_user)
+    live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user, uid: uid})
   end
 
   def totals(conn, _) do
     user = Guardian.Plug.current_resource(conn)
     conn = assign(conn, :power_user, user.power_user)
     live_render(conn, ComiditasWeb.Live.TotalsView, session: %{user: user})
+  end
+
+  def users(conn, _) do
+    user = Guardian.Plug.current_resource(conn)
+    conn = assign(conn, :power_user, user.power_user)
+    conn = assign(conn, :users, Comiditas.get_users(user.group_id))
+    render(conn, "users.html")
   end
 end
