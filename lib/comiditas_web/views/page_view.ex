@@ -46,4 +46,8 @@ defmodule ComiditasWeb.PageView do
   def print_value(val) do
     if length(val) > 0, do: "#{length(val)}", else: ""
   end
+
+  def print_date(date) do
+    "#{print_weekday(Timex.weekday date)} #{Timex.format!(date, "{D}")}"
+  end
 end

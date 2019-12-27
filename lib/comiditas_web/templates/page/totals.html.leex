@@ -1,5 +1,5 @@
-<div class="totals">
-  <h2><%= if (Comiditas.today() == @date), do: "Today", else: @date %></h2>
+<div class="totals main">
+  <h2><%= if (Comiditas.today() == @date), do: "Today", else: print_date(@date) %></h2>
   <table>
     <thead>
       <tr>
