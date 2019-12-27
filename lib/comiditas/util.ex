@@ -15,4 +15,9 @@ defmodule Comiditas.Util do
     end
   end
 
+  def replace_in_list(elem, list, key) do
+    new_list = Enum.filter(list, &(Map.get(&1, key) != Map.get(elem, key)))
+    [elem | new_list]
+  end
+
 end

@@ -1,15 +1,15 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
-  alias Comiditas.{Mealdate, Totals}
+  alias Comiditas.{Mealdate, Totals, Util}
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do
     GenServer.start_link(__MODULE__, group_id, name: {:global, "GroupServer_#{group_id}"})
   end
 
-  def get_list(pid) do
-    GenServer.call(pid, :get_list)
+  def get_state(pid) do
+    GenServer.call(pid, :get_state)
   end
 
   def gen_days_of_user(pid, n, user_id) do
@@ -48,7 +48,7 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call(:get_list, _from, state) do
+  def handle_call(:get_state, _from, state) do
     {:reply, state, state}
   end
 
@@ -72,18 +72,16 @@ defmodule Comiditas.GroupServer do
           Enum.filter(user.mds, &(!(&1.date == date)))
 
         {:updated, day} ->
-          replace_in_list(user.mds, day)
+          Util.replace_in_list(day, user.mds, :date)
 
         {:created, day} ->
           [day | user.mds]
       end
 
     new_user = %{user | mds: mds}
-    users =
-      state.users
-      |> Enum.filter(&(&1.id != day.user_id))
+    new_user_list = Util.replace_in_list(new_user, state.users, :id)
 
-    {:reply, day, %{state | users: [new_user | users]}}
+    {:reply, day, %{state | users: new_user_list}}
   end
 
   @impl true
