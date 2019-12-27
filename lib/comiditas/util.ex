@@ -1,5 +1,4 @@
 defmodule Comiditas.Util do
-
   alias Comiditas.GroupServer
 
   def str_to_date(str) do
@@ -19,5 +18,4 @@ defmodule Comiditas.Util do
     new_list = Enum.filter(list, &(Map.get(&1, key) != Map.get(elem, key)))
     [elem | new_list]
   end
-
 end

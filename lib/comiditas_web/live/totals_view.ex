@@ -35,8 +35,6 @@ defmodule ComiditasWeb.Live.TotalsView do
   end
 
   def handle_event("change_date", value, socket) do
-    IO.puts "change_date"
-    IO.puts value
     new_date = Timex.shift(socket.assigns.date, days: value)
     Endpoint.subscribe(Comiditas.totals_topic(socket.assigns.group_id, new_date))
     GroupServer.totals(socket.assigns.pid, new_date)

@@ -48,6 +48,6 @@ defmodule ComiditasWeb.PageView do
   end
 
   def print_date(date) do
-    "#{print_weekday(Timex.weekday date)} #{Timex.format!(date, "{D}")}"
+    "#{print_weekday(Timex.weekday(date))} #{Timex.format!(date, "{D}")}"
   end
 end

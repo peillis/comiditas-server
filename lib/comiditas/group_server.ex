@@ -41,8 +41,8 @@ defmodule Comiditas.GroupServer do
 
     users =
       users
-      |> Enum.map(&(Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)})))
-      |> Enum.map(&(Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)})))
+      |> Enum.map(&Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)}))
+      |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
 
     {:ok, %{mds: mealdates, tps: templates, users: users, group_id: group_id}}
   end

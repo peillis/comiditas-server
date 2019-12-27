@@ -1,5 +1,4 @@
 defmodule Comiditas.Totals do
-
   def get_totals(users, date) do
     users
     |> Enum.map(&Map.merge(&1, get_user_meals(&1, date, [:lunch, :dinner])))
