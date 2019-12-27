@@ -51,8 +51,8 @@ switch (window.location.pathname) {
                 b.setAttribute('phx-value-date', date)
                 b.setAttribute('phx-value-meal', meal)
             }
-            selector.style.top = rect.top
-            selector.style.left = rect.left
+            selector.style.top = `${rect.top}px`
+            selector.style.left = `${rect.left}px`
             selector.style.display = 'inline-block'
         }
 
@@ -67,7 +67,6 @@ switch (window.location.pathname) {
             let meal = elem.dataset.meal
             showSelector(elem, date, meal)
         }
-
 
         window.onscroll = function(ev) {
             if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
