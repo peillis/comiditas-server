@@ -84,3 +84,9 @@ a, td, svg text::selection {
 .totals thead {
     font-size: 0.35em;
 }
+
+/* users */
+.users {
+    font-size: 1.5em;
+    font-weight: 700;
+}

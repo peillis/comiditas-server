@@ -14,10 +14,17 @@ defmodule ComiditasWeb.Live.ListView do
   def mount(session, socket) do
     pid = Util.get_pid(session.user.group_id)
 
-    Endpoint.subscribe(Comiditas.user_topic(session.user.id))
-    GroupServer.gen_days_of_user(pid, @items, session.user.id)
+    user_id =
+      if session.user.power_user do
+        String.to_integer(session.uid)
+      else
+        session.user.id
+      end
 
-    {:ok, assign(socket, pid: pid, user_id: session.user.id, list: [])}
+    Endpoint.subscribe(Comiditas.user_topic(user_id))
+    GroupServer.gen_days_of_user(pid, @items, user_id)
+
+    {:ok, assign(socket, pid: pid, user_id: user_id, list: [])}
   end
 
   def handle_event("view_more", _value, socket) do
