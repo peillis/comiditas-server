@@ -75,7 +75,7 @@ switch (window.location.pathname) {
         }
 
         window.onscroll = function(ev) {
-            if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
+            if ((window.innerHeight + window.scrollY + 250) >= document.body.offsetHeight) {
                 send_event('view_more', null)
             }
             hideSelector()
