@@ -28,6 +28,10 @@ defmodule Comiditas.GroupServer do
     GenServer.cast(pid, {:totals, date})
   end
 
+  def get_uids(pid) do
+    GenServer.call(pid, :get_uids)
+  end
+
   @impl true
   def init(group_id) do
     users =
@@ -50,6 +54,12 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call(:get_state, _from, state) do
     {:reply, state, state}
+  end
+
+  @impl true
+  def handle_call(:get_uids, _from, state) do
+    user_ids = Enum.map(state.users, & &1.id)
+    {:reply, user_ids, state}
   end
 
   @impl true
@@ -101,13 +111,4 @@ defmodule Comiditas.GroupServer do
     Enum.find(users, &(&1.id == user_id))
   end
 
-  defp replace_in_list(list, elem) do
-    Enum.map(list, fn x ->
-      if x.date == elem.date do
-        elem
-      else
-        x
-      end
-    end)
-  end
 end

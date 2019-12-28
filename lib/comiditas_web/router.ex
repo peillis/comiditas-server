@@ -24,18 +24,21 @@ defmodule ComiditasWeb.Router do
     plug Guardian.Plug.EnsureAuthenticated
   end
 
+  pipeline :power_user do
+    plug ComiditasWeb.PowerUserPlug
+  end
+
   scope "/", ComiditasWeb do
     pipe_through [:browser, :auth]
 
     get "/", SessionController, :new
-
     get "/login", SessionController, :new
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
   end
 
   scope "/", ComiditasWeb do
-    pipe_through [:browser, :auth, :ensure_auth]
+    pipe_through [:browser, :auth, :ensure_auth, :power_user]
 
     # live "/list", Live.ListView
     get "/list", PageController, :list
