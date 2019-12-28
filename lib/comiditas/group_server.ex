@@ -21,7 +21,7 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:change_day, day, date, meal, val})
     gen_days_of_user(pid, length(list), day.user_id)
     totals(pid, date)
-    totals(pid, Timex.shift(date, days: -1))
+    totals(pid, Timex.shift(date, days: -1))  # in case it's breakfast
   end
 
   def totals(pid, date) do

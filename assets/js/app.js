@@ -40,6 +40,10 @@ switch (window.location.pathname) {
                 for (let b of buttons) {
                     b.addEventListener('click', select)
                 }
+                let selector_buttons = document.getElementById('selector').children
+                for (let b of selector_buttons) {
+                    b.addEventListener('click', hideSelector)
+                }
             }
         }
 
@@ -57,8 +61,10 @@ switch (window.location.pathname) {
         }
 
         let hideSelector = () => {
-            let selector = document.getElementById('selector')
-            selector.style.display = 'none'
+            setTimeout(() => {
+                let selector = document.getElementById('selector')
+                selector.style.display = 'none'
+            }, 100)
         }
 
         let select = (event) => {
