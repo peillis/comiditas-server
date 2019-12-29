@@ -24,6 +24,10 @@ defmodule Comiditas do
     "user:#{user_id}"
   end
 
+  def templates_user_topic(user_id) do
+    "templates-user:#{user_id}"
+  end
+
   def values() do
     ["pack", "1", "yes", "2"]
   end

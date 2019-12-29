@@ -22,6 +22,10 @@ defmodule Comiditas.GroupServer do
     totals(pid, Timex.shift(changeset.data.date, days: -1))  # in case it's breakfast
   end
 
+  def templates_of_user(pid, user_id) do
+    GenServer.call(pid, {:templates_of_user, user_id})
+  end
+
   def totals(pid, date) do
     GenServer.cast(pid, {:totals, date})
   end
@@ -46,7 +50,7 @@ defmodule Comiditas.GroupServer do
       |> Enum.map(&Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)}))
       |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
 
-    {:ok, %{mds: mealdates, tps: templates, users: users, group_id: group_id}}
+    {:ok, %{users: users, group_id: group_id}}
   end
 
   @impl true
@@ -67,7 +71,7 @@ defmodule Comiditas.GroupServer do
 
     mds =
       case Comiditas.save_day(changeset, tpl) do
-        {:deleted, day} ->
+        {:deleted, _day} ->
           Enum.filter(user.mds, &(!(&1.date == changeset.data.date)))
 
         {:updated, day} ->
@@ -81,6 +85,13 @@ defmodule Comiditas.GroupServer do
     new_user_list = Util.replace_in_list(new_user, state.users, :id)
 
     {:reply, changeset, %{state | users: new_user_list}}
+  end
+
+  @impl true
+  def handle_call({:templates_of_user, uid}, _from, state) do
+    user = find_user(state.users, uid)
+    tps = Enum.sort_by(user.tps, & &1.day)
+    {:reply, tps, state}
   end
 
   @impl true

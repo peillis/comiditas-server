@@ -15,7 +15,7 @@ defmodule ComiditasWeb.PageController do
   def settings(conn, %{"uid" => uid}) do
     user = Guardian.Plug.current_resource(conn)
     uid = String.to_integer(uid)
-    live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user, uid: uid})
+    live_render(conn, ComiditasWeb.Live.SettingsView, session: %{user: user, uid: uid})
   end
 
   def totals(conn, _) do

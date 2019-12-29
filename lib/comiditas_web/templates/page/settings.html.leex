@@ -1,0 +1,30 @@
+<div class="main">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Brk</th>
+        <th>Lch</th>
+        <th>Dnr</th>
+      </tr>
+    </thead>
+    <tbody id="my_table" phx-hook="TableHook">
+      <%= for t <- @templates do %>
+        <tr class="weekday-<%= t.day %>">
+          <td class="day"><%= print_weekday(t.day) %></td>
+          <td class="circle">
+          <%= circle(t.breakfast, t.day, "breakfast") %>
+          </td>
+          <td class="circle">
+          <%= circle(t.lunch, t.day, "lunch") %>
+          </td>
+          <td class="circle">
+          <%= circle(t.dinner, t.day, "dinner") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br/><br/>
+  <%= render ComiditasWeb.PageView, "_selector.html" %>
+</div>

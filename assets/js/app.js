@@ -32,18 +32,20 @@ let send_event = (event_name, value) => {
     }, 5000).receive("ok", resp => { view.update(resp.diff) })
 }
 
+let addClickListener = (elems, fn) => {
+    for (let e of elems) {
+        e.addEventListener('click', fn)
+    }
+}
+
 switch (window.location.pathname) {
     case '/list':
         Hooks.TableHook = {
             updated() {
                 let buttons = document.getElementsByClassName('buttons')
-                for (let b of buttons) {
-                    b.addEventListener('click', select)
-                }
+                addClickListener(buttons, select)
                 let selector_buttons = document.getElementById('selector').children
-                for (let b of selector_buttons) {
-                    b.addEventListener('click', hideSelector)
-                }
+                addClickListener(selector_buttons, hideSelector)
                 let notes = document.getElementsByClassName('notes')
                 for (let b of notes) {
                     b.addEventListener('click', showModal)
