@@ -32,54 +32,56 @@ let send_event = (event_name, value) => {
     }, 5000).receive("ok", resp => { view.update(resp.diff) })
 }
 
+let showSelector = (node, date, meal) => {
+    let selector = document.getElementById('selector')
+    let rect = node.getBoundingClientRect()
+    let buttons = selector.children
+    for (let b of buttons) {
+        b.setAttribute('phx-value-date', date)
+        b.setAttribute('phx-value-meal', meal)
+    }
+    selector.style.top = `${rect.top}px`
+    selector.style.left = `${rect.left}px`
+    selector.style.display = 'inline-block'
+}
+
+let hideSelector = () => {
+    setTimeout(() => {
+        let selector = document.getElementById('selector')
+        selector.style.display = 'none'
+    }, 100)
+}
+
+let select = (event) => {
+    let elem = event.target.parentNode
+    let date = elem.dataset.date
+    let meal = elem.dataset.meal
+    showSelector(elem, date, meal)
+}
+
 let addClickListener = (elems, fn) => {
     for (let e of elems) {
         e.addEventListener('click', fn)
     }
 }
 
+let activateButtons = () => {
+    let buttons = document.getElementsByClassName('buttons')
+    addClickListener(buttons, select)
+    let selector_buttons = document.getElementById('selector').children
+    addClickListener(selector_buttons, hideSelector)
+}
+
 switch (window.location.pathname) {
     case '/list':
         Hooks.TableHook = {
             updated() {
-                let buttons = document.getElementsByClassName('buttons')
-                addClickListener(buttons, select)
-                let selector_buttons = document.getElementById('selector').children
-                addClickListener(selector_buttons, hideSelector)
+                activateButtons()
                 let notes = document.getElementsByClassName('notes')
-                for (let b of notes) {
-                    b.addEventListener('click', showModal)
-                }
+                addClickListener(notes, showModal)
                 let modal_bck = document.getElementById('modal-background')
                 modal_bck.addEventListener('click', hideModal)
             }
-        }
-
-        let showSelector = (node, date, meal) => {
-            let selector = document.getElementById('selector')
-            let rect = node.getBoundingClientRect()
-            let buttons = selector.children
-            for (let b of buttons) {
-                b.setAttribute('phx-value-date', date)
-                b.setAttribute('phx-value-meal', meal)
-            }
-            selector.style.top = `${rect.top}px`
-            selector.style.left = `${rect.left}px`
-            selector.style.display = 'inline-block'
-        }
-
-        let hideSelector = () => {
-            setTimeout(() => {
-                let selector = document.getElementById('selector')
-                selector.style.display = 'none'
-            }, 100)
-        }
-
-        let select = (event) => {
-            let elem = event.target.parentNode
-            let date = elem.dataset.date
-            let meal = elem.dataset.meal
-            showSelector(elem, date, meal)
         }
 
         window.onscroll = function(ev) {
@@ -120,6 +122,17 @@ switch (window.location.pathname) {
                 send_event('change_date', -1)
             }
         });
+
+    case '/settings':
+        Hooks.SettingsHook = {
+            updated() {
+                activateButtons()
+            }
+        }
+
+        window.onscroll = function(ev) {
+            hideSelector()
+        };
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})
