@@ -12,7 +12,7 @@
     <td class="circle">
       <%= circle(@day.dinner, @day.date, "dinner") %>
     </td>
-    <td>
+    <td class="notes">
       <i class="material-icons">description</i>
     </td>
   </tr>

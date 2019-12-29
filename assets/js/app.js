@@ -44,6 +44,12 @@ switch (window.location.pathname) {
                 for (let b of selector_buttons) {
                     b.addEventListener('click', hideSelector)
                 }
+                let notes = document.getElementsByClassName('notes')
+                for (let b of notes) {
+                    b.addEventListener('click', showModal)
+                }
+                let modal_bck = document.getElementById('modal-background')
+                modal_bck.addEventListener('click', hideModal)
             }
         }
 
@@ -80,6 +86,22 @@ switch (window.location.pathname) {
             }
             hideSelector()
         };
+
+        let showModal = () => {
+            let modal = document.getElementById('modal')
+            let modal_bck = document.getElementById('modal-background')
+            let notes = document.getElementById('notes')
+            modal.style.display = 'block'
+            modal_bck.style.display = 'block'
+            notes.focus()
+        }
+
+        let hideModal = () => {
+            let modal = document.getElementById('modal')
+            let modal_bck = document.getElementById('modal-background')
+            modal.style.display = 'none'
+            modal_bck.style.display = 'none'
+        }
     
     case '/totals':
         var hammertime = new Hammer(document.body);

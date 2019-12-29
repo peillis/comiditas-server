@@ -13,6 +13,7 @@ body {
     max-width: 20em;
     margin: auto;
 }
+/* tabs  */
 .tabs {
     position: fixed;
     bottom: 0em;
@@ -98,4 +99,40 @@ a, td, svg text::selection {
 .users {
     font-size: 1.5em;
     font-weight: 700;
+}
+
+/* modal window */
+#modal {
+    z-index: 2;
+    position: fixed;
+    background-color: white;
+    top: 2em;
+    left: 0;
+    right: 0;
+    top: 5%;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    padding: 1em;
+    display: none;
+}
+#modal button {
+    float: right;
+}
+#modal textarea {
+    height: 8em;
+    font-size: 1.3em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#modal-background {
+    z-index: 1;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: black;
+    opacity: .5;
+    display: none;
 }
