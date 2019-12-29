@@ -16,8 +16,9 @@ defmodule ComiditasWeb.Live.ListView do
 
     Endpoint.subscribe(Comiditas.user_topic(session.uid))
     GroupServer.gen_days_of_user(pid, @items, session.uid)
+    changeset = Comiditas.Admin.change_user %Comiditas.Admin.User{}
 
-    {:ok, assign(socket, pid: pid, user_id: session.uid, list: [])}
+    {:ok, assign(socket, pid: pid, user_id: session.uid, list: [], changeset: %{})}
   end
 
   def handle_event("view_more", _value, socket) do
@@ -36,14 +37,23 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def handle_event("change", %{"date" => date, "meal" => meal, "val" => val}, socket) do
-    date = Util.str_to_date(date)
-
     GroupServer.change_day(
       socket.assigns.pid,
       socket.assigns.list,
-      date,
+      Util.str_to_date(date),
       String.to_atom(meal),
       val
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("notes", %{"date" => date, "notes" => notes}, socket) do
+    GroupServer.change_notes(
+      socket.assigns.pid,
+      socket.assigns.list,
+      Util.str_to_date(date),
+      String.trim(notes)
     )
 
     {:noreply, socket}

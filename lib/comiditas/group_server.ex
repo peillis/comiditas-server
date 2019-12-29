@@ -24,6 +24,14 @@ defmodule Comiditas.GroupServer do
     totals(pid, Timex.shift(date, days: -1))  # in case it's breakfast
   end
 
+  def change_notes(pid, list, date, notes) do
+    day = Enum.find(list, &(&1.date == date))
+    GenServer.call(pid, {:change_notes, day, date, notes})
+    gen_days_of_user(pid, length(list), day.user_id)
+    totals(pid, date)
+    totals(pid, Timex.shift(date, days: -1))  # in case it's breakfast
+  end
+
   def totals(pid, date) do
     GenServer.cast(pid, {:totals, date})
   end
@@ -63,14 +71,6 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_cast({:gen_days_of_user, n, user_id}, state) do
-    user = find_user(state.users, user_id)
-    list = Comiditas.generate_days(n, user.mds, user.tps)
-    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
-    {:noreply, state}
-  end
-
-  @impl true
   def handle_call({:change_day, day, date, meal, value}, _from, state) do
     changeset = Mealdate.changeset(day, Map.put(%{}, meal, value))
     user = find_user(state.users, day.user_id)
@@ -92,6 +92,38 @@ defmodule Comiditas.GroupServer do
     new_user_list = Util.replace_in_list(new_user, state.users, :id)
 
     {:reply, day, %{state | users: new_user_list}}
+  end
+
+  @impl true
+  def handle_call({:change_notes, day, date, notes}, _from, state) do
+    changeset = Mealdate.changeset(day, Map.put(%{}, :notes, notes))
+    user = find_user(state.users, day.user_id)
+    tpl = Enum.find(user.tps, &(&1.day == day.weekday))
+
+    mds =
+      case Comiditas.save_day(changeset, tpl) do
+        {:deleted, day} ->
+          Enum.filter(user.mds, &(!(&1.date == date)))
+
+        {:updated, day} ->
+          Util.replace_in_list(day, user.mds, :date)
+
+        {:created, day} ->
+          [day | user.mds]
+      end
+
+    new_user = %{user | mds: mds}
+    new_user_list = Util.replace_in_list(new_user, state.users, :id)
+
+    {:reply, day, %{state | users: new_user_list}}
+  end
+
+  @impl true
+  def handle_cast({:gen_days_of_user, n, user_id}, state) do
+    user = find_user(state.users, user_id)
+    list = Comiditas.generate_days(n, user.mds, user.tps)
+    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
+    {:noreply, state}
   end
 
   @impl true

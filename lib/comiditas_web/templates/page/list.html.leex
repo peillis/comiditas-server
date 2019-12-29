@@ -29,4 +29,15 @@
     <text phx-click="change" phx-value-val="pack" x="-0.15em" y="2.37em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">P</text>
     <text phx-click="change" phx-value-val="no" x="1.7em" y="2.37em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700">N</text>
   </svg>
+
+  <div id="modal-background"></div>
+  <div id="modal">
+    <form phx-submit="notes" accept-charset="UTF-8" method="post" action="#">
+      <h2>Notes:</h2>
+      <input type="hidden" name="date" value="" id="date"/>
+      <textarea id="notes" rows="5" name="notes" maxlength="250"></textarea>
+      <button type="submit">Save</button>
+    </form>
+  </div>
+
 </div>

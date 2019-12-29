@@ -87,10 +87,15 @@ switch (window.location.pathname) {
             hideSelector()
         };
 
-        let showModal = () => {
+        let showModal = (event) => {
+            let elem = event.target
+            if (elem.tagName == "I") elem = elem.parentNode
             let modal = document.getElementById('modal')
             let modal_bck = document.getElementById('modal-background')
             let notes = document.getElementById('notes')
+            let date = document.getElementById('date')
+            notes.value = elem.dataset.notes
+            date.value = elem.dataset.date
             modal.style.display = 'block'
             modal_bck.style.display = 'block'
             notes.focus()
