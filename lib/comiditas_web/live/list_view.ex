@@ -1,7 +1,7 @@
 defmodule ComiditasWeb.Live.ListView do
   use Phoenix.LiveView
 
-  alias Comiditas.{GroupServer, Util}
+  alias Comiditas.{GroupServer, Mealdate, Util}
   alias ComiditasWeb.Endpoint
 
   @items 15
@@ -16,9 +16,8 @@ defmodule ComiditasWeb.Live.ListView do
 
     Endpoint.subscribe(Comiditas.user_topic(session.uid))
     GroupServer.gen_days_of_user(pid, @items, session.uid)
-    changeset = Comiditas.Admin.change_user %Comiditas.Admin.User{}
 
-    {:ok, assign(socket, pid: pid, user_id: session.uid, list: [], changeset: %{})}
+    {:ok, assign(socket, pid: pid, user_id: session.uid, list: [])}
   end
 
   def handle_event("view_more", _value, socket) do
@@ -36,25 +35,14 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("change", %{"date" => date, "meal" => meal, "val" => val}, socket) do
-    GroupServer.change_day(
-      socket.assigns.pid,
-      socket.assigns.list,
-      Util.str_to_date(date),
-      String.to_atom(meal),
-      val
-    )
+  def handle_event("change", %{"date" => date, "meal" => meal, "val" => value}, socket) do
+    change_day(date, socket, Map.put(%{}, meal, value))
 
     {:noreply, socket}
   end
 
   def handle_event("notes", %{"date" => date, "notes" => notes}, socket) do
-    GroupServer.change_notes(
-      socket.assigns.pid,
-      socket.assigns.list,
-      Util.str_to_date(date),
-      String.trim(notes)
-    )
+    change_day(date, socket, %{notes: String.trim(notes)})
 
     {:noreply, socket}
   end
@@ -65,5 +53,16 @@ defmodule ComiditasWeb.Live.ListView do
     else
       {:noreply, socket}
     end
+  end
+
+  defp change_day(date, socket, change) do
+    day = Enum.find(socket.assigns.list, &(&1.date == Util.str_to_date(date)))
+    changeset = Mealdate.changeset(day, change)
+    GroupServer.change_day(socket.assigns.pid, changeset)
+    GroupServer.gen_days_of_user(
+      socket.assigns.pid,
+      length(socket.assigns.list),
+      socket.assigns.user_id
+    )
   end
 end
