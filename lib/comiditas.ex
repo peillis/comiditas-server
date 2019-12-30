@@ -94,6 +94,10 @@ defmodule Comiditas do
     end
   end
 
+  def save_template(changeset) do
+    Repo.update!(changeset)
+  end
+
   def get_users(group_id) do
     User
     |> where(group_id: ^group_id)

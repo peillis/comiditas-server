@@ -26,6 +26,13 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:templates_of_user, user_id})
   end
 
+  def change_template(pid, changeset) do
+    GenServer.call(pid, {:change_template, changeset})
+    templates_of_user(pid, changeset.data.user_id)
+    gen_days_of_user(pid, 15, changeset.data.user_id)
+    totals(pid, Comiditas.today())
+  end
+
   def totals(pid, date) do
     GenServer.cast(pid, {:totals, date})
   end
@@ -91,7 +98,19 @@ defmodule Comiditas.GroupServer do
   def handle_call({:templates_of_user, uid}, _from, state) do
     user = find_user(state.users, uid)
     tps = Enum.sort_by(user.tps, & &1.day)
+    Endpoint.broadcast(Comiditas.templates_user_topic(uid), "templates", %{templates: tps})
     {:reply, tps, state}
+  end
+
+  @impl true
+  def handle_call({:change_template, changeset}, _from, state) do
+    tp = Comiditas.save_template(changeset)
+    user = find_user(state.users, changeset.data.user_id)
+    tps = Util.replace_in_list(tp, user.tps, :day)
+    new_user = %{user | tps: tps}
+    new_user_list = Util.replace_in_list(new_user, state.users, :id)
+
+    {:reply, tp, %{state | users: new_user_list}}
   end
 
   @impl true
