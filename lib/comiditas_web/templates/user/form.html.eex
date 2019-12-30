@@ -32,6 +32,12 @@
     </div>
   
     <div class="torch-form-group">
+      <%= label f, :root_user %>
+      <%= checkbox f, :root_user %>
+      <%= error_tag f, :root_user %>
+    </div>
+
+    <div class="torch-form-group">
       <%= label f, :group_id %>
       <%= number_input f, :group_id %>
       <%= error_tag f, :group_id %>

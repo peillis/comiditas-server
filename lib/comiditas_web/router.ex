@@ -28,6 +28,10 @@ defmodule ComiditasWeb.Router do
     plug ComiditasWeb.PowerUserPlug
   end
 
+  pipeline :root_user do
+    plug ComiditasWeb.RootUserPlug
+  end
+
   scope "/", ComiditasWeb do
     pipe_through [:browser, :auth]
 
@@ -48,7 +52,7 @@ defmodule ComiditasWeb.Router do
   end
 
   scope "/", ComiditasWeb do
-    pipe_through [:browser, :auth, :ensure_auth]
+    pipe_through [:browser, :auth, :ensure_auth, :root_user]
 
     scope "/admin" do
       resources "/groups", GroupController
