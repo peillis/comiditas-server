@@ -139,3 +139,13 @@ a, td, svg text::selection {
     opacity: .5;
     display: none;
 }
+
+/* settings */
+.settings {
+    padding: 1em;
+    padding-right: 3em;
+}
+.settings .day {
+    color: black;
+    font-size: 1.3em;
+}
