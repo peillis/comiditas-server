@@ -14,16 +14,9 @@ defmodule ComiditasWeb.Live.TotalsView do
     date = Comiditas.today()
 
     Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
-    GroupServer.totals(pid, date)
+    totals = GroupServer.totals(pid, date)
 
-    zero =
-      Comiditas.values()
-      |> Enum.map(&{&1, []})
-      |> Enum.into(%{})
-
-    totals = %{lunch: zero, dinner: zero, breakfast: zero}
-
-    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [])}
+    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [])}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
@@ -44,12 +37,19 @@ defmodule ComiditasWeb.Live.TotalsView do
 
   def handle_event("show_list", %{"meal" => meal, "val" => value}, socket) do
     list = socket.assigns.totals[String.to_atom meal][value]
-    IO.inspect list
-    # require IEx; IEx.pry
     {:noreply, assign(socket, list: list)}
   end
 
   def handle_event("hide_list", _value, socket) do
     {:noreply, assign(socket, list: [])}
+  end
+
+  def handle_event("show_notes", %{"notes" => value}, socket) do
+    notes = socket.assigns.totals[String.to_atom value]
+    {:noreply, assign(socket, notes: notes)}
+  end
+
+  def handle_event("hide_notes", _value, socket) do
+    {:noreply, assign(socket, notes: [])}
   end
 end

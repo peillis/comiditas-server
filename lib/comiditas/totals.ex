@@ -1,30 +1,44 @@
 defmodule Comiditas.Totals do
   def get_totals(users, date) do
-    users
-    |> Enum.map(&Map.merge(&1, get_user_meals(&1, date, [:lunch, :dinner])))
-    |> Enum.map(&Map.merge(&1, get_user_meals(&1, Timex.shift(date, days: 1), [:breakfast])))
-    |> build_totals()
+    today = Enum.map(users, &get_day(&1, date, [:lunch, :dinner, :notes]))
+    tomorrow = Enum.map(users, &get_day(&1, Timex.shift(date, days: 1), [:breakfast, :lunch, :dinner, :notes]))
+    %{
+      lunch: get_meal_totals(:lunch, today),
+      dinner: get_meal_totals(:dinner, today),
+      breakfast: get_meal_totals(:breakfast, tomorrow),
+      notes: get_notes(today),
+      notes_tomorrow: get_notes(tomorrow),
+      packs: %{
+        "breakfast" => get_meal_totals(:breakfast, tomorrow)["pack"],
+        "lunch" => get_meal_totals(:lunch, tomorrow)["pack"],
+        "dinner" => get_meal_totals(:dinner, tomorrow)["pack"]
+      }
+    }
   end
 
-  defp get_user_meals(user, date, fields) do
+  def get_day(user, date, fields) do
     date
     |> Comiditas.get_day(user.mds, user.tps)
     |> Map.take(fields)
+    |> Map.merge(%{name: user.name})
   end
 
-  defp build_totals(result) do
-    Enum.map([:lunch, :dinner, :breakfast], fn meal ->
-      {meal,
-       Comiditas.values()
-       |> Enum.map(&{&1, get_list_of_names(result, meal, &1)})
-       |> Enum.into(%{})}
-    end)
+  def get_meal_totals(meal, list) do
+    Comiditas.values()
+    |> Enum.map(&{&1, get_list_of_names(&1, list, meal)})
     |> Enum.into(%{})
   end
 
-  defp get_list_of_names(results, meal, value) do
-    results
-    |> Enum.filter(&(Map.get(&1, meal) == value))
+  def get_list_of_names(value, list, meal) do
+    list
+    |> Enum.filter(& &1[meal] == value)
     |> Enum.map(& &1.name)
   end
+
+  def get_notes(list) do
+    list
+    |> Enum.filter(& &1.notes != nil)
+    |> Enum.map(&{&1.name, &1.notes})
+  end
+
 end

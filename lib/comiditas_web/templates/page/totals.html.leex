@@ -3,7 +3,11 @@
   <table>
     <thead>
       <tr>
-        <th><i class="red material-icons">description</i></th>
+        <%= if length(@totals.notes) > 0 do %>
+        <th phx-click="show_notes" phx-value-notes="notes" class="notes"><i class="red material-icons">description</i></th>
+        <% else %>
+        <th></th>
+        <% end %>
         <th><%= circle("pack") %></th>
         <th><%= circle("1") %></th>
         <th><%= circle("yes") %></th>
@@ -26,6 +30,33 @@
     </tbody>
   </table>
 
+  <%= if length(@totals.packs["breakfast"]) > 0 or length(@totals.packs["lunch"]) > 0 or length(@totals.packs["dinner"]) > 0 do %>
+  <h2>Tomorrow Packs</h2>
+  <table>
+    <thead>
+      <tr>
+        <%= if length(@totals.notes_tomorrow) > 0 do %>
+        <th phx-click="show_notes" phx-value-notes="notes_tomorrow" class="notes"><i class="red material-icons">description</i></th>
+        <% else %>
+        <th></th>
+        <% end %>
+        <th class="packs">Brk</th>
+        <th class="packs">Lch</th>
+        <th class="packs">Dnr</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <%= print_value(@totals.packs["breakfast"], "packs", "breakfast") %>
+        <%= print_value(@totals.packs["lunch"], "packs", "lunch") %>
+        <%= print_value(@totals.packs["dinner"], "packs", "dinner") %>
+      </tr>
+    </tbody>
+  </table>
+  <% end %>
+  <br/><br/>
+
   <%= if length(@list) > 0 do %>
   <div id="modal-background" phx-click="hide_list"></div>
   <div id="modal" phx-click="hide_list">
@@ -33,6 +64,18 @@
     <ul>
       <%= for p <- @list do %>
       <li><%= p %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <%= if length(@notes) > 0 do %>
+  <div id="modal-background" phx-click="hide_notes"></div>
+  <div id="modal" phx-click="hide_notes">
+    <br/><br/>
+    <ul>
+      <%= for {p, n} <- @notes do %>
+      <li><strong><%= p %>:</strong> <%= n %></li>
       <% end %>
     </ul>
   </div>

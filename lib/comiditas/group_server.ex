@@ -34,7 +34,7 @@ defmodule Comiditas.GroupServer do
   end
 
   def totals(pid, date) do
-    GenServer.cast(pid, {:totals, date})
+    GenServer.call(pid, {:totals, date})
   end
 
   def get_uids(pid) do
@@ -114,15 +114,7 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_cast({:gen_days_of_user, n, user_id}, state) do
-    user = find_user(state.users, user_id)
-    list = Comiditas.generate_days(n, user.mds, user.tps)
-    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_cast({:totals, date}, state) do
+  def handle_call({:totals, date}, _from, state) do
     totals = Totals.get_totals(state.users, date)
 
     Endpoint.broadcast(
@@ -131,6 +123,14 @@ defmodule Comiditas.GroupServer do
       totals
     )
 
+    {:reply, totals, state}
+  end
+
+  @impl true
+  def handle_cast({:gen_days_of_user, n, user_id}, state) do
+    user = find_user(state.users, user_id)
+    list = Comiditas.generate_days(n, user.mds, user.tps)
+    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
     {:noreply, state}
   end
 

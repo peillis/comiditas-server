@@ -13,7 +13,7 @@ defmodule Comiditas do
   alias Comiditas.{Mealdate, Repo, Template}
 
   def today() do
-    Timex.today() |> Timex.shift(months: -3)
+    Timex.today()
   end
 
   def totals_topic(group_id, date) do

@@ -84,6 +84,17 @@ a, td, svg text::selection {
     background: none;
 }
 
+/* blink */
+.blink {
+    animation: blinker 1s linear infinite;
+}
+  
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
 /* totals  */
 .totals {
     padding: 1em;
@@ -96,6 +107,13 @@ a, td, svg text::selection {
 }
 .totals thead {
     font-size: 0.35em;
+}
+.totals th.packs {
+    font-size: 2em;
+    font-weight: normal;
+}
+.totals .notes i {
+    font-size: 4em;
 }
 .totals #modal {
     display: block;
