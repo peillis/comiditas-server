@@ -15,7 +15,7 @@ defmodule ComiditasWeb.PageView do
 
   def circle(value, date \\ nil, meal \\ nil) do
     ~e"""
-    <svg class="buttons" data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="2em" cy="2em" r="2em" fill="<%= color(value) %>"></circle>
       <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700"><%= text(value) %></text>
     </svg>

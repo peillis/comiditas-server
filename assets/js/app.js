@@ -53,7 +53,12 @@ let hideSelector = () => {
 }
 
 let select = (event) => {
-    let elem = event.target.parentNode
+    window.ev = event
+    let parent = event.target
+    if (event.target.tagName != "TD") {
+        parent = event.target.closest('.buttons')
+    }
+    let elem = parent.lastElementChild
     let date = elem.dataset.date
     let meal = elem.dataset.meal
     showSelector(elem, date, meal)

@@ -30,8 +30,9 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("multi_select", _value, socket) do
+  def handle_event("multi_select", value, socket) do
     IO.inspect("multi select")
+    IO.inspect value
     {:noreply, socket}
   end
 
