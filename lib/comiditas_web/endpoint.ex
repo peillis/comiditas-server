@@ -49,7 +49,8 @@ defmodule ComiditasWeb.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_comiditas_key",
-    signing_salt: "7dyuAp3l"
+    signing_salt: "7dyuAp3l",
+    max_age: 365 * 24 * 60 * 60  # 1 year of cookie time
 
   plug ComiditasWeb.Router
 end
