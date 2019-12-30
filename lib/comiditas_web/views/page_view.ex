@@ -34,17 +34,25 @@ defmodule ComiditasWeb.PageView do
   def text("2"), do: "2"
   def text("pack"), do: "P"
 
-  def print_totals(meal) do
+  def print_totals(data, meal) do
     ~e"""
-    <td><%= print_value(meal["pack"]) %></td>
-    <td><%= print_value(meal["1"]) %></td>
-    <td><%= print_value(meal["yes"]) %></td>
-    <td><%= print_value(meal["2"]) %></td>
+    <%= print_value(data["pack"], meal, "pack") %>
+    <%= print_value(data["1"], meal, "1") %>
+    <%= print_value(data["yes"], meal, "yes") %>
+    <%= print_value(data["2"], meal, "2") %>
     """
   end
 
-  def print_value(val) do
-    if length(val) > 0, do: "#{length(val)}", else: ""
+  def print_value(count, meal, val) do
+    if length(count) > 0 do
+      ~e"""
+      <td phx-click="show_list" phx-value-meal="<%= meal %>" phx-value-val="<%= val %>"><%= length(count) %></td>
+      """
+    else
+      ~e"""
+      <td></td>
+      """
+    end
   end
 
   def print_date(date) do

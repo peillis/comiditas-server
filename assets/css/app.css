@@ -97,6 +97,15 @@ a, td, svg text::selection {
 .totals thead {
     font-size: 0.35em;
 }
+.totals #modal {
+    display: block;
+    font-size: 0.6em;
+    font-weight: normal;
+    line-height: 0.7em;
+}
+.totals #modal-background {
+    display: block;
+}
 
 /* users */
 .users {

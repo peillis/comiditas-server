@@ -13,16 +13,29 @@
     <tbody>
       <tr>
         <td class="td_meal">Lunch</td>
-        <%= print_totals(@totals.lunch) %>
+        <%= print_totals(@totals.lunch, "lunch") %>
       </tr>
       <tr>
         <td class="td_meal">Dinner</td>
-        <%= print_totals(@totals.dinner) %>
+        <%= print_totals(@totals.dinner, "dinner") %>
       </tr>
       <tr>
         <td class="td_meal">Breakfast</td>
-        <%= print_totals(@totals.breakfast) %>
+        <%= print_totals(@totals.breakfast, "breakfast") %>
       </tr>
     </tbody>
   </table>
+
+  <%= if length(@list) > 0 do %>
+  <div id="modal-background" phx-click="hide_list"></div>
+  <div id="modal" phx-click="hide_list">
+    <br/><br/>
+    <ul>
+      <%= for p <- @list do %>
+      <li><%= p %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
 </div>

@@ -23,7 +23,7 @@ defmodule ComiditasWeb.Live.TotalsView do
 
     totals = %{lunch: zero, dinner: zero, breakfast: zero}
 
-    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals)}
+    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [])}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
@@ -40,5 +40,16 @@ defmodule ComiditasWeb.Live.TotalsView do
     GroupServer.totals(socket.assigns.pid, new_date)
 
     {:noreply, assign(socket, date: new_date)}
+  end
+
+  def handle_event("show_list", %{"meal" => meal, "val" => value}, socket) do
+    list = socket.assigns.totals[String.to_atom meal][value]
+    IO.inspect list
+    # require IEx; IEx.pry
+    {:noreply, assign(socket, list: list)}
+  end
+
+  def handle_event("hide_list", _value, socket) do
+    {:noreply, assign(socket, list: [])}
   end
 end
