@@ -12,13 +12,13 @@
       <%= for t <- @templates do %>
         <tr class="weekday-<%= t.day %>">
           <td class="day"><%= print_weekday(t.day) %></td>
-          <td class="circle buttons">
+          <td class="buttons">
           <%= circle(t.breakfast, t.day, "breakfast") %>
           </td>
-          <td class="circle buttons">
+          <td class="buttons">
           <%= circle(t.lunch, t.day, "lunch") %>
           </td>
-          <td class="circle buttons">
+          <td class="buttons">
           <%= circle(t.dinner, t.day, "dinner") %>
           </td>
         </tr>
