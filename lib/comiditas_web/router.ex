@@ -45,6 +45,10 @@ defmodule ComiditasWeb.Router do
     get "/settings", PageController, :settings
     get "/totals", PageController, :totals
     get "/users", PageController, :users
+  end
+
+  scope "/", ComiditasWeb do
+    pipe_through [:browser, :auth, :ensure_auth]
 
     scope "/admin" do
       resources "/groups", GroupController
