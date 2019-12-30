@@ -8,7 +8,7 @@
         <th>Dnr</th>
       </tr>
     </thead>
-    <tbody id="my_table" phx-hook="SettingsHook">
+    <tbody id="my_table" phx-hook="TableHook">
       <%= for t <- @templates do %>
         <tr class="weekday-<%= t.day %>">
           <td class="day"><%= print_weekday(t.day) %></td>

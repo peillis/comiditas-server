@@ -111,6 +111,7 @@ switch (window.location.pathname) {
             modal.style.display = 'none'
             modal_bck.style.display = 'none'
         }
+        break
     
     case '/totals':
         var hammertime = new Hammer(document.body);
@@ -121,10 +122,11 @@ switch (window.location.pathname) {
             if (ev.offsetDirection == 4) {  // to right
                 send_event('change_date', -1)
             }
-        });
+        })
+        break
 
     case '/settings':
-        Hooks.SettingsHook = {
+        Hooks.TableHook = {
             updated() {
                 activateButtons()
             }
@@ -133,6 +135,7 @@ switch (window.location.pathname) {
         window.onscroll = function(ev) {
             hideSelector()
         };
+        break
 }
 
 let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})
