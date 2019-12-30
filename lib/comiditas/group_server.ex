@@ -13,7 +13,7 @@ defmodule Comiditas.GroupServer do
   end
 
   def gen_days_of_user(pid, n, user_id) do
-    GenServer.cast(pid, {:gen_days_of_user, n, user_id})
+    GenServer.call(pid, {:gen_days_of_user, n, user_id})
   end
 
   def change_day(pid, changeset) do
@@ -127,11 +127,11 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_cast({:gen_days_of_user, n, user_id}, state) do
+  def handle_call({:gen_days_of_user, n, user_id}, _from, state) do
     user = find_user(state.users, user_id)
     list = Comiditas.generate_days(n, user.mds, user.tps)
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: list})
-    {:noreply, state}
+    {:reply, list, state}
   end
 
   def find_user(users, user_id) do

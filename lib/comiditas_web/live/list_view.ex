@@ -15,9 +15,9 @@ defmodule ComiditasWeb.Live.ListView do
     pid = Util.get_pid(session.user.group_id)
 
     Endpoint.subscribe(Comiditas.user_topic(session.uid))
-    GroupServer.gen_days_of_user(pid, @items, session.uid)
+    list = GroupServer.gen_days_of_user(pid, @items, session.uid)
 
-    {:ok, assign(socket, pid: pid, user_id: session.uid, list: [])}
+    {:ok, assign(socket, pid: pid, user_id: session.uid, list: list)}
   end
 
   def handle_event("view_more", _value, socket) do
