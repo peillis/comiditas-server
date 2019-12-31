@@ -45,6 +45,21 @@ let showSelector = (node, date, meal) => {
     selector.style.display = 'inline-block'
 }
 
+let showSelectorMultiSelect = (node_from, node_to) => {
+    let selector = document.getElementById('selector')
+    let rect = node_to.getBoundingClientRect()
+    let buttons = selector.children
+    for (let b of buttons) {
+        b.setAttribute('phx-value-date-from', node_from.dataset.date)
+        b.setAttribute('phx-value-meal-from', node_from.dataset.meal)
+        b.setAttribute('phx-value-date-to', node_to.dataset.date)
+        b.setAttribute('phx-value-meal-to', node_to.dataset.meal)
+    }
+    selector.style.top = `${rect.top}px`
+    selector.style.left = `${rect.left}px`
+    selector.style.display = 'inline-block'
+}
+
 let hideSelector = () => {
     setTimeout(() => {
         let selector = document.getElementById('selector')
@@ -53,15 +68,38 @@ let hideSelector = () => {
 }
 
 let select = (event) => {
-    window.ev = event
     let parent = event.target
     if (event.target.tagName != "TD") {
         parent = event.target.closest('.buttons')
     }
     let elem = parent.lastElementChild
-    let date = elem.dataset.date
-    let meal = elem.dataset.meal
-    showSelector(elem, date, meal)
+    if (document.getElementsByClassName('blink').length > 0){
+        // multi select
+        let from_elem = document.getElementsByClassName('blink')[0]
+        from_elem.classList.remove('blink')
+        let next = from_elem
+        while(next != elem) {
+            next.classList.add('blink')
+            next = next_button(next)
+        }
+        showSelectorMultiSelect(from_elem, elem)
+    }
+    else {
+        let date = elem.dataset.date
+        let meal = elem.dataset.meal
+        showSelector(elem, date, meal)
+    }
+}
+
+let next_button = (elem) => {
+    let td = elem.parentElement
+    if (td.nextElementSibling.className == 'buttons') {
+        return td.nextElementSibling.firstElementChild
+    }
+    else {
+        let td_of_next_tr = td.parentElement.nextElementSibling.children[1]
+        return td_of_next_tr.firstElementChild
+    }
 }
 
 let addClickListener = (elems, fn) => {
