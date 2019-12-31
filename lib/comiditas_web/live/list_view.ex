@@ -30,10 +30,25 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("multi_select", %{"date" => date, "meal" => meal, "val" => value}, socket) do
+  def handle_event("multi_select", %{"date" => date, "meal" => meal}, socket) do
     IO.inspect("multi select")
-    IO.inspect value
-    {:noreply, socket}
+    IO.inspect date
+    IO.inspect meal
+    day = Enum.find(socket.assigns.list, &(&1.date == Util.str_to_date(date)))
+    day = Map.put(day, :multi_select, meal)
+
+    list = Enum.map(socket.assigns.list, fn x ->
+      if x.date == Util.str_to_date(date) do
+        Map.put(x, :multi_select, meal)
+      else
+        x
+      end
+    end)
+
+    # new_list = Util.replace_in_list(day, socket.assigns.list, :date)
+    # new_list = Enum.sort_by(new_list, & &1.date)
+    # IO.inspect new_list
+    {:noreply, assign(socket, list: list)}
   end
 
   def handle_event("change", %{"date" => date, "meal" => meal, "val" => value}, socket) do

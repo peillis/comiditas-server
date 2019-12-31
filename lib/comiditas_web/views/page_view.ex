@@ -13,9 +13,44 @@ defmodule ComiditasWeb.PageView do
     end
   end
 
-  def circle(value, date \\ nil, meal \\ nil) do
+  def expand_day(day) do
+    Enum.map_reduce(["breakfast", "lunch", "dinner"], day, fn x, day ->
+      multi_select =
+        if day.multi_select == x do
+          true
+        else
+          false
+        end
+      item =
+        %{
+           date: day.date,
+           value: Map.get(day, String.to_atom(x)),
+           meal: x,
+           multi_select: multi_select
+         }
+      {item, day}
+    end)
+  end
+
+  def print_day(day) do
+    {items, _acc} = expand_day(day)
+    Enum.map(items, fn x ->
+      ~e"""
+      <td class="buttons">
+        <%= circle(x.value, x.date, x.meal, x.multi_select) %>
+      </td>
+      """
+    end)
+  end
+
+  def circle(value, date \\ nil, meal \\ nil, multi_select \\ false) do
+    class =
+      case multi_select do
+        true -> "blink"
+        _ -> nil
+      end
     ~e"""
-    <svg data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg class="<%= class %>" data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="2em" cy="2em" r="2em" fill="<%= color(value) %>"></circle>
       <text x="0.77em" y="1.16em" font-size="2.6em" text-anchor="middle" fill="white" style="font-weight:700"><%= text(value) %></text>
     </svg>

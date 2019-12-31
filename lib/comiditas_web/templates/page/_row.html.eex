@@ -3,15 +3,7 @@
       <%= print_weekday(@day.weekday) %><br/>
       <strong><%= @day.date.day %></strong>
     </td>
-    <td class="buttons">
-      <%= circle(@day.breakfast, @day.date, "breakfast") %>
-    </td>
-    <td class="buttons">
-      <%= circle(@day.lunch, @day.date, "lunch") %>
-    </td>
-    <td class="buttons">
-      <%= circle(@day.dinner, @day.date, "dinner") %>
-    </td>
+    <%= print_day(@day) %>
     <td class="notes" data-date="<%= @day.date %>" data-notes="<%= @day.notes %>">
       <i class="material-icons <%= if @day.notes != nil, do: "red" %>">description</i>
     </td>

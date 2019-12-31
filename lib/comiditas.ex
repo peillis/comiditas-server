@@ -66,6 +66,7 @@ defmodule Comiditas do
         md
     end
     |> Map.put(:weekday, Timex.weekday(date))
+    |> Map.put(:multi_select, false)
   end
 
   def template_to_mealdate(template, date) do
