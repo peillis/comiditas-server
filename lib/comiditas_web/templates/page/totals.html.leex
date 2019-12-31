@@ -14,7 +14,7 @@
         <th><%= circle("2") %></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="my_table" phx-hook="TableHook">
       <tr>
         <td class="td_meal">Lunch</td>
         <%= print_totals(@totals.lunch, "lunch") %>

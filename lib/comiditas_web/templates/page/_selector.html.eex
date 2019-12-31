@@ -1,6 +1,6 @@
     <svg id="selector" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="2em" cy="2em" r="7em" fill="white" stroke="lightgray" stroke-width="0.1em"></circle>
-      <circle cx="2em" cy="2em" r="1em" fill="lightgray" phx-click="multi_select"></circle>
+      <circle phx-click="multi_select" cx="2em" cy="2em" r="1em" fill="lightgray"></circle>
       <circle phx-click="change" phx-value-val="yes" cx="2em" cy="-2em" r="2em" fill="green"></circle>
       <circle phx-click="change" phx-value-val="1" cx="-1.8em" cy="0.7em" r="2em" fill="lightskyblue"></circle>
       <circle phx-click="change" phx-value-val="2" cx="5.8em" cy="0.7em" r="2em" fill="blue"></circle>

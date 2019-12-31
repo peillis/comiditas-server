@@ -21,17 +21,6 @@ import {LiveSocket, debug} from "phoenix_live_view"
 
 let Hooks = {}
 
-// Triggers an event on liveview
-let send_event = (event_name, value) => {
-    let layer = document.getElementsByClassName('main')[0].parentElement
-    let view = liveSocket.views[layer.id]
-    view.channel.push('event', {
-        event: event_name,
-        type: null,
-        value: value
-    }, 5000).receive("ok", resp => { view.update(resp.diff) })
-}
-
 let showSelector = (node, date, meal) => {
     let selector = document.getElementById('selector')
     let rect = node.getBoundingClientRect()
@@ -124,15 +113,16 @@ switch (window.location.pathname) {
                 addClickListener(notes, showModal)
                 let modal_bck = document.getElementById('modal-background')
                 modal_bck.addEventListener('click', hideModal)
+                let scrollfn = (ev) => {
+                    if ((window.innerHeight + window.scrollY + 250) >= document.body.offsetHeight) {
+                        this.pushEvent('view_more', null)
+                    }
+                    hideSelector()
+                }
+                window.onscroll = scrollfn
             }
         }
 
-        window.onscroll = function(ev) {
-            if ((window.innerHeight + window.scrollY + 250) >= document.body.offsetHeight) {
-                send_event('view_more', null)
-            }
-            hideSelector()
-        };
 
         let showModal = (event) => {
             let elem = event.target
@@ -157,15 +147,20 @@ switch (window.location.pathname) {
         break
     
     case '/totals':
-        var hammertime = new Hammer(document.body);
-        hammertime.on('swipe', function(ev) {
-            if (ev.offsetDirection == 2) {  // swipe to left
-                send_event('change_date', 1)
+        Hooks.TableHook = {
+            mounted() {
+                var hammertime = new Hammer(document.body);
+                let change_day = (ev) => {
+                    if (ev.offsetDirection == 2) {  // swipe to left
+                        this.pushEvent('change_date', 1)
+                    }
+                    if (ev.offsetDirection == 4) {  // to right
+                        this.pushEvent('change_date', -1)
+                    }
+                }
+                hammertime.on('swipe', change_day)
             }
-            if (ev.offsetDirection == 4) {  // to right
-                send_event('change_date', -1)
-            }
-        })
+        }
         break
 
     case '/settings':
