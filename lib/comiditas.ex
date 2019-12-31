@@ -48,7 +48,7 @@ defmodule Comiditas do
     Enum.filter(objects, &(&1.user_id == user_id))
   end
 
-  def generate_days(n, mealdates, templates, date \\ today()) do
+  def generate_days(n, mealdates, templates, date) do
     Enum.reduce((n - 1)..0, [], fn x, acc ->
       date = Timex.shift(date, days: x)
       [get_day(date, mealdates, templates) | acc]
