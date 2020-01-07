@@ -138,4 +138,26 @@ defmodule Comiditas.GroupServer do
     Enum.find(users, &(&1.id == user_id))
   end
 
+  def change_days(date_from, meal_from, date_to, meal_to, value) do
+  end
+
+  def get_meals(meal, from_to) do
+    list = [:breakfast, :lunch, :dinner]
+    ind = Enum.find_index(list, & &1 == meal)
+    case from_to do
+      :from -> Enum.slice(list, ind, 10)
+      :to -> Enum.slice(list, 0, ind + 1)
+    end
+  end
+
+  def change_day(day, [head | tail], value) do
+    day
+    |> Map.put(head, value)
+    |> change_day(tail, value)
+  end
+
+  def change_day(day, [], value) do
+    day
+  end
+
 end
