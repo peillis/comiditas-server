@@ -1,7 +1,7 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
-  alias Comiditas.{Mealdate, Totals, Util}
+  alias Comiditas.{Totals, Util}
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do

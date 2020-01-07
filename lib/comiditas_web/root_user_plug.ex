@@ -1,5 +1,4 @@
 defmodule ComiditasWeb.RootUserPlug do
-  import Plug.Conn
 
   def init(options) do
     options

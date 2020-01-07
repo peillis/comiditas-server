@@ -54,6 +54,13 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, assign(socket, list: list)}
   end
 
+  def handle_event("change", %{"date-from" => date_from, "meal-from" => meal_from, "date-to" => date_to, "meal-to" => meal_to, "val" => value}, socket) do
+    # change_day(date, socket, Map.put(%{}, meal, value))
+    IO.inspect("multi change here")
+
+    {:noreply, socket}
+  end
+
   def handle_event("change", %{"date" => date, "meal" => meal, "val" => value}, socket) do
     change_day(date, socket, Map.put(%{}, meal, value))
 
@@ -85,4 +92,5 @@ defmodule ComiditasWeb.Live.ListView do
       Comiditas.today()
     )
   end
+
 end
