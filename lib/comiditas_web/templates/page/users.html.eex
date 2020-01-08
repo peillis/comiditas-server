@@ -7,7 +7,11 @@
         <td><a href="<%= Routes.page_path(@conn, :edit, u.id) %>"><i class="material-icons">edit</i></a></td>
       </tr>
       <% end %>
+      <tr>
+        <td colspan="2"><a href="<%= Routes.page_path(@conn, :new, uid: @conn.params["uid"]) %>">Add User</a></td>
+      </tr>
     </tbody>
   </table>
+  <br/><br/><br/>
   <br/><br/><br/>
 </div>

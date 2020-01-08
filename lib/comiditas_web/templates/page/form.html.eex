@@ -3,7 +3,9 @@
     <%= if @changeset.action do %>
       <p class="torch-form-error">Oops, something went wrong! Please check the errors below.</p>
     <% end %>
-  
+
+    <input type="hidden" name="uid" value="<%= Guardian.Plug.current_resource(@conn).id %>">
+    
     <div class="torch-form-group">
       <%= label f, :name %>
       <%= text_input f, :name %>

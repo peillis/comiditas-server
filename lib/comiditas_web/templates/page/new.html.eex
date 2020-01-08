@@ -1,0 +1,8 @@
+<div class="edit">
+  <div class="torch-container">
+    <div class="header">
+      <h3>New User</h3>
+    </div>
+    <%= render "form.html", Map.put(assigns, :action, Routes.page_path(@conn, :create)) %>
+  </div>
+</div>
