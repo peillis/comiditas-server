@@ -25,6 +25,10 @@ defmodule Comiditas.GroupServer do
   def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
     GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
     gen_days_of_user(pid, length(list), uid, Comiditas.today())
+    ndays = Timex.diff(date_to, date_from, :days)
+    for d <- 0..ndays do
+      totals(pid, Timex.shift(date_from, days: d))
+    end
   end
 
   def templates_of_user(pid, user_id) do
@@ -80,23 +84,9 @@ defmodule Comiditas.GroupServer do
   def handle_call({:change_day, changeset}, _from, state) do
     user = find_user(state.users, changeset.data.user_id)
     tpl = Enum.find(user.tps, &(&1.day == changeset.data.weekday))
+    Comiditas.save_day(changeset, tpl)
 
-    mds =
-      case Comiditas.save_day(changeset, tpl) do
-        {:deleted, _day} ->
-          Enum.filter(user.mds, &(!(&1.date == changeset.data.date)))
-
-        {:updated, day} ->
-          Util.replace_in_list(day, user.mds, :date)
-
-        {:created, day} ->
-          [day | user.mds]
-      end
-
-    new_user = %{user | mds: mds}
-    new_user_list = Util.replace_in_list(new_user, state.users, :id)
-
-    {:reply, changeset, %{state | users: new_user_list}}
+    {:reply, nil, refresh_user(state, user.id, :mds)}
   end
 
   @impl true
@@ -104,11 +94,7 @@ defmodule Comiditas.GroupServer do
     user = find_user(state.users, uid)
     Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
 
-    mds = Comiditas.get_mealdates_of_users([uid])
-    new_user = %{user | mds: mds}
-    new_user_list = Util.replace_in_list(new_user, state.users, :id)
-
-    {:reply, new_user, %{state | users: new_user_list}}
+    {:reply, nil, refresh_user(state, uid, :mds)}
   end
 
   @impl true
@@ -116,18 +102,15 @@ defmodule Comiditas.GroupServer do
     user = find_user(state.users, uid)
     tps = Enum.sort_by(user.tps, & &1.day)
     Endpoint.broadcast(Comiditas.templates_user_topic(uid), "templates", %{templates: tps})
+
     {:reply, tps, state}
   end
 
   @impl true
   def handle_call({:change_template, changeset}, _from, state) do
     tp = Comiditas.save_template(changeset)
-    user = find_user(state.users, changeset.data.user_id)
-    tps = Util.replace_in_list(tp, user.tps, :day)
-    new_user = %{user | tps: tps}
-    new_user_list = Util.replace_in_list(new_user, state.users, :id)
 
-    {:reply, tp, %{state | users: new_user_list}}
+    {:reply, tp, refresh_user(state, changeset.data.user_id, :tps) }
   end
 
   @impl true
@@ -148,11 +131,24 @@ defmodule Comiditas.GroupServer do
     user = find_user(state.users, user_id)
     new_list = list ++ Comiditas.generate_days(n, user.mds, user.tps, date)
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list})
+
     {:reply, new_list, state}
   end
 
   def find_user(users, user_id) do
     Enum.find(users, &(&1.id == user_id))
+  end
+
+  defp refresh_user(state, uid, key) do
+    user = find_user(state.users, uid)
+    mod_user =
+      case key do
+        :mds -> %{user | mds: Comiditas.get_mealdates_of_users([uid])}
+        :tps -> %{user | tps: Comiditas.get_templates_of_users([uid])}
+      end
+    mod_users = Util.replace_in_list(mod_user, state.users, :id)
+
+    %{state | users: mod_users}
   end
 
 end
