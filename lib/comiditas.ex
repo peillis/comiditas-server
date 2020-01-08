@@ -102,6 +102,7 @@ defmodule Comiditas do
   def get_users(group_id) do
     User
     |> where(group_id: ^group_id)
+    |> order_by(:id)
     |> Repo.all()
   end
 

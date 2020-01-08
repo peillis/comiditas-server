@@ -19,8 +19,8 @@
       <a href="<%= Routes.page_path(@conn, :list, uid: @conn.params["uid"]) %>" class="tab-item active"><i class="material-icons">view_list</i></a>
       <a href="<%= Routes.page_path(@conn, :settings, uid: @conn.params["uid"]) %>" class="tab-item"><i class="material-icons">settings</i></a>
       <%= if @power_user do %>
-        <%= if String.to_integer(@conn.params["uid"]) == Guardian.Plug.current_resource(@conn).id do %>
-        <a href="<%= Routes.page_path(@conn, :users, uid: @conn.params["uid"]) %>" class="tab-item person"><i class="material-icons">person</i></a>
+        <%= if String.to_integer(@conn.params["uid"]) == Guardian.Plug.current_resource(@conn).id or @view_template == "edit.html" do %>
+        <a href="<%= Routes.page_path(@conn, :users, uid: Guardian.Plug.current_resource(@conn).id) %>" class="tab-item person"><i class="material-icons">person</i></a>
         <% else %>
         <a href="<%= Routes.page_path(@conn, :list, uid: Guardian.Plug.current_resource(@conn).id) %>" class="tab-item person"><i class="material-icons">person</i></a>
         <% end %>

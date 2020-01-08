@@ -176,3 +176,11 @@ a, td, svg text::selection {
     color: black;
     font-size: 1.3em;
 }
+
+/* edit user */
+.edit {
+    padding: 2em;
+}
+.edit input {
+    font-size: 1.3em;
+}

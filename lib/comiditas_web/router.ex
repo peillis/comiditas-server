@@ -49,6 +49,8 @@ defmodule ComiditasWeb.Router do
     get "/settings", PageController, :settings
     get "/totals", PageController, :totals
     get "/users", PageController, :users
+    get "/users/:uid/edit", PageController, :edit
+    put "/users/:uid", PageController, :update
   end
 
   scope "/", ComiditasWeb do
