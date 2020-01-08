@@ -37,8 +37,8 @@ defmodule ComiditasWeb.Live.ListView do
     IO.inspect("multi select")
     IO.inspect date
     IO.inspect meal
-    day = Enum.find(socket.assigns.list, &(&1.date == Util.str_to_date(date)))
-    day = Map.put(day, :multi_select, meal)
+    # day = Enum.find(socket.assigns.list, &(&1.date == Util.str_to_date(date)))
+    # day = Map.put(day, :multi_select, meal)
 
     list = Enum.map(socket.assigns.list, fn x ->
       if x.date == Util.str_to_date(date) do
@@ -55,8 +55,18 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def handle_event("change", %{"date-from" => date_from, "meal-from" => meal_from, "date-to" => date_to, "meal-to" => meal_to, "val" => value}, socket) do
-    # change_day(date, socket, Map.put(%{}, meal, value))
     IO.inspect("multi change here")
+    IO.inspect value
+    GroupServer.change_days(
+      socket.assigns.pid,
+      socket.assigns.user_id,
+      socket.assigns.list,
+      Util.str_to_date(date_from),
+      String.to_atom(meal_from),
+      Util.str_to_date(date_to),
+      String.to_atom(meal_to),
+      value
+    )
 
     {:noreply, socket}
   end

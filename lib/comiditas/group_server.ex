@@ -22,6 +22,11 @@ defmodule Comiditas.GroupServer do
     totals(pid, Timex.shift(changeset.data.date, days: -1))  # in case it's breakfast
   end
 
+  def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
+    GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
+    gen_days_of_user(pid, length(list), uid, Comiditas.today())
+  end
+
   def templates_of_user(pid, user_id) do
     GenServer.call(pid, {:templates_of_user, user_id})
   end
@@ -95,6 +100,18 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
+  def handle_call({:change_days, uid, list, date_from, meal_from, date_to, meal_to, value}, _from, state) do
+    user = find_user(state.users, uid)
+    Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
+
+    mds = Comiditas.get_mealdates_of_users([uid])
+    new_user = %{user | mds: mds}
+    new_user_list = Util.replace_in_list(new_user, state.users, :id)
+
+    {:reply, new_user, %{state | users: new_user_list}}
+  end
+
+  @impl true
   def handle_call({:templates_of_user, uid}, _from, state) do
     user = find_user(state.users, uid)
     tps = Enum.sort_by(user.tps, & &1.day)
@@ -136,28 +153,6 @@ defmodule Comiditas.GroupServer do
 
   def find_user(users, user_id) do
     Enum.find(users, &(&1.id == user_id))
-  end
-
-  def change_days(date_from, meal_from, date_to, meal_to, value) do
-  end
-
-  def get_meals(meal, from_to) do
-    list = [:breakfast, :lunch, :dinner]
-    ind = Enum.find_index(list, & &1 == meal)
-    case from_to do
-      :from -> Enum.slice(list, ind, 10)
-      :to -> Enum.slice(list, 0, ind + 1)
-    end
-  end
-
-  def change_day(day, [head | tail], value) do
-    day
-    |> Map.put(head, value)
-    |> change_day(tail, value)
-  end
-
-  def change_day(day, [], value) do
-    day
   end
 
 end

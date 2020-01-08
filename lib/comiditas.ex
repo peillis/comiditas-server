@@ -117,4 +117,46 @@ defmodule Comiditas do
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
   end
+
+  # Functions for changing multiple days
+
+  def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
+    Enum.each(list, fn x ->
+      meals =
+        case x.date do
+          ^date_from ->
+            get_meals(meal_from, :from)
+          ^date_to ->
+            get_meals(meal_to, :to)
+          d when d > date_from and d < date_to ->
+            [:breakfast, :lunch, :dinner]
+          _ ->
+            []
+        end
+
+      if length(meals) > 0 do
+        changeset = build_changeset(x, meals, value)
+        template = Enum.find(templates, &(&1.day == changeset.data.weekday))
+        save_day(changeset, template)
+      end
+    end)
+  end
+
+  def build_changeset(day, meals, value) do
+    change =
+      meals
+      |> Enum.map(& {&1, value})
+      |> Enum.into(%{})
+
+    Mealdate.changeset(day, change)
+  end
+
+  def get_meals(meal, from_to) do
+    list = [:breakfast, :lunch, :dinner]
+    ind = Enum.find_index(list, & &1 == meal)
+    case from_to do
+      :from -> Enum.slice(list, ind, 10)
+      :to -> Enum.slice(list, 0, ind + 1)
+    end
+  end
 end
