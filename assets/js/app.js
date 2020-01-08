@@ -65,6 +65,9 @@ let select = (event) => {
     if (document.getElementsByClassName('blink').length > 0){
         // multi select
         let from_elem = document.getElementsByClassName('blink')[0]
+        if (elem.dataset.date < from_elem.dataset.date){
+            return
+        } 
         from_elem.classList.remove('blink')
         let next = from_elem
         while(next != elem) {

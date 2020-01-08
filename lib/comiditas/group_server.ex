@@ -26,7 +26,7 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
     gen_days_of_user(pid, length(list), uid, Comiditas.today())
     ndays = Timex.diff(date_to, date_from, :days)
-    for d <- 0..ndays do
+    for d <- -1..ndays do
       totals(pid, Timex.shift(date_from, days: d))
     end
   end
