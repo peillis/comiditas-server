@@ -32,7 +32,7 @@
   
     <div>
       <%= submit "Submit", class: "torch-submit-button" %>&nbsp;&nbsp;
-      <a href="<%= Routes.page_path(@conn, :users, uid: @conn.params["uid"]) %>">Cancel</a>
+      <a href="<%= Routes.page_path(@conn, :users, uid: Guardian.Plug.current_resource(@conn).id) %>">Cancel</a>
     </div>
   </fieldset>
 <% end %>

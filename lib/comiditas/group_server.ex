@@ -8,6 +8,10 @@ defmodule Comiditas.GroupServer do
     GenServer.start_link(__MODULE__, group_id, name: {:global, "GroupServer_#{group_id}"})
   end
 
+  def refresh(pid) do
+    GenServer.cast(pid, :refresh)
+  end
+
   def get_state(pid) do
     GenServer.call(pid, :get_state)
   end
@@ -52,21 +56,12 @@ defmodule Comiditas.GroupServer do
 
   @impl true
   def init(group_id) do
-    users =
-      group_id
-      |> Comiditas.get_users()
-      |> Enum.map(&Map.take(&1, [:id, :name]))
+    {:ok, get_data(group_id)}
+  end
 
-    user_ids = Enum.map(users, & &1.id)
-    mealdates = Comiditas.get_mealdates_of_users(user_ids)
-    templates = Comiditas.get_templates_of_users(user_ids)
-
-    users =
-      users
-      |> Enum.map(&Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)}))
-      |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
-
-    {:ok, %{users: users, group_id: group_id}}
+  @impl true
+  def handle_cast(:refresh, state) do
+    {:noreply, get_data(state.group_id)}
   end
 
   @impl true
@@ -135,7 +130,7 @@ defmodule Comiditas.GroupServer do
     {:reply, new_list, state}
   end
 
-  def find_user(users, user_id) do
+  defp find_user(users, user_id) do
     Enum.find(users, &(&1.id == user_id))
   end
 
@@ -149,6 +144,24 @@ defmodule Comiditas.GroupServer do
     mod_users = Util.replace_in_list(mod_user, state.users, :id)
 
     %{state | users: mod_users}
+  end
+
+  defp get_data(group_id) do
+    users =
+      group_id
+      |> Comiditas.get_users()
+      |> Enum.map(&Map.take(&1, [:id, :name]))
+
+    user_ids = Enum.map(users, & &1.id)
+    mealdates = Comiditas.get_mealdates_of_users(user_ids)
+    templates = Comiditas.get_templates_of_users(user_ids)
+
+    users =
+      users
+      |> Enum.map(&Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)}))
+      |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
+
+    %{users: users, group_id: group_id}
   end
 
 end

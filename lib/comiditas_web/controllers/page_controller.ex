@@ -2,7 +2,7 @@ defmodule ComiditasWeb.PageController do
   use ComiditasWeb, :controller
   import Phoenix.LiveView.Controller
 
-  alias Comiditas.Admin
+  alias Comiditas.{Admin, GroupServer, Util}
   alias Comiditas.Admin.User
 
   def index(conn, _params) do
@@ -38,11 +38,16 @@ defmodule ComiditasWeb.PageController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    # Add the group_id to the user
+    power_user = Guardian.Plug.current_resource(conn)
+    user_params = Map.put(user_params, "group_id", power_user.group_id)
     case Admin.create_user(user_params) do
-      {:ok, user} ->
+      {:ok, _user} ->
+        pid = Util.get_pid(power_user.group_id)
+        GroupServer.refresh(pid)
         conn
         |> put_flash(:info, "User created successfully.")
-        |> redirect(to: Routes.user_path(conn, :show, user))
+        |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
