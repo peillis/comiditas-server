@@ -15,7 +15,7 @@ defmodule Comiditas.Template do
   @doc false
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:day, :breakfast, :lunch, :dinner])
-    |> validate_required([:day, :breakfast, :lunch, :dinner])
+    |> cast(params, [:day, :breakfast, :lunch, :dinner, :user_id])
+    |> validate_required([:day, :breakfast, :lunch, :dinner, :user_id])
   end
 end
