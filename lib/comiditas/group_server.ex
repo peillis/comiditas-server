@@ -23,13 +23,15 @@ defmodule Comiditas.GroupServer do
   def change_day(pid, changeset) do
     GenServer.call(pid, {:change_day, changeset})
     totals(pid, changeset.data.date)
-    totals(pid, Timex.shift(changeset.data.date, days: -1))  # in case it's breakfast
+    # in case it's breakfast
+    totals(pid, Timex.shift(changeset.data.date, days: -1))
   end
 
   def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
     GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
     gen_days_of_user(pid, length(list), uid, Comiditas.today())
     ndays = Timex.diff(date_to, date_from, :days)
+
     for d <- -1..ndays do
       totals(pid, Timex.shift(date_from, days: d))
     end
@@ -85,7 +87,11 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call({:change_days, uid, list, date_from, meal_from, date_to, meal_to, value}, _from, state) do
+  def handle_call(
+        {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value},
+        _from,
+        state
+      ) do
     user = find_user(state.users, uid)
     Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
 
@@ -105,7 +111,7 @@ defmodule Comiditas.GroupServer do
   def handle_call({:change_template, changeset}, _from, state) do
     tp = Comiditas.save_template(changeset)
 
-    {:reply, tp, refresh_user(state, changeset.data.user_id, :tps) }
+    {:reply, tp, refresh_user(state, changeset.data.user_id, :tps)}
   end
 
   @impl true
@@ -136,11 +142,13 @@ defmodule Comiditas.GroupServer do
 
   defp refresh_user(state, uid, key) do
     user = find_user(state.users, uid)
+
     mod_user =
       case key do
         :mds -> %{user | mds: Comiditas.get_mealdates_of_users([uid])}
         :tps -> %{user | tps: Comiditas.get_templates_of_users([uid])}
       end
+
     mod_users = Util.replace_in_list(mod_user, state.users, :id)
 
     %{state | users: mod_users}
@@ -163,5 +171,4 @@ defmodule Comiditas.GroupServer do
 
     %{users: users, group_id: group_id}
   end
-
 end

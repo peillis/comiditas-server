@@ -21,19 +21,21 @@ defmodule ComiditasWeb.PageView do
         else
           false
         end
-      item =
-        %{
-           date: day.date,
-           value: Map.get(day, String.to_atom(x)),
-           meal: x,
-           multi_select: multi_select
-         }
+
+      item = %{
+        date: day.date,
+        value: Map.get(day, String.to_atom(x)),
+        meal: x,
+        multi_select: multi_select
+      }
+
       {item, day}
     end)
   end
 
   def print_day(day) do
     {items, _acc} = expand_day(day)
+
     Enum.map(items, fn x ->
       ~e"""
       <td class="buttons">
@@ -49,6 +51,7 @@ defmodule ComiditasWeb.PageView do
         true -> "blink"
         _ -> nil
       end
+
     ~e"""
     <svg class="<%= class %>" data-date="<%= date %>" data-meal="<%= meal %>" version="1.1" width="4em" height="4em" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="2em" cy="2em" r="2em" fill="<%= color(value) %>"></circle>
@@ -93,5 +96,4 @@ defmodule ComiditasWeb.PageView do
   def print_date(date) do
     "#{print_weekday(Timex.weekday(date))} #{Timex.format!(date, "{D}")}"
   end
-
 end

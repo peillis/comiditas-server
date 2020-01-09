@@ -37,5 +37,4 @@ defmodule ComiditasWeb.Live.SettingsView do
       {:noreply, socket}
     end
   end
-
 end

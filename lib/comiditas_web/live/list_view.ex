@@ -27,31 +27,63 @@ defmodule ComiditasWeb.Live.ListView do
     len = length(list) + @items
 
     if len < @max_items do
-      GroupServer.gen_days_of_user(socket.assigns.pid, @items, socket.assigns.user_id, next_date, list)
+      GroupServer.gen_days_of_user(
+        socket.assigns.pid,
+        @items,
+        socket.assigns.user_id,
+        next_date,
+        list
+      )
     end
 
     {:noreply, socket}
   end
 
   def handle_event("multi_select", %{"date" => date, "meal" => meal}, socket) do
-    list = Enum.map(socket.assigns.list, fn x ->
-      if x.date == Util.str_to_date(date) do
-        Map.put(x, :multi_select, meal)
-      else
-        x
-      end
-    end)
+    list =
+      Enum.map(socket.assigns.list, fn x ->
+        if x.date == Util.str_to_date(date) do
+          Map.put(x, :multi_select, meal)
+        else
+          x
+        end
+      end)
 
     {:noreply, assign(socket, list: list)}
   end
 
-  def handle_event("multi_select", %{"date-from" => _date_from, "meal-from" => _meal_from, "date-to" => _date_to, "meal-to" => _meal_to}, socket) do
+  def handle_event(
+        "multi_select",
+        %{
+          "date-from" => _date_from,
+          "meal-from" => _meal_from,
+          "date-to" => _date_to,
+          "meal-to" => _meal_to
+        },
+        socket
+      ) do
     # multi_select clicked twice
-    GroupServer.gen_days_of_user(socket.assigns.pid, length(socket.assigns.list), socket.assigns.user_id, Comiditas.today())
+    GroupServer.gen_days_of_user(
+      socket.assigns.pid,
+      length(socket.assigns.list),
+      socket.assigns.user_id,
+      Comiditas.today()
+    )
+
     {:noreply, socket}
   end
 
-  def handle_event("change", %{"date-from" => date_from, "meal-from" => meal_from, "date-to" => date_to, "meal-to" => meal_to, "val" => value}, socket) do
+  def handle_event(
+        "change",
+        %{
+          "date-from" => date_from,
+          "meal-from" => meal_from,
+          "date-to" => date_to,
+          "meal-to" => meal_to,
+          "val" => value
+        },
+        socket
+      ) do
     GroupServer.change_days(
       socket.assigns.pid,
       socket.assigns.user_id,
@@ -90,6 +122,7 @@ defmodule ComiditasWeb.Live.ListView do
     day = Enum.find(socket.assigns.list, &(&1.date == Util.str_to_date(date)))
     changeset = Mealdate.changeset(day, change)
     GroupServer.change_day(socket.assigns.pid, changeset)
+
     GroupServer.gen_days_of_user(
       socket.assigns.pid,
       length(socket.assigns.list),
@@ -97,5 +130,4 @@ defmodule ComiditasWeb.Live.ListView do
       Comiditas.today()
     )
   end
-
 end

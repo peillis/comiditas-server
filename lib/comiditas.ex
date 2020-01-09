@@ -127,10 +127,13 @@ defmodule Comiditas do
         case x.date do
           ^date_from ->
             get_meals(meal_from, :from)
+
           ^date_to ->
             get_meals(meal_to, :to)
+
           d when d > date_from and d < date_to ->
             [:breakfast, :lunch, :dinner]
+
           _ ->
             []
         end
@@ -146,7 +149,7 @@ defmodule Comiditas do
   def build_changeset(day, meals, value) do
     change =
       meals
-      |> Enum.map(& {&1, value})
+      |> Enum.map(&{&1, value})
       |> Enum.into(%{})
 
     Mealdate.changeset(day, change)
@@ -154,7 +157,8 @@ defmodule Comiditas do
 
   def get_meals(meal, from_to) do
     list = [:breakfast, :lunch, :dinner]
-    ind = Enum.find_index(list, & &1 == meal)
+    ind = Enum.find_index(list, &(&1 == meal))
+
     case from_to do
       :from -> Enum.slice(list, ind, 10)
       :to -> Enum.slice(list, 0, ind + 1)

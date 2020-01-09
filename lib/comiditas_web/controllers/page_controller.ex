@@ -41,10 +41,12 @@ defmodule ComiditasWeb.PageController do
     # Add the group_id to the user
     power_user = Guardian.Plug.current_resource(conn)
     user_params = Map.put(user_params, "group_id", power_user.group_id)
+
     case Admin.create_user(user_params) do
       {:ok, _user} ->
         pid = Util.get_pid(power_user.group_id)
         GroupServer.refresh(pid)
+
         conn
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))

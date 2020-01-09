@@ -16,7 +16,8 @@ defmodule ComiditasWeb.Live.TotalsView do
     Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
     totals = GroupServer.totals(pid, date)
 
-    {:ok, assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [])}
+    {:ok,
+     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [])}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
@@ -36,7 +37,7 @@ defmodule ComiditasWeb.Live.TotalsView do
   end
 
   def handle_event("show_list", %{"meal" => meal, "val" => value}, socket) do
-    list = socket.assigns.totals[String.to_atom meal][value]
+    list = socket.assigns.totals[String.to_atom(meal)][value]
     {:noreply, assign(socket, list: list)}
   end
 
@@ -45,7 +46,7 @@ defmodule ComiditasWeb.Live.TotalsView do
   end
 
   def handle_event("show_notes", %{"notes" => value}, socket) do
-    notes = socket.assigns.totals[String.to_atom value]
+    notes = socket.assigns.totals[String.to_atom(value)]
     {:noreply, assign(socket, notes: notes)}
   end
 
