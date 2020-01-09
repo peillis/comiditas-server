@@ -184,3 +184,7 @@ a, td, svg text::selection {
 .edit input {
     font-size: 1.3em;
 }
+.edit .delete {
+    color: red;
+    border-color: red;
+}

@@ -1,3 +1,9 @@
+<%= if @view_template == "edit.html" do %>
+  <%= form_for @conn, Routes.page_path(@conn, :delete, @user.id), [method: "delete", onsubmit: "return confirm('Are you sure?');"], fn f -> %>
+    <%= submit "Delete", class: "delete button button-outline" %>&nbsp;&nbsp;
+  <% end %>
+<% end %>
+
 <%= form_for @changeset, @action, [multipart: true, id: "torch-form"], fn f -> %>
   <fieldset class="torch-panel">
     <%= if @changeset.action do %>

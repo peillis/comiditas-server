@@ -74,4 +74,16 @@ defmodule ComiditasWeb.PageController do
         render(conn, "edit.html", user: user, changeset: changeset)
     end
   end
+
+  def delete(conn, %{"uid" => uid}) do
+    user = Admin.get_user!(uid)
+    power_user = Guardian.Plug.current_resource(conn)
+    {:ok, _user} = Admin.delete_user(user)
+    pid = Util.get_pid(power_user.group_id)
+    GroupServer.refresh(pid)
+
+    conn
+    |> put_flash(:info, "User deleted successfully.")
+    |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+  end
 end

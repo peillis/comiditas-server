@@ -44,7 +44,6 @@ defmodule ComiditasWeb.Router do
   scope "/", ComiditasWeb do
     pipe_through [:browser, :auth, :ensure_auth, :power_user]
 
-    # live "/list", Live.ListView
     get "/list", PageController, :list
     get "/settings", PageController, :settings
     get "/totals", PageController, :totals
@@ -53,6 +52,7 @@ defmodule ComiditasWeb.Router do
     put "/users/:uid", PageController, :update
     get "/users/new", PageController, :new
     post "/users", PageController, :create
+    delete "/users/:uid", PageController, :delete
   end
 
   scope "/", ComiditasWeb do
