@@ -8,7 +8,7 @@
       </tr>
       <% end %>
       <tr>
-        <td colspan="2"><a href="<%= Routes.page_path(@conn, :new, uid: @conn.params["uid"]) %>">Add User</a></td>
+        <td colspan="2"><button onclick="window.location.href = '<%= Routes.page_path(@conn, :new, uid: @conn.params["uid"]) %>';">Add User</button></td>
       </tr>
     </tbody>
   </table>
