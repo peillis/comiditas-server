@@ -223,7 +223,7 @@ defmodule Comiditas.GroupServer do
   end
 
   defp update_timestamp(state) do
-    %{state | last_op: Timex.now()}
+    Map.put(state, :last_op, Timex.now())
   end
 
   defp check_time_running do

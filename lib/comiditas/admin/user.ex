@@ -49,7 +49,6 @@ defmodule Comiditas.Admin.User do
         else
           []
         end
-
       else
         []
       end
