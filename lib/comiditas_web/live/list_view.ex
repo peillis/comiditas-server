@@ -15,24 +15,20 @@ defmodule ComiditasWeb.Live.ListView do
     pid = Util.get_pid(session.user.group_id)
 
     Endpoint.subscribe(Comiditas.user_topic(session.uid))
-    list = GroupServer.gen_days_of_user(pid, @items, session.uid, Comiditas.today())
+    list = GroupServer.gen_days_of_user(pid, @items, session.uid)
 
     {:ok, assign(socket, pid: pid, user_id: session.uid, list: list)}
   end
 
   def handle_event("view_more", _value, socket) do
-    list = socket.assigns.list
-    last = Enum.at(list, -1)
-    next_date = Timex.shift(last.date, days: 1)
-    len = length(list) + @items
+    len = length(socket.assigns.list) + @items
 
     if len < @max_items do
       GroupServer.gen_days_of_user(
         socket.assigns.pid,
         @items,
         socket.assigns.user_id,
-        next_date,
-        list
+        socket.assigns.list
       )
     end
 
@@ -66,8 +62,7 @@ defmodule ComiditasWeb.Live.ListView do
     GroupServer.gen_days_of_user(
       socket.assigns.pid,
       length(socket.assigns.list),
-      socket.assigns.user_id,
-      Comiditas.today()
+      socket.assigns.user_id
     )
 
     {:noreply, socket}
@@ -126,8 +121,7 @@ defmodule ComiditasWeb.Live.ListView do
     GroupServer.gen_days_of_user(
       socket.assigns.pid,
       length(socket.assigns.list),
-      socket.assigns.user_id,
-      Comiditas.today()
+      socket.assigns.user_id
     )
   end
 end

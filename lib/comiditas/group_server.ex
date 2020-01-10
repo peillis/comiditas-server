@@ -16,8 +16,8 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, :get_state)
   end
 
-  def gen_days_of_user(pid, n, user_id, date, list \\ []) do
-    GenServer.call(pid, {:gen_days_of_user, n, user_id, date, list})
+  def gen_days_of_user(pid, n, user_id, list \\ []) do
+    GenServer.call(pid, {:gen_days_of_user, n, user_id, list})
   end
 
   def change_day(pid, changeset) do
@@ -29,7 +29,7 @@ defmodule Comiditas.GroupServer do
 
   def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
     GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
-    gen_days_of_user(pid, length(list), uid, Comiditas.today())
+    gen_days_of_user(pid, length(list), uid)
     ndays = Timex.diff(date_to, date_from, :days)
 
     for d <- -1..ndays do
@@ -44,7 +44,7 @@ defmodule Comiditas.GroupServer do
   def change_template(pid, changeset) do
     GenServer.call(pid, {:change_template, changeset})
     templates_of_user(pid, changeset.data.user_id)
-    gen_days_of_user(pid, 15, changeset.data.user_id, Comiditas.today())
+    gen_days_of_user(pid, 15, changeset.data.user_id)
     totals(pid, Comiditas.today())
   end
 
@@ -128,8 +128,13 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call({:gen_days_of_user, n, user_id, date, list}, _from, state) do
+  def handle_call({:gen_days_of_user, n, user_id, list}, _from, state) do
     user = find_user(state.users, user_id)
+    date =
+      case Enum.at(list, -1) do
+        nil -> Comiditas.today()
+        last -> Timex.shift(last.date, days: 1)
+      end
     new_list = list ++ Comiditas.generate_days(n, user.mds, user.tps, date)
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list})
 
