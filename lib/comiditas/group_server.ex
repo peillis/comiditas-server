@@ -58,12 +58,25 @@ defmodule Comiditas.GroupServer do
 
   @impl true
   def init(group_id) do
-    {:ok, get_data(group_id)}
+    state =
+      group_id
+      |> get_data()
+      |> Map.put(:start, Timex.now())
+      |> Map.put(:last_op, Timex.now())
+
+    check_time_running()
+
+    {:ok, state}
   end
 
   @impl true
   def handle_cast(:refresh, state) do
-    {:noreply, get_data(state.group_id)}
+    state =
+      state.group_id
+      |> get_data()
+      |> update_timestamp()
+
+    {:noreply, state}
   end
 
   @impl true
@@ -74,7 +87,7 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call(:get_uids, _from, state) do
     user_ids = Enum.map(state.users, & &1.id)
-    {:reply, user_ids, state}
+    {:reply, user_ids, update_timestamp(state)}
   end
 
   @impl true
@@ -83,7 +96,12 @@ defmodule Comiditas.GroupServer do
     tpl = Enum.find(user.tps, &(&1.day == changeset.data.weekday))
     Comiditas.save_day(changeset, tpl)
 
-    {:reply, nil, refresh_user(state, user.id, :mds)}
+    state =
+      state
+      |> refresh_user(user.id, :mds)
+      |> update_timestamp()
+
+    {:reply, nil, state}
   end
 
   @impl true
@@ -95,7 +113,12 @@ defmodule Comiditas.GroupServer do
     user = find_user(state.users, uid)
     Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
 
-    {:reply, nil, refresh_user(state, uid, :mds)}
+    state =
+      state
+      |> refresh_user(uid, :mds)
+      |> update_timestamp()
+
+    {:reply, nil, state}
   end
 
   @impl true
@@ -104,14 +127,19 @@ defmodule Comiditas.GroupServer do
     tps = Enum.sort_by(user.tps, & &1.day)
     Endpoint.broadcast(Comiditas.templates_user_topic(uid), "templates", %{templates: tps})
 
-    {:reply, tps, state}
+    {:reply, tps, update_timestamp(state)}
   end
 
   @impl true
   def handle_call({:change_template, changeset}, _from, state) do
     tp = Comiditas.save_template(changeset)
 
-    {:reply, tp, refresh_user(state, changeset.data.user_id, :tps)}
+    state =
+      state
+      |> refresh_user(changeset.data.user_id, :tps)
+      |> update_timestamp()
+
+    {:reply, tp, state}
   end
 
   @impl true
@@ -124,21 +152,38 @@ defmodule Comiditas.GroupServer do
       totals
     )
 
-    {:reply, totals, state}
+    {:reply, totals, update_timestamp(state)}
   end
 
   @impl true
   def handle_call({:gen_days_of_user, n, user_id, list}, _from, state) do
     user = find_user(state.users, user_id)
+
     date =
       case Enum.at(list, -1) do
         nil -> Comiditas.today()
         last -> Timex.shift(last.date, days: 1)
       end
+
     new_list = list ++ Comiditas.generate_days(n, user.mds, user.tps, date)
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list})
 
-    {:reply, new_list, state}
+    {:reply, new_list, update_timestamp(state)}
+  end
+
+  @impl true
+  def handle_info(:suicide, state) do
+    # stops genserver if not accessed in the last hour
+    diff = Timex.diff(Timex.now(), state.last_op, :minutes)
+
+    case diff do
+      x when x > 60 ->
+        {:stop, :normal, state}
+
+      _ ->
+        check_time_running()
+        {:noreply, state}
+    end
   end
 
   defp find_user(users, user_id) do
@@ -175,5 +220,14 @@ defmodule Comiditas.GroupServer do
       |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
 
     %{users: users, group_id: group_id}
+  end
+
+  defp update_timestamp(state) do
+    %{state | last_op: Timex.now()}
+  end
+
+  defp check_time_running do
+    # check every 15 minutes
+    Process.send_after(self(), :suicide, 15 * 60 * 1000)
   end
 end

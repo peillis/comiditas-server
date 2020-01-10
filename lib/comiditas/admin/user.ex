@@ -42,6 +42,7 @@ defmodule Comiditas.Admin.User do
        ) do
     validate_change(changeset, :power_user, fn :power_user, power_user ->
       users = Comiditas.get_users(changeset.data.group_id)
+
       if Enum.count(users, &(&1.power_user == true)) < 2 do
         [power_user: "This is the last power user."]
       else
