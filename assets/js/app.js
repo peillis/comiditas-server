@@ -17,7 +17,7 @@ import "phoenix_html"
 // import socket from "./socket"
 
 import {Socket} from "phoenix"
-import {LiveSocket, debug} from "phoenix_live_view"
+import {LiveSocket} from "phoenix_live_view"
 
 let Hooks = {}
 
@@ -117,7 +117,7 @@ switch (window.location.pathname) {
                 let modal_bck = document.getElementById('modal-background')
                 modal_bck.addEventListener('click', hideModal)
                 let scrollfn = (ev) => {
-                    if ((window.innerHeight + window.scrollY + 250) >= document.body.offsetHeight) {
+                    if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
                         this.pushEvent('view_more', null)
                     }
                     hideSelector()
@@ -179,5 +179,5 @@ switch (window.location.pathname) {
         break
 }
 
-let liveSocket = new LiveSocket("/live", Socket, {viewLogger: debug, hooks: Hooks})
+let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks})
 liveSocket.connect()
