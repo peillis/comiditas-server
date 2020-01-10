@@ -41,10 +41,15 @@ defmodule Comiditas.Admin.User do
          %Ecto.Changeset{valid?: true, changes: %{power_user: false}} = changeset
        ) do
     validate_change(changeset, :power_user, fn :power_user, power_user ->
-      users = Comiditas.get_users(changeset.data.group_id)
+      if changeset.data.group_id do
+        users = Comiditas.get_users(changeset.data.group_id)
 
-      if Enum.count(users, &(&1.power_user == true)) < 2 do
-        [power_user: "This is the last power user."]
+        if Enum.count(users, &(&1.power_user == true)) < 2 do
+          [power_user: "This is the last power user."]
+        else
+          []
+        end
+
       else
         []
       end
