@@ -45,7 +45,7 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:change_template, changeset})
     templates_of_user(pid, changeset.data.user_id)
     gen_days_of_user(pid, 15, changeset.data.user_id)
-    totals(pid, Comiditas.today())
+    totals(pid, today(pid))
   end
 
   def totals(pid, date) do
@@ -54,6 +54,10 @@ defmodule Comiditas.GroupServer do
 
   def get_uids(pid) do
     GenServer.call(pid, :get_uids)
+  end
+
+  def today(pid) do
+    GenServer.call(pid, :today)
   end
 
   @impl true
@@ -161,7 +165,7 @@ defmodule Comiditas.GroupServer do
 
     date =
       case Enum.at(list, -1) do
-        nil -> Comiditas.today()
+        nil -> get_today(state.timezone)
         last -> Timex.shift(last.date, days: 1)
       end
 
@@ -169,6 +173,11 @@ defmodule Comiditas.GroupServer do
     Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list})
 
     {:reply, new_list, update_timestamp(state)}
+  end
+
+  @impl true
+  def handle_call(:today, _from, state) do
+    {:reply, get_today(state.timezone), state}
   end
 
   @impl true
@@ -186,16 +195,23 @@ defmodule Comiditas.GroupServer do
     end
   end
 
+  defp get_today(timezone) do
+    Timex.now()
+    |> Timex.Timezone.convert(timezone)
+    |> DateTime.to_date()
+  end
+
   defp find_user(users, user_id) do
     Enum.find(users, &(&1.id == user_id))
   end
 
   defp refresh_user(state, uid, key) do
     user = find_user(state.users, uid)
+    today = get_today(state.timezone)
 
     mod_user =
       case key do
-        :mds -> %{user | mds: Comiditas.get_mealdates_of_users([uid])}
+        :mds -> %{user | mds: Comiditas.get_mealdates_of_users([uid], today)}
         :tps -> %{user | tps: Comiditas.get_templates_of_users([uid])}
       end
 
@@ -210,8 +226,9 @@ defmodule Comiditas.GroupServer do
       |> Comiditas.get_users()
       |> Enum.map(&Map.take(&1, [:id, :name]))
 
+    timezone = Comiditas.get_timezone(group_id)
     user_ids = Enum.map(users, & &1.id)
-    mealdates = Comiditas.get_mealdates_of_users(user_ids)
+    mealdates = Comiditas.get_mealdates_of_users(user_ids, get_today(timezone))
     templates = Comiditas.get_templates_of_users(user_ids)
 
     users =
@@ -219,7 +236,7 @@ defmodule Comiditas.GroupServer do
       |> Enum.map(&Map.merge(&1, %{mds: Comiditas.filter(mealdates, &1.id)}))
       |> Enum.map(&Map.merge(&1, %{tps: Comiditas.filter(templates, &1.id)}))
 
-    %{users: users, group_id: group_id}
+    %{users: users, group_id: group_id, timezone: timezone}
   end
 
   defp update_timestamp(state) do

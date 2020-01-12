@@ -12,6 +12,12 @@
       <%= text_input f, :name %>
       <%= error_tag f, :name %>
     </div>
+
+    <div class="torch-form-group">
+      <%= label f, :timezone %>
+      <%= text_input f, :timezone %>
+      <%= error_tag f, :timezone %>
+    </div>
   
     <div class="torch-submit-form">
       <%= submit "Submit", class: "torch-submit-button" %>

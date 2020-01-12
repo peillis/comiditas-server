@@ -11,13 +11,13 @@ defmodule ComiditasWeb.Live.TotalsView do
   def mount(session, socket) do
     group_id = session.user.group_id
     pid = Util.get_pid(group_id)
-    date = Comiditas.today()
+    date = GroupServer.today(pid)
 
     Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
     totals = GroupServer.totals(pid, date)
 
     {:ok,
-     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [])}
+     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [], today: date)}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do

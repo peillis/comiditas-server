@@ -9,12 +9,8 @@ defmodule Comiditas do
 
   import Ecto.Query
 
-  alias Comiditas.Admin.User
+  alias Comiditas.Admin.{Group, User}
   alias Comiditas.{Mealdate, Repo, Template}
-
-  def today() do
-    Timex.today()
-  end
 
   def totals_topic(group_id, date) do
     "group:#{group_id}-day:#{date}"
@@ -106,9 +102,9 @@ defmodule Comiditas do
     |> Repo.all()
   end
 
-  def get_mealdates_of_users(user_ids) do
+  def get_mealdates_of_users(user_ids, date) do
     Mealdate
-    |> where([m], m.date >= ^today())
+    |> where([m], m.date >= ^date)
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
   end
@@ -117,6 +113,10 @@ defmodule Comiditas do
     Template
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
+  end
+
+  def get_timezone(group_id) do
+    Repo.get(Group, group_id).timezone
   end
 
   # Functions for changing multiple days

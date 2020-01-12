@@ -40,7 +40,7 @@ defmodule Comiditas.Admin.User do
   defp validate_last_power_user(
          %Ecto.Changeset{valid?: true, changes: %{power_user: false}} = changeset
        ) do
-    validate_change(changeset, :power_user, fn :power_user, power_user ->
+    validate_change(changeset, :power_user, fn :power_user, _power_user ->
       if changeset.data.group_id do
         users = Comiditas.get_users(changeset.data.group_id)
 
