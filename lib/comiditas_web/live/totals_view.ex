@@ -12,12 +12,14 @@ defmodule ComiditasWeb.Live.TotalsView do
     group_id = session.user.group_id
     pid = Util.get_pid(group_id)
     date = GroupServer.today(pid)
+    frozen = Comiditas.frozen?(group_id, date)
+    power_user = session.user.power_user
 
     Endpoint.subscribe(Comiditas.totals_topic(group_id, date))
     totals = GroupServer.totals(pid, date)
 
     {:ok,
-     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [], today: date)}
+     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [], today: date, frozen: frozen, power_user: power_user)}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
@@ -52,5 +54,15 @@ defmodule ComiditasWeb.Live.TotalsView do
 
   def handle_event("hide_notes", _value, socket) do
     {:noreply, assign(socket, notes: [])}
+  end
+
+  def handle_event("freeze", _value, socket) do
+    GroupServer.freeze(socket.assigns.pid)
+    {:noreply, assign(socket, frozen: true)}
+  end
+
+  def handle_event("unfreeze", _value, socket) do
+    GroupServer.unfreeze(socket.assigns.pid)
+    {:noreply, assign(socket, frozen: false)}
   end
 end

@@ -55,6 +55,15 @@
     </tbody>
   </table>
   <% end %>
+
+  <%= if @today == @date and @power_user do %>
+    <%= if @frozen do %>
+    <button phx-click="unfreeze">Unfreeze</button>
+    <% else %>
+    <button phx-click="freeze">Freeze</button>
+    <% end %>
+  <% end %>
+
   <br/><br/>
 
   <%= if length(@list) > 0 do %>

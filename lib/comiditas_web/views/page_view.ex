@@ -33,15 +33,23 @@ defmodule ComiditasWeb.PageView do
     end)
   end
 
-  def print_day(day) do
+  def print_day(day, today, frozen) do
     {items, _acc} = expand_day(day)
 
     Enum.map(items, fn x ->
+      if x.date == today and frozen do
+      ~e"""
+      <td class="buttons frozen">
+        <%= circle(x.value, x.date, x.meal, x.multi_select) %>
+      </td>
+      """
+      else
       ~e"""
       <td class="buttons">
         <%= circle(x.value, x.date, x.meal, x.multi_select) %>
       </td>
       """
+      end
     end)
   end
 

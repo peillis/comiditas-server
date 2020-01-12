@@ -12,12 +12,14 @@ defmodule ComiditasWeb.Live.ListView do
   end
 
   def mount(session, socket) do
-    pid = Util.get_pid(session.user.group_id)
+    group_id = session.user.group_id
+    pid = Util.get_pid(group_id)
+    today = GroupServer.today(pid)
 
     Endpoint.subscribe(Comiditas.user_topic(session.uid))
     list = GroupServer.gen_days_of_user(pid, @items, session.uid)
 
-    {:ok, assign(socket, pid: pid, user_id: session.uid, list: list)}
+    {:ok, assign(socket, pid: pid, user_id: session.uid, list: list, frozen: false, today: today)}
   end
 
   def handle_event("view_more", _value, socket) do
@@ -107,7 +109,7 @@ defmodule ComiditasWeb.Live.ListView do
 
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.user_topic(socket.assigns.user_id) do
-      {:noreply, assign(socket, list: state.list)}
+      {:noreply, assign(socket, list: state.list, frozen: state.frozen)}
     else
       {:noreply, socket}
     end

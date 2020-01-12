@@ -61,6 +61,9 @@ let select = (event) => {
     if (event.target.tagName != "TD") {
         parent = event.target.closest('.buttons')
     }
+    if (parent.classList.contains('frozen')) {
+        return
+    }
     let elem = parent.lastElementChild
     if (document.getElementsByClassName('blink').length > 0){
         // multi select
@@ -130,6 +133,9 @@ switch (window.location.pathname) {
         let showModal = (event) => {
             let elem = event.target
             if (elem.tagName == "I") elem = elem.parentNode
+            if (elem.classList.contains('frozen')) {
+                return
+            }
             let modal = document.getElementById('modal')
             let modal_bck = document.getElementById('modal-background')
             let notes = document.getElementById('notes')

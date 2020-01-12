@@ -60,6 +60,16 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, :today)
   end
 
+  def freeze(pid) do
+    GenServer.cast(pid, :freeze)
+    Enum.each(get_uids(pid), &(gen_days_of_user(pid, 15, &1)))
+  end
+
+  def unfreeze(pid) do
+    GenServer.cast(pid, :unfreeze)
+    Enum.each(get_uids(pid), &(gen_days_of_user(pid, 15, &1)))
+  end
+
   @impl true
   def init(group_id) do
     state =
@@ -168,9 +178,10 @@ defmodule Comiditas.GroupServer do
         nil -> get_today(state.timezone)
         last -> Timex.shift(last.date, days: 1)
       end
+    frozen = Comiditas.frozen?(state.group_id, get_today(state.timezone))
 
     new_list = list ++ Comiditas.generate_days(n, user.mds, user.tps, date)
-    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list})
+    Endpoint.broadcast(Comiditas.user_topic(user_id), "list", %{list: new_list, frozen: frozen})
 
     {:reply, new_list, update_timestamp(state)}
   end
@@ -178,6 +189,18 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call(:today, _from, state) do
     {:reply, get_today(state.timezone), state}
+  end
+
+  @impl true
+  def handle_cast(:freeze, state) do
+    Comiditas.freeze(state.group_id, get_today(state.timezone))
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast(:unfreeze, state) do
+    Comiditas.unfreeze(state.group_id, get_today(state.timezone))
+    {:noreply, state}
   end
 
   @impl true

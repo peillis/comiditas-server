@@ -58,8 +58,11 @@ td {
     color: black;
     font-size: 27px;
 }
-.buttons {
+.buttons, .frozen {
     font-size: 13px;
+}
+.frozen {
+    background-color: darkgrey;
 }
 .weekday-6, .weekday-7 {
     background-color: lightgray;

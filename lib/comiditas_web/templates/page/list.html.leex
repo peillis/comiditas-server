@@ -11,7 +11,7 @@
     </thead>
     <tbody id="my_table" phx-hook="TableHook">
       <%= for day <- @list do %>
-        <%= render ComiditasWeb.PageView, "_row.html", day: day %>
+        <%= render ComiditasWeb.PageView, "_row.html", day: day, today: @today, frozen: @frozen %>
       <% end %>
     </tbody>
   </table>

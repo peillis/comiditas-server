@@ -10,7 +10,7 @@ defmodule Comiditas do
   import Ecto.Query
 
   alias Comiditas.Admin.{Group, User}
-  alias Comiditas.{Mealdate, Repo, Template}
+  alias Comiditas.{Frozen, Mealdate, Repo, Template}
 
   def totals_topic(group_id, date) do
     "group:#{group_id}-day:#{date}"
@@ -93,6 +93,24 @@ defmodule Comiditas do
 
   def save_template(changeset) do
     Repo.update!(changeset)
+  end
+
+  def freeze(group_id, date) do
+    Repo.insert(%Frozen{date: date, group_id: group_id})
+  end
+
+  def unfreeze(group_id, date) do
+    Frozen
+    |> where(group_id: ^group_id)
+    |> where(date: ^date)
+    |> Repo.delete_all
+  end
+
+  def frozen?(group_id, date) do
+    case Repo.get_by(Frozen, [group_id: group_id, date: date]) do
+      nil -> false
+      _ -> true
+    end
   end
 
   def get_users(group_id) do
