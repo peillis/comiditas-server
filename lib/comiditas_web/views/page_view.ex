@@ -37,7 +37,8 @@ defmodule ComiditasWeb.PageView do
     {items, _acc} = expand_day(day)
 
     Enum.map(items, fn x ->
-      if x.date == today and frozen do
+      tomorrow = Timex.shift(today, days: 1)
+      if frozen and (x.date == today or (x.date == tomorrow and x.meal == "breakfast"))  do
       ~e"""
       <td class="buttons frozen">
         <%= circle(x.value, x.date, x.meal, x.multi_select) %>
