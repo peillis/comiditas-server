@@ -12,6 +12,7 @@ body {
 .login {
     max-width: 20em;
     margin: auto;
+    padding: 2em;
 }
 .red {
     color: red;
