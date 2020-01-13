@@ -88,8 +88,14 @@ let select = (event) => {
 
 let next_button = (elem) => {
     let td = elem.parentElement
-    if (td.nextElementSibling.className == 'buttons') {
-        return td.nextElementSibling.firstElementChild
+    if (td.nextElementSibling != null) {
+        if (td.nextElementSibling.className == 'buttons'){
+            return td.nextElementSibling.firstElementChild
+        }
+        else {
+            let td_of_next_tr = td.parentElement.nextElementSibling.children[1]
+            return td_of_next_tr.firstElementChild
+        }
     }
     else {
         let td_of_next_tr = td.parentElement.nextElementSibling.children[1]

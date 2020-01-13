@@ -131,6 +131,7 @@ defmodule Comiditas do
     Template
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
+    |> Enum.map(&Map.put(&1, :multi_select, false))
   end
 
   def get_timezone(group_id) do
@@ -182,4 +183,35 @@ defmodule Comiditas do
       :to -> Enum.slice(list, 0, ind + 1)
     end
   end
+
+  # Functions for changing multiple templates
+
+  def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
+    Enum.each(list, fn x ->
+      meals =
+        case x.day do
+          ^day_from ->
+            get_meals(meal_from, :from)
+
+          ^day_to ->
+            get_meals(meal_to, :to)
+
+          d when d > day_from and d < day_to ->
+            [:breakfast, :lunch, :dinner]
+
+          _ ->
+            []
+        end
+
+      if length(meals) > 0 do
+        change =
+          meals
+          |> Enum.map(&{&1, value})
+          |> Enum.into(%{})
+        changeset = Template.changeset(x, change)
+        save_template(changeset)
+      end
+    end)
+  end
+
 end

@@ -15,18 +15,11 @@ defmodule ComiditasWeb.PageView do
 
   def expand_day(day) do
     Enum.map_reduce(["breakfast", "lunch", "dinner"], day, fn x, day ->
-      multi_select =
-        if day.multi_select == x do
-          true
-        else
-          false
-        end
-
       item = %{
         date: day.date,
         value: Map.get(day, String.to_atom(x)),
         meal: x,
-        multi_select: multi_select
+        multi_select: day.multi_select
       }
 
       {item, day}
@@ -57,7 +50,7 @@ defmodule ComiditasWeb.PageView do
 
   def circle(value, date \\ nil, meal \\ nil, multi_select \\ false) do
     class =
-      case multi_select do
+      case multi_select == meal do
         true -> "blink"
         _ -> nil
       end

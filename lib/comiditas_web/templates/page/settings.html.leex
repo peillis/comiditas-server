@@ -13,13 +13,13 @@
         <tr class="weekday-<%= t.day %>">
           <td class="day"><%= print_weekday(t.day) %></td>
           <td class="buttons">
-          <%= circle(t.breakfast, t.day, "breakfast") %>
+          <%= circle(t.breakfast, t.day, "breakfast", t.multi_select) %>
           </td>
           <td class="buttons">
-          <%= circle(t.lunch, t.day, "lunch") %>
+          <%= circle(t.lunch, t.day, "lunch", t.multi_select) %>
           </td>
           <td class="buttons">
-          <%= circle(t.dinner, t.day, "dinner") %>
+          <%= circle(t.dinner, t.day, "dinner", t.multi_select) %>
           </td>
         </tr>
       <% end %>

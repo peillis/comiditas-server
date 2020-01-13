@@ -48,6 +48,12 @@ defmodule Comiditas.GroupServer do
     totals(pid, today(pid))
   end
 
+  def change_templates(pid, uid, day_from, meal_from, day_to, meal_to, value) do
+    GenServer.call(pid, {:change_templates, uid, day_from, meal_from, day_to, meal_to, value})
+    templates_of_user(pid, uid)
+    totals(pid, today(pid))
+  end
+
   def totals(pid, date) do
     GenServer.call(pid, {:totals, date})
   end
@@ -154,6 +160,23 @@ defmodule Comiditas.GroupServer do
       |> update_timestamp()
 
     {:reply, tp, state}
+  end
+
+  @impl true
+  def handle_call(
+        {:change_templates, uid, day_from, meal_from, day_to, meal_to, value},
+        _from,
+        state
+      ) do
+    user = find_user(state.users, uid)
+    Comiditas.change_templates(user.tps, day_from, meal_from, day_to, meal_to, value)
+
+    state =
+      state
+      |> refresh_user(uid, :tps)
+      |> update_timestamp()
+
+    {:reply, nil, state}
   end
 
   @impl true
