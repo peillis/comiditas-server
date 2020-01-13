@@ -142,21 +142,7 @@ defmodule Comiditas do
 
   def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
     Enum.each(list, fn x ->
-      meals =
-        case x.date do
-          ^date_from ->
-            get_meals(meal_from, :from)
-
-          ^date_to ->
-            get_meals(meal_to, :to)
-
-          d when d > date_from and d < date_to ->
-            [:breakfast, :lunch, :dinner]
-
-          _ ->
-            []
-        end
-
+      meals = get_meals(x.date, date_from, meal_from, date_to, meal_to)
       if length(meals) > 0 do
         changeset = build_changeset(x, meals, value)
         template = Enum.find(templates, &(&1.day == changeset.data.weekday))
@@ -174,6 +160,22 @@ defmodule Comiditas do
     Mealdate.changeset(day, change)
   end
 
+  def get_meals(date, date_from, meal_from, date_to, meal_to) do
+    case date do
+      ^date_from ->
+        get_meals(meal_from, :from)
+
+      ^date_to ->
+        get_meals(meal_to, :to)
+
+      d when d > date_from and d < date_to ->
+        [:breakfast, :lunch, :dinner]
+
+      _ ->
+        []
+    end
+  end
+
   def get_meals(meal, from_to) do
     list = [:breakfast, :lunch, :dinner]
     ind = Enum.find_index(list, &(&1 == meal))
@@ -188,21 +190,7 @@ defmodule Comiditas do
 
   def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
     Enum.each(list, fn x ->
-      meals =
-        case x.day do
-          ^day_from ->
-            get_meals(meal_from, :from)
-
-          ^day_to ->
-            get_meals(meal_to, :to)
-
-          d when d > day_from and d < day_to ->
-            [:breakfast, :lunch, :dinner]
-
-          _ ->
-            []
-        end
-
+      meals = get_meals(x.day, day_from, meal_from, day_to, meal_to)
       if length(meals) > 0 do
         change =
           meals

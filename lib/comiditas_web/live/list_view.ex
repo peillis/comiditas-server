@@ -50,16 +50,7 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, assign(socket, list: list)}
   end
 
-  def handle_event(
-        "multi_select",
-        %{
-          "date-from" => _date_from,
-          "meal-from" => _meal_from,
-          "date-to" => _date_to,
-          "meal-to" => _meal_to
-        },
-        socket
-      ) do
+  def handle_event("multi_select", _data, socket) do
     # multi_select clicked twice
     GroupServer.gen_days_of_user(
       socket.assigns.pid,
