@@ -62,12 +62,12 @@ defmodule Comiditas.GroupServer do
 
   def freeze(pid) do
     GenServer.cast(pid, :freeze)
-    Enum.each(get_uids(pid), &(gen_days_of_user(pid, 15, &1)))
+    Enum.each(get_uids(pid), &gen_days_of_user(pid, 15, &1))
   end
 
   def unfreeze(pid) do
     GenServer.cast(pid, :unfreeze)
-    Enum.each(get_uids(pid), &(gen_days_of_user(pid, 15, &1)))
+    Enum.each(get_uids(pid), &gen_days_of_user(pid, 15, &1))
   end
 
   @impl true
@@ -178,6 +178,7 @@ defmodule Comiditas.GroupServer do
         nil -> get_today(state.timezone)
         last -> Timex.shift(last.date, days: 1)
       end
+
     frozen = Comiditas.frozen?(state.group_id, get_today(state.timezone))
 
     new_list = list ++ Comiditas.generate_days(n, user.mds, user.tps, date)

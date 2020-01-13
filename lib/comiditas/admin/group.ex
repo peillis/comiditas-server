@@ -20,7 +20,7 @@ defmodule Comiditas.Admin.Group do
 
   defp validate_timezone(changeset, field, options \\ []) do
     validate_change(changeset, field, fn _, timezone ->
-      if timezone in Timex.timezones do
+      if timezone in Timex.timezones() do
         []
       else
         [{field, "Not valid timezone"}]

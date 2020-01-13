@@ -38,18 +38,19 @@ defmodule ComiditasWeb.PageView do
 
     Enum.map(items, fn x ->
       tomorrow = Timex.shift(today, days: 1)
-      if frozen and (x.date == today or (x.date == tomorrow and x.meal == "breakfast"))  do
-      ~e"""
-      <td class="buttons frozen">
-        <%= circle(x.value, x.date, x.meal, x.multi_select) %>
-      </td>
-      """
+
+      if frozen and (x.date == today or (x.date == tomorrow and x.meal == "breakfast")) do
+        ~e"""
+        <td class="buttons frozen">
+          <%= circle(x.value, x.date, x.meal, x.multi_select) %>
+        </td>
+        """
       else
-      ~e"""
-      <td class="buttons">
-        <%= circle(x.value, x.date, x.meal, x.multi_select) %>
-      </td>
-      """
+        ~e"""
+        <td class="buttons">
+          <%= circle(x.value, x.date, x.meal, x.multi_select) %>
+        </td>
+        """
       end
     end)
   end

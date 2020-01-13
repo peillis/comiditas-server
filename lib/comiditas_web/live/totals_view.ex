@@ -19,7 +19,17 @@ defmodule ComiditasWeb.Live.TotalsView do
     totals = GroupServer.totals(pid, date)
 
     {:ok,
-     assign(socket, pid: pid, group_id: group_id, date: date, totals: totals, list: [], notes: [], today: date, frozen: frozen, power_user: power_user)}
+     assign(socket,
+       pid: pid,
+       group_id: group_id,
+       date: date,
+       totals: totals,
+       list: [],
+       notes: [],
+       today: date,
+       frozen: frozen,
+       power_user: power_user
+     )}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do

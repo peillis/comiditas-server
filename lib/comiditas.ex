@@ -103,11 +103,11 @@ defmodule Comiditas do
     Frozen
     |> where(group_id: ^group_id)
     |> where(date: ^date)
-    |> Repo.delete_all
+    |> Repo.delete_all()
   end
 
   def frozen?(group_id, date) do
-    case Repo.get_by(Frozen, [group_id: group_id, date: date]) do
+    case Repo.get_by(Frozen, group_id: group_id, date: date) do
       nil -> false
       _ -> true
     end
