@@ -122,7 +122,7 @@ a, td, svg text::selection {
     display: block;
     font-size: 0.6em;
     font-weight: normal;
-    line-height: 0.7em;
+    line-height: 1em;
 }
 .totals #modal-background {
     display: block;
