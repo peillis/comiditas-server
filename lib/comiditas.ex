@@ -143,6 +143,7 @@ defmodule Comiditas do
   def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
     Enum.each(list, fn x ->
       meals = get_meals(x.date, date_from, meal_from, date_to, meal_to)
+
       if length(meals) > 0 do
         changeset = build_changeset(x, meals, value)
         template = Enum.find(templates, &(&1.day == changeset.data.weekday))
@@ -191,15 +192,16 @@ defmodule Comiditas do
   def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
     Enum.each(list, fn x ->
       meals = get_meals(x.day, day_from, meal_from, day_to, meal_to)
+
       if length(meals) > 0 do
         change =
           meals
           |> Enum.map(&{&1, value})
           |> Enum.into(%{})
+
         changeset = Template.changeset(x, change)
         save_template(changeset)
       end
     end)
   end
-
 end
