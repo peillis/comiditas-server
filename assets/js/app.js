@@ -29,8 +29,8 @@ let showSelector = (node, date, meal) => {
         b.setAttribute('phx-value-date', date)
         b.setAttribute('phx-value-meal', meal)
     }
-    selector.style.top = `${rect.top}px`
-    selector.style.left = `${rect.left}px`
+    selector.style.top = `${rect.top - 44}px`
+    selector.style.left = `${rect.left - 53}px`
     selector.style.display = 'inline-block'
 }
 
@@ -44,8 +44,8 @@ let showSelectorMultiSelect = (node_from, node_to) => {
         b.setAttribute('phx-value-date-to', node_to.dataset.date)
         b.setAttribute('phx-value-meal-to', node_to.dataset.meal)
     }
-    selector.style.top = `${rect.top}px`
-    selector.style.left = `${rect.left}px`
+    selector.style.top = `${rect.top - 44}px`
+    selector.style.left = `${rect.left - 53}px`
     selector.style.display = 'inline-block'
 }
 
