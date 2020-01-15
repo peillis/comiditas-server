@@ -4,7 +4,7 @@
     <thead>
       <tr>
         <%= if length(@totals.notes) > 0 do %>
-        <th phx-click="show_notes" phx-value-notes="notes" class="notes"><i class="red material-icons">description</i></th>
+        <th onclick="" phx-click="show_notes" phx-value-notes="notes" class="notes"><i class="red material-icons">description</i></th>
         <% else %>
         <th></th>
         <% end %>
@@ -36,7 +36,7 @@
     <thead>
       <tr>
         <%= if length(@totals.notes_tomorrow) > 0 do %>
-        <th phx-click="show_notes" phx-value-notes="notes_tomorrow" class="notes"><i class="red material-icons">description</i></th>
+        <th onclick="" phx-click="show_notes" phx-value-notes="notes_tomorrow" class="notes"><i class="red material-icons">description</i></th>
         <% else %>
         <th></th>
         <% end %>
@@ -67,8 +67,8 @@
   <br/><br/>
 
   <%= if length(@list) > 0 do %>
-  <div id="modal-background" phx-click="hide_list"></div>
-  <div id="modal" phx-click="hide_list">
+  <div id="modal-background" onclick="" phx-click="hide_list"></div>
+  <div id="modal" onclick="" phx-click="hide_list">
     <br/><br/>
     <ul>
       <%= for p <- @list do %>
@@ -79,8 +79,8 @@
   <% end %>
 
   <%= if length(@notes) > 0 do %>
-  <div id="modal-background" phx-click="hide_notes"></div>
-  <div id="modal" phx-click="hide_notes">
+  <div id="modal-background" onclick="" phx-click="hide_notes"></div>
+  <div id="modal" onclick="" phx-click="hide_notes">
     <br/><br/>
     <ul>
       <%= for {p, n} <- @notes do %>

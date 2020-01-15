@@ -87,7 +87,7 @@ defmodule ComiditasWeb.PageView do
   def print_value(count, meal, val) do
     if length(count) > 0 do
       ~e"""
-      <td phx-click="show_list" phx-value-meal="<%= meal %>" phx-value-val="<%= val %>"><%= length(count) %></td>
+      <td onclick="" phx-click="show_list" phx-value-meal="<%= meal %>" phx-value-val="<%= val %>"><%= length(count) %></td>
       """
     else
       ~e"""
