@@ -47,4 +47,11 @@ defmodule ComiditasWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug ComiditasWeb.Router
+
+  plug Plug.Static,
+    at: "/torch",
+    from: {:torch, "priv/static"},
+    gzip: true,
+    cache_control_for_etags: "public, max-age=86400",
+    headers: [{"access-control-allow-origin", "*"}]
 end
