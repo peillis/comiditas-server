@@ -22,6 +22,13 @@ defmodule ComiditasWeb.Endpoint do
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 
+  plug Plug.Static,
+    at: "/torch",
+    from: {:torch, "priv/static"},
+    gzip: true,
+    cache_control_for_etags: "public, max-age=86400",
+    headers: [{"access-control-allow-origin", "*"}]
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
@@ -47,11 +54,4 @@ defmodule ComiditasWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug ComiditasWeb.Router
-
-  plug Plug.Static,
-    at: "/torch",
-    from: {:torch, "priv/static"},
-    gzip: true,
-    cache_control_for_etags: "public, max-age=86400",
-    headers: [{"access-control-allow-origin", "*"}]
 end
