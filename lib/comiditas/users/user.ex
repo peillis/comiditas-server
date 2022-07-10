@@ -18,5 +18,6 @@ defmodule Comiditas.Users.User do
     user
     |> cast(attrs, [:name, :email, :password, :group_id, :power_user, :root_user])
     |> validate_required([:name, :email, :password, :group_id])
+    |> foreign_key_constraint(:group_id)
   end
 end
