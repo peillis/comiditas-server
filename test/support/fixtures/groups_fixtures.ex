@@ -1,7 +1,7 @@
-defmodule Comiditas.AdminFixtures do
+defmodule Comiditas.GroupsFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Comiditas.Admin` context.
+  entities via the `Comiditas.Groups` context.
   """
 
   @doc """
@@ -14,7 +14,7 @@ defmodule Comiditas.AdminFixtures do
         name: "some name",
         timezone: "some timezone"
       })
-      |> Comiditas.Admin.create_group()
+      |> Comiditas.Groups.create_group()
 
     group
   end

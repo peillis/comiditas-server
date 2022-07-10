@@ -1,6 +1,6 @@
-defmodule Comiditas.Admin do
+defmodule Comiditas.Groups do
   @moduledoc """
-  The Admin context.
+  The Groups context.
   """
 
   import Ecto.Query, warn: false
@@ -8,7 +8,7 @@ defmodule Comiditas.Admin do
   import Torch.Helpers, only: [sort: 1, paginate: 4, strip_unset_booleans: 3]
   import Filtrex.Type.Config
 
-  alias Comiditas.Admin.Group
+  alias Comiditas.Groups.Group
 
   @pagination [page_size: 15]
   @pagination_distance 5

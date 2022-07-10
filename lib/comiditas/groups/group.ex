@@ -1,4 +1,4 @@
-defmodule Comiditas.Admin.Group do
+defmodule Comiditas.Groups.Group do
   use Ecto.Schema
   import Ecto.Changeset
 

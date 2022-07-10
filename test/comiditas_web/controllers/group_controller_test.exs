@@ -1,14 +1,14 @@
 defmodule ComiditasWeb.GroupControllerTest do
   use ComiditasWeb.ConnCase
 
-  alias Comiditas.Admin
+  alias Comiditas.Groups
 
   @create_attrs %{name: "some name", timezone: "some timezone"}
   @update_attrs %{name: "some updated name", timezone: "some updated timezone"}
   @invalid_attrs %{name: nil, timezone: nil}
 
   def fixture(:group) do
-    {:ok, group} = Admin.create_group(@create_attrs)
+    {:ok, group} = Groups.create_group(@create_attrs)
     group
   end
 
