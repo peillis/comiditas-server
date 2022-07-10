@@ -21,6 +21,11 @@ defmodule ComiditasWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+  end
+
+  scope "/admin", ComiditasWeb do
+    pipe_through :browser
+
     resources "/groups", GroupController
     resources "/users", UserController
   end
