@@ -35,19 +35,18 @@ defmodule Comiditas.Users do
     {:ok, sort_field} = Map.fetch(params, "sort_field")
 
     with {:ok, filter} <- Filtrex.parse_params(filter_config(:users), params["user"] || %{}),
-        %Scrivener.Page{} = page <- do_paginate_users(filter, params) do
+         %Scrivener.Page{} = page <- do_paginate_users(filter, params) do
       {:ok,
-        %{
-          users: page.entries,
-          page_number: page.page_number,
-          page_size: page.page_size,
-          total_pages: page.total_pages,
-          total_entries: page.total_entries,
-          distance: @pagination_distance,
-          sort_field: sort_field,
-          sort_direction: sort_direction
-        }
-      }
+       %{
+         users: page.entries,
+         page_number: page.page_number,
+         page_size: page.page_size,
+         total_pages: page.total_pages,
+         total_entries: page.total_entries,
+         distance: @pagination_distance,
+         sort_field: sort_field,
+         sort_direction: sort_direction
+       }}
     else
       {:error, error} -> {:error, error}
       error -> {:error, error}
@@ -157,13 +156,12 @@ defmodule Comiditas.Users do
 
   defp filter_config(:users) do
     defconfig do
-      text :name
-        text :email
-        text :password
-        number :group_id
-        boolean :power_user
-        boolean :root_user
-        
+      text(:name)
+      text(:email)
+      text(:password)
+      number(:group_id)
+      boolean(:power_user)
+      boolean(:root_user)
     end
   end
 end

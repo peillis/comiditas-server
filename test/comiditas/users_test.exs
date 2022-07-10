@@ -7,9 +7,28 @@ defmodule Comiditas.UsersTest do
 
   import Comiditas.UsersFixtures, only: [user_fixture: 1, user_fixture: 0]
 
-  @valid_attrs %{email: "some@email.com", name: "some name", password: "some password", power_user: false, root_user: false}
-  @update_attrs %{email: "some updated email", name: "some updated name", password: "some updated password", power_user: false, root_user: false}
-  @invalid_attrs %{email: nil, group_id: nil, name: nil, password: nil, power_user: nil, root_user: nil}
+  @valid_attrs %{
+    email: "some@email.com",
+    name: "some name",
+    password: "some password",
+    power_user: false,
+    root_user: false
+  }
+  @update_attrs %{
+    email: "some updated email",
+    name: "some updated name",
+    password: "some updated password",
+    power_user: false,
+    root_user: false
+  }
+  @invalid_attrs %{
+    email: nil,
+    group_id: nil,
+    name: nil,
+    password: nil,
+    power_user: nil,
+    root_user: nil
+  }
 
   describe "#paginate_users/1" do
     test "returns paginated list of users" do

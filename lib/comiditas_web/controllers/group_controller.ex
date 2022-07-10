@@ -11,6 +11,7 @@ defmodule ComiditasWeb.GroupController do
     case Groups.paginate_groups(params) do
       {:ok, assigns} ->
         render(conn, "index.html", assigns)
+
       error ->
         conn
         |> put_flash(:error, "There was an error rendering Groups. #{inspect(error)}")
@@ -29,6 +30,7 @@ defmodule ComiditasWeb.GroupController do
         conn
         |> put_flash(:info, "Group created successfully.")
         |> redirect(to: Routes.group_path(conn, :show, group))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -53,6 +55,7 @@ defmodule ComiditasWeb.GroupController do
         conn
         |> put_flash(:info, "Group updated successfully.")
         |> redirect(to: Routes.group_path(conn, :show, group))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", group: group, changeset: changeset)
     end

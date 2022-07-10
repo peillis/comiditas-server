@@ -93,5 +93,4 @@ defmodule Comiditas.GroupsTest do
 
     group
   end
-
 end

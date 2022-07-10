@@ -35,19 +35,18 @@ defmodule Comiditas.Groups do
     {:ok, sort_field} = Map.fetch(params, "sort_field")
 
     with {:ok, filter} <- Filtrex.parse_params(filter_config(:groups), params["group"] || %{}),
-        %Scrivener.Page{} = page <- do_paginate_groups(filter, params) do
+         %Scrivener.Page{} = page <- do_paginate_groups(filter, params) do
       {:ok,
-        %{
-          groups: page.entries,
-          page_number: page.page_number,
-          page_size: page.page_size,
-          total_pages: page.total_pages,
-          total_entries: page.total_entries,
-          distance: @pagination_distance,
-          sort_field: sort_field,
-          sort_direction: sort_direction
-        }
-      }
+       %{
+         groups: page.entries,
+         page_number: page.page_number,
+         page_size: page.page_size,
+         total_pages: page.total_pages,
+         total_entries: page.total_entries,
+         distance: @pagination_distance,
+         sort_field: sort_field,
+         sort_direction: sort_direction
+       }}
     else
       {:error, error} -> {:error, error}
       error -> {:error, error}
@@ -157,9 +156,8 @@ defmodule Comiditas.Groups do
 
   defp filter_config(:groups) do
     defconfig do
-      text :name
-        text :timezone
-        
+      text(:name)
+      text(:timezone)
     end
   end
 end

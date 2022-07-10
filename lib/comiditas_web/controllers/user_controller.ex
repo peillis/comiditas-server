@@ -11,6 +11,7 @@ defmodule ComiditasWeb.UserController do
     case Users.paginate_users(params) do
       {:ok, assigns} ->
         render(conn, "index.html", assigns)
+
       error ->
         conn
         |> put_flash(:error, "There was an error rendering Users. #{inspect(error)}")
@@ -29,6 +30,7 @@ defmodule ComiditasWeb.UserController do
         conn
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: Routes.user_path(conn, :show, user))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -53,6 +55,7 @@ defmodule ComiditasWeb.UserController do
         conn
         |> put_flash(:info, "User updated successfully.")
         |> redirect(to: Routes.user_path(conn, :show, user))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", user: user, changeset: changeset)
     end
