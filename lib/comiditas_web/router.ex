@@ -19,6 +19,7 @@ defmodule ComiditasWeb.Router do
 
     get "/", PageController, :index
     resources "/groups", GroupController
+    resources "/users", UserController
   end
 
   # Other scopes may use custom stacks.
