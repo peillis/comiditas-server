@@ -2,7 +2,7 @@ defmodule ComiditasWeb.UserController do
   use ComiditasWeb, :controller
 
   alias Comiditas.Users
-  alias Comiditas.Users.User
+  alias Comiditas.Accounts.User
 
   plug(:put_root_layout, {ComiditasWeb.LayoutView, "torch.html"})
   plug(:put_layout, false)

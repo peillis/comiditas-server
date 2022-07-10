@@ -3,7 +3,7 @@ defmodule Comiditas.UsersTest do
 
   alias Comiditas.Users
 
-  alias Comiditas.Users.User
+  alias Comiditas.Accounts.User
 
   import Comiditas.UsersFixtures, only: [user_fixture: 1, user_fixture: 0]
 

@@ -8,7 +8,7 @@ defmodule Comiditas.Users do
   import Torch.Helpers, only: [sort: 1, paginate: 4, strip_unset_booleans: 3]
   import Filtrex.Type.Config
 
-  alias Comiditas.Users.User
+  alias Comiditas.Accounts.User
 
   @pagination [page_size: 15]
   @pagination_distance 5

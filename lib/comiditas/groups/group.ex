@@ -5,7 +5,7 @@ defmodule Comiditas.Groups.Group do
   schema "groups" do
     field :name, :string
     field :timezone, :string
-    has_many :users, Comiditas.Users.User
+    has_many :users, Comiditas.Accounts.User
 
     timestamps()
   end
