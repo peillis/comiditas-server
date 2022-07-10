@@ -5,6 +5,7 @@ defmodule Comiditas.Groups.Group do
   schema "groups" do
     field :name, :string
     field :timezone, :string
+    has_many :users, Comiditas.Users.User
 
     timestamps()
   end
@@ -14,5 +15,16 @@ defmodule Comiditas.Groups.Group do
     group
     |> cast(attrs, [:name, :timezone])
     |> validate_required([:name, :timezone])
+    |> validate_timezone(:timezone)
+  end
+
+  defp validate_timezone(changeset, field, _options \\ []) do
+    validate_change(changeset, field, fn _, timezone ->
+      if timezone in Timex.timezones() do
+        []
+      else
+        [{field, "Not valid timezone"}]
+      end
+    end)
   end
 end

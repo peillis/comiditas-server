@@ -5,8 +5,10 @@ defmodule Comiditas.UsersTest do
 
   alias Comiditas.Users.User
 
-  @valid_attrs %{email: "some email", group_id: 42, name: "some name", password: "some password", power_user: true, root_user: true}
-  @update_attrs %{email: "some updated email", group_id: 43, name: "some updated name", password: "some updated password", power_user: false, root_user: false}
+  import Comiditas.UsersFixtures, only: [user_fixture: 1, user_fixture: 0]
+
+  @valid_attrs %{email: "some@email.com", name: "some name", password: "some password", power_user: false, root_user: false}
+  @update_attrs %{email: "some updated email", name: "some updated name", password: "some updated password", power_user: false, root_user: false}
   @invalid_attrs %{email: nil, group_id: nil, name: nil, password: nil, power_user: nil, root_user: nil}
 
   describe "#paginate_users/1" do
@@ -44,13 +46,14 @@ defmodule Comiditas.UsersTest do
 
   describe "#create_user/1" do
     test "with valid data creates a user" do
-      assert {:ok, %User{} = user} = Users.create_user(@valid_attrs)
-      assert user.email == "some email"
-      assert user.group_id == 42
+      group = Comiditas.GroupsFixtures.group_fixture()
+      attrs = Map.put(@valid_attrs, :group_id, group.id)
+      assert {:ok, %User{} = user} = Users.create_user(attrs)
+      assert user.email == "some@email.com"
       assert user.name == "some name"
       assert user.password == "some password"
-      assert user.power_user == true
-      assert user.root_user == true
+      assert user.power_user == false
+      assert user.root_user == false
     end
 
     test "with invalid data returns error changeset" do
@@ -64,7 +67,6 @@ defmodule Comiditas.UsersTest do
       assert {:ok, user} = Users.update_user(user, @update_attrs)
       assert %User{} = user
       assert user.email == "some updated email"
-      assert user.group_id == 43
       assert user.name == "some updated name"
       assert user.password == "some updated password"
       assert user.power_user == false
@@ -92,14 +94,4 @@ defmodule Comiditas.UsersTest do
       assert %Ecto.Changeset{} = Users.change_user(user)
     end
   end
-
-  def user_fixture(attrs \\ %{}) do
-    {:ok, user} =
-      attrs
-      |> Enum.into(@valid_attrs)
-      |> Users.create_user()
-
-    user
-  end
-
 end

@@ -3,8 +3,8 @@ defmodule ComiditasWeb.GroupControllerTest do
 
   alias Comiditas.Groups
 
-  @create_attrs %{name: "some name", timezone: "some timezone"}
-  @update_attrs %{name: "some updated name", timezone: "some updated timezone"}
+  @create_attrs %{name: "some name", timezone: "Europe/Madrid"}
+  @update_attrs %{name: "some updated name", timezone: "America/Buenos_Aires"}
   @invalid_attrs %{name: nil, timezone: nil}
 
   def fixture(:group) do

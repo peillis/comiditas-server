@@ -5,8 +5,8 @@ defmodule Comiditas.GroupsTest do
 
   alias Comiditas.Groups.Group
 
-  @valid_attrs %{name: "some name", timezone: "some timezone"}
-  @update_attrs %{name: "some updated name", timezone: "some updated timezone"}
+  @valid_attrs %{name: "some name", timezone: "Europe/Madrid"}
+  @update_attrs %{name: "some updated name", timezone: "America/Buenos_Aires"}
   @invalid_attrs %{name: nil, timezone: nil}
 
   describe "#paginate_groups/1" do
@@ -46,7 +46,7 @@ defmodule Comiditas.GroupsTest do
     test "with valid data creates a group" do
       assert {:ok, %Group{} = group} = Groups.create_group(@valid_attrs)
       assert group.name == "some name"
-      assert group.timezone == "some timezone"
+      assert group.timezone == "Europe/Madrid"
     end
 
     test "with invalid data returns error changeset" do
@@ -60,7 +60,7 @@ defmodule Comiditas.GroupsTest do
       assert {:ok, group} = Groups.update_group(group, @update_attrs)
       assert %Group{} = group
       assert group.name == "some updated name"
-      assert group.timezone == "some updated timezone"
+      assert group.timezone == "America/Buenos_Aires"
     end
 
     test "with invalid data returns error changeset" do

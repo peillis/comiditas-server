@@ -12,7 +12,7 @@ defmodule Comiditas.GroupsFixtures do
       attrs
       |> Enum.into(%{
         name: "some name",
-        timezone: "some timezone"
+        timezone: "Europe/Madrid"
       })
       |> Comiditas.Groups.create_group()
 

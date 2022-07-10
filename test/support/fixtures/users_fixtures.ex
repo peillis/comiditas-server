@@ -4,19 +4,23 @@ defmodule Comiditas.UsersFixtures do
   entities via the `Comiditas.Users` context.
   """
 
+  alias Comiditas.GroupsFixtures
+
   @doc """
   Generate a user.
   """
   def user_fixture(attrs \\ %{}) do
+    group = GroupsFixtures.group_fixture()
+
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        email: "some email",
-        group_id: 42,
+        email: "some@email.com",
+        group_id: group.id,
         name: "some name",
         password: "some password",
-        power_user: true,
-        root_user: true
+        power_user: false,
+        root_user: false
       })
       |> Comiditas.Users.create_user()
 
