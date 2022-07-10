@@ -139,6 +139,22 @@ defmodule ComiditasWeb.UserAuth do
     end
   end
 
+  @doc """
+  Used for the admin of users and groups. The `root_user` privilege
+  is required.
+  """
+  def require_root_user(conn, _opts) do
+    if conn.assigns.current_user.root_user do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You don't have privileges to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: Routes.user_session_path(conn, :new))
+      |> halt()
+    end
+  end
+
   defp maybe_store_return_to(%{method: "GET"} = conn) do
     put_session(conn, :user_return_to, current_path(conn))
   end

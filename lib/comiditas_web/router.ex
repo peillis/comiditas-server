@@ -23,13 +23,6 @@ defmodule ComiditasWeb.Router do
     get "/", PageController, :index
   end
 
-  scope "/admin", ComiditasWeb do
-    pipe_through :browser
-
-    resources "/groups", GroupController
-    resources "/users", UserController
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", ComiditasWeb do
   #   pipe_through :api
@@ -85,6 +78,13 @@ defmodule ComiditasWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+  end
+
+  scope "/admin", ComiditasWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_root_user]
+
+    resources "/groups", GroupController
+    resources "/users", UserController
   end
 
   scope "/", ComiditasWeb do
