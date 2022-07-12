@@ -9,7 +9,7 @@ defmodule ComiditasWeb.Components do
         <strong><%= @day.date.day %></strong>
       </td>
       <.print_day day={@day} today={@today} frozen={@frozen} />
-      <td class={"notes #{if @frozen and @day.date == @today, do: "frozen", else: nil}"} data-date={@day.date} data-notes={@day.notes}>
+      <td class={"notes #{frozen(@frozen, @day, @today)}"} data-date={@day.date} data-notes={@day.notes}>
         <i class={"material-icons #{if @day.notes != nil, do: "red"}"}>description</i>
       </td>
     </tr>
