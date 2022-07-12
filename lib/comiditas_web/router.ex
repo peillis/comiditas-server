@@ -23,11 +23,6 @@ defmodule ComiditasWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ComiditasWeb do
-  #   pipe_through :api
-  # end
-
   # Enables LiveDashboard only for development
   #
   # If you want to use the LiveDashboard in production, you should put
@@ -62,8 +57,8 @@ defmodule ComiditasWeb.Router do
   scope "/", ComiditasWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/users/register", UserRegistrationController, :new
-    post "/users/register", UserRegistrationController, :create
+    #get "/users/register", UserRegistrationController, :new
+    #post "/users/register", UserRegistrationController, :create
     get "/users/log_in", UserSessionController, :new
     post "/users/log_in", UserSessionController, :create
     get "/users/reset_password", UserResetPasswordController, :new
@@ -78,6 +73,20 @@ defmodule ComiditasWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+  end
+
+  scope "/app", ComiditasWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/list", Live.ListView, :index
+    #get "/settings", PageController, :settings
+    #get "/totals", PageController, :totals
+    #get "/users", PageController, :users
+    #get "/users/:uid/edit", PageController, :edit
+    #put "/users/:uid", PageController, :update
+    #get "/users/new", PageController, :new
+    #post "/users", PageController, :create
+    #delete "/users/:uid", PageController, :delete
   end
 
   scope "/admin", ComiditasWeb do
