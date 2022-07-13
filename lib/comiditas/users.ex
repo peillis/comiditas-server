@@ -9,6 +9,7 @@ defmodule Comiditas.Users do
   import Filtrex.Type.Config
 
   alias Comiditas.Accounts.User
+  alias Comiditas.Template
 
   @pagination [page_size: 15]
   @pagination_distance 5
@@ -102,9 +103,18 @@ defmodule Comiditas.Users do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    res =
+      %User{}
+      |> User.changeset(attrs)
+      |> Repo.insert()
+
+    with {:ok, user} <- res do
+      user
+      |> Template.create_templates()
+      |> Enum.each(&Repo.insert/1)
+
+      {:ok, user}
+    end
   end
 
   @doc """

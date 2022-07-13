@@ -1,7 +1,5 @@
 defmodule Comiditas.Util do
   alias Comiditas.GroupServer
-  alias Comiditas.Repo
-  alias Comiditas.Template
 
   def str_to_date(str) do
     str
@@ -21,17 +19,4 @@ defmodule Comiditas.Util do
     [elem | new_list]
   end
 
-  def create_templates(user) do
-    for day <- 1..7 do
-      %Template{}
-      |> Template.changeset(%{
-        day: day,
-        breakfast: "no",
-        lunch: "no",
-        dinner: "no",
-        user_id: user.id
-      })
-      |> Repo.insert()
-    end
-  end
 end

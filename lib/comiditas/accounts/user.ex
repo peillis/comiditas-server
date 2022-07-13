@@ -16,10 +16,12 @@ defmodule Comiditas.Accounts.User do
   end
 
   @doc false
-  def changeset(user, attrs) do
+  def changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:name, :email, :password, :group_id, :power_user, :root_user])
     |> validate_required([:name, :email, :password, :group_id])
+    |> validate_email()
+    |> validate_password(opts)
     |> foreign_key_constraint(:group_id)
   end
 
