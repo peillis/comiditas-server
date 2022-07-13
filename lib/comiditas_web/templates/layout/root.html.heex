@@ -8,6 +8,7 @@
     <%= live_title_tag assigns[:page_title] || "Comiditas", suffix: " · Phoenix Framework" %>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha256-eVNjHw5UeU0jUqPPpZHAkU1z4U+QFBBY488WvueTm88=" crossorigin="anonymous"></script>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body>
@@ -27,6 +28,20 @@
         </a>
       </section>
     </header>
+
     <%= @inner_content %>
+
+    <div class="tabs red">
+      <a href={Routes.list_view_path(@conn, :index)} class="tab-item"><i class="material-icons">view_list</i></a>
+      <a href="" class="tab-item"><i class="material-icons">settings</i></a>
+      <%= if true do %>
+        <%= if true do %>
+          <a href="" class="tab-item person"><i class="material-icons">person</i></a>
+        <% else %>
+          <a href="" class="tab-item person"><i class="material-icons">person</i></a>
+        <% end %>
+      <% end %>
+      <a href="" class="tab-item"><i class="material-icons">done_all</i></a>
+    </div>
   </body>
 </html>

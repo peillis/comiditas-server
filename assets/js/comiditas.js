@@ -99,9 +99,10 @@ switch (window.location.pathname) {
   case '/app/list':
     Hooks.TableHook = {
       updated() {
-        activateButtons()
-        let notes = document.getElementsByClassName('notes')
-        addClickListener(notes, showModal)
+        activateActions()
+      },
+      mounted() {
+        activateActions()
         let modal_bck = document.getElementById('modal-background')
         modal_bck.addEventListener('click', hideModal)
         let scrollfn = (ev) => {
@@ -114,6 +115,11 @@ switch (window.location.pathname) {
       }
     }
 
+    let activateActions = () => {
+      activateButtons()
+      let notes = document.getElementsByClassName('notes')
+      addClickListener(notes, showModal)
+    }
 
     let showModal = (event) => {
       let elem = event.target
