@@ -1,21 +1,17 @@
 defmodule ComiditasWeb.UserControllerTest do
   use ComiditasWeb.ConnCase
 
-  alias Comiditas.Users
-
   setup :register_and_log_in_root_user
 
   @create_attrs %{
-    email: "some email",
-    group_id: 42,
+    email: "some@email",
     name: "some name",
     password: "some password",
-    power_user: true,
-    root_user: true
+    power_user: false,
+    root_user: false
   }
   @update_attrs %{
-    email: "some updated email",
-    group_id: 43,
+    email: "some@updated_email",
     name: "some updated name",
     password: "some updated password",
     power_user: false,
@@ -29,11 +25,6 @@ defmodule ComiditasWeb.UserControllerTest do
     power_user: nil,
     root_user: nil
   }
-
-  def fixture(:user) do
-    {:ok, user} = Users.create_user(@create_attrs)
-    user
-  end
 
   describe "index" do
     test "lists all users", %{conn: conn} do
@@ -51,7 +42,9 @@ defmodule ComiditasWeb.UserControllerTest do
 
   describe "create user" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post conn, Routes.user_path(conn, :create), user: @create_attrs
+      group = Comiditas.GroupsFixtures.group_fixture()
+      attrs = Map.put(@create_attrs, :group_id, group.id)
+      conn = post conn, Routes.user_path(conn, :create), user: attrs
 
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.user_path(conn, :show, id)
@@ -83,7 +76,7 @@ defmodule ComiditasWeb.UserControllerTest do
       assert redirected_to(conn) == Routes.user_path(conn, :show, user)
 
       conn = get(conn, Routes.user_path(conn, :show, user))
-      assert html_response(conn, 200) =~ "some updated email"
+      assert html_response(conn, 200) =~ "some@updated_email"
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
@@ -106,7 +99,7 @@ defmodule ComiditasWeb.UserControllerTest do
   end
 
   defp create_user(_) do
-    user = fixture(:user)
+    user = Comiditas.UsersFixtures.user_fixture(@create_attrs)
     {:ok, user: user}
   end
 end
