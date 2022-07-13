@@ -5,7 +5,7 @@ defmodule Comiditas.UsersTest do
 
   alias Comiditas.Accounts.User
 
-  import Comiditas.UsersFixtures, only: [user_fixture: 1, user_fixture: 0]
+  import Comiditas.UsersFixtures, only: [user_fixture: 0]
 
   @valid_attrs %{
     email: "some@email.com",
