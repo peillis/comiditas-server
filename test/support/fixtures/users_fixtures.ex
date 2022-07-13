@@ -15,7 +15,7 @@ defmodule Comiditas.UsersFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        email: "some@email.com",
+        email: Comiditas.AccountsFixtures.unique_user_email(),
         group_id: group.id,
         name: "some name",
         password: "some password",

@@ -15,7 +15,7 @@ defmodule Comiditas.UsersTest do
     root_user: false
   }
   @update_attrs %{
-    email: "some updated email",
+    email: "some@updated_email",
     name: "some updated name",
     password: "some updated password",
     power_user: false,
@@ -70,7 +70,6 @@ defmodule Comiditas.UsersTest do
       assert {:ok, %User{} = user} = Users.create_user(attrs)
       assert user.email == "some@email.com"
       assert user.name == "some name"
-      assert user.password == "some password"
       assert user.power_user == false
       assert user.root_user == false
     end
@@ -85,9 +84,8 @@ defmodule Comiditas.UsersTest do
       user = user_fixture()
       assert {:ok, user} = Users.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == "some updated email"
+      assert user.email == "some@updated_email"
       assert user.name == "some updated name"
-      assert user.password == "some updated password"
       assert user.power_user == false
       assert user.root_user == false
     end
