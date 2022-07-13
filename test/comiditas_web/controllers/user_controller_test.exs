@@ -3,6 +3,8 @@ defmodule ComiditasWeb.UserControllerTest do
 
   alias Comiditas.Users
 
+  setup :register_and_log_in_root_user
+
   @create_attrs %{
     email: "some email",
     group_id: 42,

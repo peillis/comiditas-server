@@ -23,6 +23,13 @@ defmodule Comiditas.AccountsFixtures do
     user
   end
 
+  def root_user_fixture(attrs \\ %{}) do
+    attrs
+    |> valid_user_attributes()
+    |> Map.put(:root_user, true)
+    |> Comiditas.UsersFixtures.user_fixture()
+  end
+
   def extract_user_token(fun) do
     {:ok, captured_email} = fun.(&"[TOKEN]#{&1}[TOKEN]")
     [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")

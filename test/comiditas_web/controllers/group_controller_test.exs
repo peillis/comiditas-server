@@ -1,7 +1,9 @@
 defmodule ComiditasWeb.GroupControllerTest do
-  use ComiditasWeb.ConnCase
+  use ComiditasWeb.ConnCase, async: true
 
   alias Comiditas.Groups
+
+  setup :register_and_log_in_root_user
 
   @create_attrs %{name: "some name", timezone: "Europe/Madrid"}
   @update_attrs %{name: "some updated name", timezone: "America/Buenos_Aires"}

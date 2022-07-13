@@ -49,6 +49,11 @@ defmodule ComiditasWeb.ConnCase do
     %{conn: log_in_user(conn, user), user: user}
   end
 
+  def register_and_log_in_root_user(%{conn: conn}) do
+    user = Comiditas.AccountsFixtures.root_user_fixture()
+    %{conn: log_in_user(conn, user), user: user}
+  end
+
   @doc """
   Logs the given `user` into the `conn`.
 
