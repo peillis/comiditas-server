@@ -78,7 +78,7 @@ defmodule ComiditasWeb.Router do
   scope "/app", ComiditasWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live "/list", Live.ListView, :index
+    live "/list", Live.ListView
     #get "/settings", PageController, :settings
     #get "/totals", PageController, :totals
     #get "/users", PageController, :users

@@ -161,5 +161,5 @@ defmodule ComiditasWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: "/"
+  defp signed_in_path(conn), do: Routes.live_path(conn, ComiditasWeb.Live.ListView)
 end

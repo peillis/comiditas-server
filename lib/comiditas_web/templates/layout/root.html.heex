@@ -32,7 +32,7 @@
     <%= @inner_content %>
 
     <div class="tabs red">
-      <a href={Routes.list_view_path(@conn, :index)} class="tab-item"><i class="material-icons">view_list</i></a>
+      <a href={Routes.live_path(@conn, ComiditasWeb.Live.ListView)} class="tab-item"><i class="material-icons">view_list</i></a>
       <a href="" class="tab-item"><i class="material-icons">settings</i></a>
       <%= if true do %>
         <%= if true do %>
