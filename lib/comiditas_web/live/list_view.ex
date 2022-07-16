@@ -4,10 +4,12 @@ defmodule ComiditasWeb.Live.ListView do
   alias Comiditas.{Accounts, GroupServer, Mealdate, Util}
   alias ComiditasWeb.Endpoint
 
+  import ComiditasWeb.Components
+
   @items 15
   @max_items 300
 
-  def mount(params, %{"user_token" => user_token} = _session, socket) do
+  def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
     pid = Util.get_pid(user.group_id)
     today = GroupServer.today(pid)

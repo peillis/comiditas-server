@@ -165,7 +165,7 @@ switch (window.location.pathname) {
 
   case '/app/settings':
     Hooks.TableHook = {
-      updated() {
+      mounted() {
         activateButtons()
       }
     }

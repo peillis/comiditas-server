@@ -79,7 +79,7 @@ defmodule ComiditasWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live "/list", Live.ListView
-    #get "/settings", PageController, :settings
+    live "/settings", Live.SettingsView
     #get "/totals", PageController, :totals
     #get "/users", PageController, :users
     #get "/users/:uid/edit", PageController, :edit

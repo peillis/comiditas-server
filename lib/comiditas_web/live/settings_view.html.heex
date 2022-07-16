@@ -1,0 +1,33 @@
+<div class="main settings">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Brk</th>
+        <th>Lch</th>
+        <th>Dnr</th>
+      </tr>
+    </thead>
+    <tbody id="my_table" phx-hook="TableHook">
+      <%= for t <- @templates do %>
+        <tr class={"weekday-#{t.day}"}>
+          <td class="day"><%= Timex.day_shortname(t.day) %></td>
+          <td class="buttons">
+            <.circle value={t.breakfast} />
+          </td>
+          <td class="buttons">
+            <.circle value={t.lunch} />
+          </td>
+          <td class="buttons">
+            <.circle value={t.dinner} />
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br/><br/>
+  <button onclick="window.location.href = '/logout';">Logout</button>
+  <br/><br/>
+  <br/><br/>
+  <.selector />
+</div>
