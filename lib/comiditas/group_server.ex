@@ -1,7 +1,7 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
-  alias Comiditas.{Totals, Util}
+  alias Comiditas.{Template, Totals, Util}
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do
@@ -41,10 +41,10 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:templates_of_user, user_id})
   end
 
-  def change_template(pid, changeset) do
-    GenServer.call(pid, {:change_template, changeset})
-    templates_of_user(pid, changeset.data.user_id)
-    gen_days_of_user(pid, 15, changeset.data.user_id)
+  def change_template(pid, %{uid: uid} = info) do
+    GenServer.call(pid, {:change_template, info})
+    templates_of_user(pid, uid)
+    gen_days_of_user(pid, 15, uid)
     totals(pid, today(pid))
   end
 
@@ -81,7 +81,6 @@ defmodule Comiditas.GroupServer do
     state =
       group_id
       |> get_data()
-      |> Map.put(:start, Timex.now())
       |> Map.put(:last_op, Timex.now())
 
     check_time_running()
@@ -151,12 +150,18 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call({:change_template, changeset}, _from, state) do
-    tp = Comiditas.save_template(changeset)
+  def handle_call({:change_template, %{uid: uid, day: day, change: change}}, _from, state) do
+    tp =
+      state.users
+      |> find_user(uid)
+      |> Map.get(:tps)
+      |> Enum.find(& &1.day == day)
+      |> Template.changeset(change)
+      |> Comiditas.save_template()
 
     state =
       state
-      |> refresh_user(changeset.data.user_id, :tps)
+      |> refresh_user(uid, :tps)
       |> update_timestamp()
 
     {:reply, tp, state}
