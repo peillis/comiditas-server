@@ -1,6 +1,10 @@
   <div class="tabs red">
-    <a href={Routes.live_path(@conn, ComiditasWeb.Live.ListView)} class="tab-item"><i class="material-icons">view_list</i></a>
-    <a href={Routes.live_path(@conn, ComiditasWeb.Live.SettingsView)} class="tab-item"><i class="material-icons">settings</i></a>
+    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.ListView), class: "tab-item" do %>
+      <i class="material-icons">view_list</i>
+    <% end %>
+    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.SettingsView), class: "tab-item" do %>
+      <i class="material-icons">settings</i>
+    <% end %>
     <%= if true do %>
       <%= if true do %>
         <a href="" class="tab-item person"><i class="material-icons">person</i></a>
