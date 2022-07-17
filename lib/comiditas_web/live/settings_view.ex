@@ -25,7 +25,7 @@ defmodule ComiditasWeb.Live.SettingsView do
       end)
       |> Enum.into(%{})
 
-    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: {{1, "lunch"}, {4, "dinner"}})}
+    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: nil)}
   end
 
   def blink(range, r) do
@@ -35,7 +35,13 @@ defmodule ComiditasWeb.Live.SettingsView do
   end
 
   def handle_event("select", %{"meal" => meal, "day" => day}, socket) do
-    {:noreply, assign(socket, selected: {String.to_integer(day), meal})}
+    selected = {String.to_integer(day), meal}
+    socket =
+      case socket.assigns.range do
+        nil -> assign(socket, selected: selected)
+        _ -> assign(socket, range: set_range(socket.assigns.range, selected))
+      end
+    {:noreply, socket}
   end
 
   def handle_event("change", %{"val" => value}, socket) do
@@ -46,6 +52,20 @@ defmodule ComiditasWeb.Live.SettingsView do
 
     {:noreply, assign(socket, circles: circles)}
   end
+
+  def handle_event("multi_select", _, socket) do
+    socket = assign(socket, range: set_range(socket.assigns.range, socket.assigns.selected))
+    {:noreply, socket}
+  end
+
+  def set_range(nil, selected), do: {selected, nil}
+  def set_range({r1, nil}, selected) do
+    case Selection.compare(selected, r1) do
+      :gt -> {r1, selected}
+      _ -> nil
+    end
+  end
+  def set_range(_, _), do: nil
 
   #def handle_event("multi_select", %{"date" => date, "meal" => meal}, socket) do
     #tps =
