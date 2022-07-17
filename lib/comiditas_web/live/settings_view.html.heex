@@ -13,8 +13,8 @@
       <tr class={"weekday-#{day}"}>
         <td class="day"><%= Timex.day_shortname(day) %></td>
         <%= for meal <- ["breakfast", "lunch", "dinner"] do %>
-        <td class={"buttons #{blink(v[meal][:multi_select])}"} phx-click="select" phx-value-meal={meal} phx-value-day={day}>
-          <.circle value={v[meal][:value]} />
+        <td class={"buttons #{blink(@range, {day, meal})}"} phx-click="select" phx-value-meal={meal} phx-value-day={day}>
+          <.circle value={v[meal]} />
         </td>
         <% end %>
       </tr>

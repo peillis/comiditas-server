@@ -3,6 +3,7 @@ defmodule ComiditasWeb.Live.SettingsView do
 
   alias Comiditas.{Accounts, GroupServer, Util}
   alias ComiditasWeb.Endpoint
+  alias ComiditasWeb.Selection
 
   import ComiditasWeb.Components
 
@@ -17,18 +18,21 @@ defmodule ComiditasWeb.Live.SettingsView do
       |> GroupServer.templates_of_user(user.id)
       |> Enum.map(fn t ->
         {t.day, %{
-          "breakfast" => %{value: t.breakfast, multi_select: false},
-          "lunch" => %{value: t.lunch, multi_select: false},
-          "dinner" => %{value: t.dinner, multi_select: false}
+          "breakfast" => t.breakfast,
+          "lunch" => t.lunch,
+          "dinner" => t.dinner
         }}
       end)
       |> Enum.into(%{})
 
-    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil)}
+    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: {{1, "lunch"}, {4, "dinner"}})}
   end
 
-  def blink(true), do: "blink"
-  def blink(_), do: nil
+  def blink(range, r) do
+    if Selection.in_range?(range, r) do
+      "blink"
+    end
+  end
 
   def handle_event("select", %{"meal" => meal, "day" => day}, socket) do
     {:noreply, assign(socket, selected: {String.to_integer(day), meal})}
@@ -38,7 +42,7 @@ defmodule ComiditasWeb.Live.SettingsView do
     %{pid: pid, uid: uid, selected: {day, meal}, circles: circles} = socket.assigns
 
     GroupServer.change_template(pid, %{uid: uid, day: day, change: %{meal => value}})
-    circles = put_in(circles, [day, meal, :value], value)
+    circles = put_in(circles, [day, meal], value)
 
     {:noreply, assign(socket, circles: circles)}
   end
@@ -63,11 +67,11 @@ defmodule ComiditasWeb.Live.SettingsView do
     #{:noreply, socket}
   #end
 
-  def handle_info(%{topic: topic, payload: state}, socket) do
-    if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
-      {:noreply, assign(socket, templates: state.templates)}
-    else
-      {:noreply, socket}
-    end
-  end
+  #def handle_info(%{topic: topic, payload: state}, socket) do
+    #if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
+      #{:noreply, assign(socket, templates: state.templates)}
+    #else
+      #{:noreply, socket}
+    #end
+  #end
 end
