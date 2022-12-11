@@ -12,8 +12,8 @@
       <%= for {day, v} <- @circles do %>
       <tr class={"weekday-#{day}"}>
         <td class="day"><%= Timex.day_shortname(day) %></td>
-        <%= for meal <- ["breakfast", "lunch", "dinner"] do %>
-        <td class={"buttons #{blink(@range, {day, meal})}"} phx-click="select" phx-value-meal={meal} phx-value-day={day}>
+        <%= for meal <- [:breakfast, :lunch, :dinner] do %>
+          <td class={"buttons #{blink(@range, {day, meal})}"} id={"#{day}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={day}>
           <.circle value={v[meal]} />
         </td>
         <% end %>
@@ -25,5 +25,5 @@
   <button onclick="window.location.href = '/logout';">Logout</button>
   <br/><br/>
   <br/><br/>
-  <.selector />
+  <.selector selector={@selector} />
 </div>

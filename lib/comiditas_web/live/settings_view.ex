@@ -2,6 +2,7 @@ defmodule ComiditasWeb.Live.SettingsView do
   use Phoenix.LiveView
 
   alias Comiditas.{Accounts, GroupServer, Util}
+  alias ComiditasWeb.Components.Selector
   alias ComiditasWeb.Endpoint
   alias ComiditasWeb.Selection
 
@@ -18,14 +19,14 @@ defmodule ComiditasWeb.Live.SettingsView do
       |> GroupServer.templates_of_user(user.id)
       |> Enum.map(fn t ->
         {t.day, %{
-          "breakfast" => t.breakfast,
-          "lunch" => t.lunch,
-          "dinner" => t.dinner
+          :breakfast => t.breakfast,
+          :lunch => t.lunch,
+          :dinner => t.dinner
         }}
       end)
       |> Enum.into(%{})
 
-    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: nil)}
+    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: nil, selector: %Selector{})}
   end
 
   def blink(range, r) do
@@ -34,13 +35,17 @@ defmodule ComiditasWeb.Live.SettingsView do
     end
   end
 
-  def handle_event("select", %{"meal" => meal, "day" => day}, socket) do
+  def handle_event("select", %{"meal" => meal, "day" => day, "left" => left, "top" => top}, socket) do
     selected = {String.to_integer(day), meal}
     socket =
       case socket.assigns.range do
         nil -> assign(socket, selected: selected)
         _ -> assign(socket, range: set_range(socket.assigns.range, selected))
       end
+    socket =
+      socket
+      |> assign(selector: %Selector{show: true, left: left, top: top})
+
     {:noreply, socket}
   end
 
@@ -48,13 +53,21 @@ defmodule ComiditasWeb.Live.SettingsView do
     %{pid: pid, uid: uid, selected: {day, meal}, circles: circles} = socket.assigns
 
     GroupServer.change_template(pid, %{uid: uid, day: day, change: %{meal => value}})
-    circles = put_in(circles, [day, meal], value)
 
-    {:noreply, assign(socket, circles: circles)}
+    socket =
+      socket
+      |> assign(circles: put_in(circles, [day, meal], value))
+      |> assign(selector: %Selector{})
+
+    {:noreply, socket}
   end
 
   def handle_event("multi_select", _, socket) do
-    socket = assign(socket, range: set_range(socket.assigns.range, socket.assigns.selected))
+    socket =
+      socket
+      |> assign(range: set_range(socket.assigns.range, socket.assigns.selected))
+      |> assign(selector: %Selector{})
+
     {:noreply, socket}
   end
 
@@ -87,11 +100,11 @@ defmodule ComiditasWeb.Live.SettingsView do
     #{:noreply, socket}
   #end
 
-  #def handle_info(%{topic: topic, payload: state}, socket) do
-    #if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
-      #{:noreply, assign(socket, templates: state.templates)}
-    #else
-      #{:noreply, socket}
-    #end
-  #end
+  def handle_info(%{topic: topic, payload: state}, socket) do
+    if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
+      {:noreply, assign(socket, templates: state.templates)}
+    else
+      {:noreply, socket}
+    end
+  end
 end

@@ -1,96 +1,8 @@
-let showSelector = (node, date, meal) => {
-  let selector = document.getElementById('selector')
-  let rect = node.getBoundingClientRect()
-  let buttons = selector.children
-  for (let b of buttons) {
-    b.setAttribute('phx-value-date', date)
-    b.setAttribute('phx-value-meal', meal)
-  }
-  selector.style.top = `${rect.top - 44}px`
-  selector.style.left = `${rect.left - 53}px`
-  selector.style.display = 'inline-block'
-}
-
-let showSelectorMultiSelect = (node_from, node_to) => {
-  let selector = document.getElementById('selector')
-  let rect = node_to.getBoundingClientRect()
-  let buttons = selector.children
-  for (let b of buttons) {
-    b.setAttribute('phx-value-date-from', node_from.dataset.date)
-    b.setAttribute('phx-value-meal-from', node_from.dataset.meal)
-    b.setAttribute('phx-value-date-to', node_to.dataset.date)
-    b.setAttribute('phx-value-meal-to', node_to.dataset.meal)
-  }
-  selector.style.top = `${rect.top - 44}px`
-  selector.style.left = `${rect.left - 53}px`
-  selector.style.display = 'inline-block'
-}
 
 let hideSelector = () => {
   setTimeout(() => {
-    let selector = document.getElementById('selector')
-    selector.style.display = 'none'
+    document.getElementById('selector').style.display = 'none'
   }, 100)
-}
-
-let select = (event) => {
-  let parent = event.target
-  if (event.target.tagName != "TD") {
-    parent = event.target.closest('.buttons')
-  }
-  if (parent.classList.contains('frozen')) {
-    return
-  }
-  let elem = parent.lastElementChild
-  if (document.getElementsByClassName('blink').length > 0){
-    // multi select
-    let from_elem = document.getElementsByClassName('blink')[0]
-    if (elem.dataset.date < from_elem.dataset.date){
-      return
-    } 
-    from_elem.classList.remove('blink')
-    let next = from_elem
-    while(next != elem) {
-      next.classList.add('blink')
-      next = next_button(next)
-    }
-    showSelectorMultiSelect(from_elem, elem)
-  }
-  else {
-    let date = elem.dataset.date
-    let meal = elem.dataset.meal
-    showSelector(elem, date, meal)
-  }
-}
-
-let next_button = (elem) => {
-  let td = elem.parentElement
-  if (td.nextElementSibling != null) {
-    if (td.nextElementSibling.className == 'buttons'){
-      return td.nextElementSibling.firstElementChild
-    }
-    else {
-      let td_of_next_tr = td.parentElement.nextElementSibling.children[1]
-      return td_of_next_tr.firstElementChild
-    }
-  }
-  else {
-    let td_of_next_tr = td.parentElement.nextElementSibling.children[1]
-    return td_of_next_tr.firstElementChild
-  }
-}
-
-let addClickListener = (elems, fn) => {
-  for (let e of elems) {
-    e.addEventListener('click', fn)
-  }
-}
-
-let activateButtons = () => {
-  let buttons = document.getElementsByClassName('buttons')
-  addClickListener(buttons, select)
-  let selector_buttons = document.getElementById('selector').children
-  addClickListener(selector_buttons, hideSelector)
 }
 
 export let Hooks = {}
@@ -116,9 +28,10 @@ switch (window.location.pathname) {
     }
 
     let activateActions = () => {
-      activateButtons()
       let notes = document.getElementsByClassName('notes')
-      addClickListener(notes, showModal)
+      for (let e of notes) {
+        e.addEventListener('click', showModal)
+      }
     }
 
     let showModal = (event) => {
@@ -166,7 +79,23 @@ switch (window.location.pathname) {
   case '/app/settings':
     Hooks.TableHook = {
       mounted() {
-        activateButtons()
+        console.log('mounted')
+      }
+    }
+
+    Hooks.ShowSelector = {
+      mounted() {
+        this.el.addEventListener('click', e => {
+          // Find the TD closest to the event to get its coordinates
+          td_parent = e.target
+          if (td_parent.tagName != 'TD') {
+            td_parent = td_parent.closest('.buttons')
+          }
+          rect = td_parent.lastElementChild.getBoundingClientRect()
+          td_parent.dataset.left = rect.left - 53
+          td_parent.dataset.top = rect.top - 44
+          this.pushEvent('select', td_parent.dataset)
+        })
       }
     }
 

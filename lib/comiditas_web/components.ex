@@ -16,9 +16,13 @@ defmodule ComiditasWeb.Components do
     """
   end
 
+  defmodule Selector do
+    defstruct show: false, top: 0, left: 0
+  end
+
   def selector(assigns) do
     ~H"""
-    <svg id="selector" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg id="selector" display={if @selector.show, do: "inline-block", else: "none"} style={"left: #{@selector.left}px; top: #{@selector.top}px;"} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="6em" cy="6em" r="7em" fill="white" stroke="lightgray" stroke-width="0.1em"></circle>
       <circle phx-click="multi_select" cx="6em" cy="6em" r="1em" fill="lightgray"></circle>
       <circle phx-click="change" phx-value-val="yes" cx="6em" cy="2em" r="2em" fill="green"></circle>
