@@ -1,6 +1,6 @@
 <h1>Log in</h1>
 
-<.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
+<%= form_for @conn, Routes.user_session_path(@conn, :create), as={:user}, fn f -> %>
   <%= if @error_message do %>
     <div class="alert alert-danger">
       <p><%= @error_message %></p>
@@ -19,7 +19,7 @@
   <div>
     <%= submit "Log in" %>
   </div>
-</.form>
+<% end %>
 
 <p>
   <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
