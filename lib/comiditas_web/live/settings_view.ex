@@ -17,16 +17,21 @@ defmodule ComiditasWeb.Live.SettingsView do
     circles =
       pid
       |> GroupServer.templates_of_user(user.id)
-      |> Enum.map(fn t ->
-        {t.day, %{
-          :breakfast => t.breakfast,
-          :lunch => t.lunch,
-          :dinner => t.dinner
-        }}
-      end)
-      |> Enum.into(%{})
+      |> build_circles()
 
     {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: nil, selector: %Selector{})}
+  end
+
+  defp build_circles(templates) do
+    templates
+    |> Enum.map(fn t ->
+      {t.day, %{
+        :breakfast => t.breakfast,
+        :lunch => t.lunch,
+        :dinner => t.dinner
+      }}
+    end)
+    |> Enum.into(%{})
   end
 
   def blink(range, r) do
@@ -102,7 +107,7 @@ defmodule ComiditasWeb.Live.SettingsView do
 
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
-      {:noreply, assign(socket, templates: state.templates)}
+      {:noreply, assign(socket, circles: build_circles(state.templates))}
     else
       {:noreply, socket}
     end
