@@ -26,9 +26,9 @@ defmodule ComiditasWeb.Live.SettingsView do
     templates
     |> Enum.map(fn t ->
       {t.day, %{
-        :breakfast => t.breakfast,
-        :lunch => t.lunch,
-        :dinner => t.dinner
+        "breakfast" => t.breakfast,
+        "lunch" => t.lunch,
+        "dinner" => t.dinner
       }}
     end)
     |> Enum.into(%{})
@@ -47,8 +47,6 @@ defmodule ComiditasWeb.Live.SettingsView do
         nil -> assign(socket, selected: selected)
         _ -> assign(socket, range: set_range(socket.assigns.range, selected))
       end
-    socket =
-      socket
       |> assign(selector: %Selector{show: true, left: left, top: top})
 
     {:noreply, socket}
@@ -84,26 +82,6 @@ defmodule ComiditasWeb.Live.SettingsView do
     end
   end
   def set_range(_, _), do: nil
-
-  #def handle_event("multi_select", %{"date" => date, "meal" => meal}, socket) do
-    #tps =
-      #Enum.map(socket.assigns.templates, fn x ->
-        #if x.day == String.to_integer(date) do
-          #Map.put(x, :multi_select, meal)
-        #else
-          #x
-        #end
-      #end)
-
-    #{:noreply, assign(socket, templates: tps)}
-  #end
-
-  #def handle_event("multi_select", _data, socket) do
-    ## multi_select clicked twice
-    #GroupServer.templates_of_user(socket.assigns.pid, socket.assigns.uid)
-
-    #{:noreply, socket}
-  #end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
