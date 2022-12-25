@@ -85,15 +85,6 @@ defmodule ComiditasWeb.Live.SettingsView do
     {:noreply, socket}
   end
 
-  def set_range(nil, selected), do: {selected, nil}
-  def set_range({r1, nil}, selected) do
-    case Selection.compare(selected, r1) do
-      :gt -> {r1, selected}
-      _ -> nil
-    end
-  end
-  def set_range(_, _), do: nil
-
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
       {:noreply, assign(socket, circles: build_circles(state.templates))}
