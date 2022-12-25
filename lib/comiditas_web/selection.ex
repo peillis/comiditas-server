@@ -8,11 +8,9 @@ defmodule ComiditasWeb.Selection do
   def compare({_, _meal}, {_, "breakfast"}), do: :gt
   def compare({_, _meal}, {_, "dinner"}), do: :lt
 
-  def in_range?(nil, _), do: false
-  def in_range?({r, nil}, r), do: true
-  def in_range?({_, nil}, _), do: false
-  def in_range?({r, _}, r), do: true
+  def in_range?({nil, _}, _), do: false
   def in_range?({_, r}, r), do: true
+  def in_range?({r, _}, r), do: true
   def in_range?({r1, r2}, r) do
     if compare(r, r1) == :gt and compare(r, r2) == :lt do
       true

@@ -19,7 +19,7 @@ defmodule ComiditasWeb.Live.SettingsView do
       |> GroupServer.templates_of_user(user.id)
       |> build_circles()
 
-    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, range: nil, selector: %Selector{})}
+    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles, selected: nil, multi_select_from: nil, selector: %Selector{})}
   end
 
   defp build_circles(templates) do
@@ -40,16 +40,27 @@ defmodule ComiditasWeb.Live.SettingsView do
     end
   end
 
-  def handle_event("select", %{"meal" => meal, "day" => day, "left" => left, "top" => top}, socket) do
+  def handle_event("select", %{"meal" => meal, "day" => day} = params, %{assigns: %{multi_select_from: msf}} = socket) when not is_nil(msf) do
     selected = {String.to_integer(day), meal}
     socket =
-      case socket.assigns.range do
-        nil -> assign(socket, selected: selected)
-        _ -> assign(socket, range: set_range(socket.assigns.range, selected))
+      case Selection.compare(selected, msf) do
+        :gt -> socket
+        _ -> assign(socket, multi_select_from: nil)
       end
-      |> assign(selector: %Selector{show: true, left: left, top: top})
+    {:noreply, assign_selected(socket, params)}
+  end
 
-    {:noreply, socket}
+  def handle_event("select", params, socket) do
+    {:noreply, assign_selected(socket, params)}
+  end
+
+  defp assign_selected(socket, params) do
+    %{"meal" => meal, "day" => day, "left" => left, "top" => top} = params
+    selected = {String.to_integer(day), meal}
+
+    socket
+    |> assign(selected: selected)
+    |> assign(selector: %Selector{show: true, left: left, top: top})
   end
 
   def handle_event("change", %{"val" => value}, socket) do
@@ -68,7 +79,7 @@ defmodule ComiditasWeb.Live.SettingsView do
   def handle_event("multi_select", _, socket) do
     socket =
       socket
-      |> assign(range: set_range(socket.assigns.range, socket.assigns.selected))
+      |> assign(multi_select_from: socket.assigns.selected)
       |> assign(selector: %Selector{})
 
     {:noreply, socket}
