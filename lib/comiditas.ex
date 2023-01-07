@@ -11,6 +11,7 @@ defmodule Comiditas do
   alias Comiditas.Groups.Group
   alias Comiditas.Accounts.User
   alias Comiditas.{Frozen, Mealdate, Repo, Template}
+  alias ComiditasWeb.Selection
 
   def totals_topic(group_id, date) do
     "group:#{group_id}-day:#{date}"
@@ -141,8 +142,11 @@ defmodule Comiditas do
   # Functions for changing multiple days
 
   def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
+    range = {{date_from, meal_from}, {date_to, meal_to}}
     Enum.each(list, fn x ->
-      meals = get_meals(x.date, date_from, meal_from, date_to, meal_to)
+      meals =
+        ["breakfast", "lunch", "dinner"]
+        |> Enum.filter(&Selection.in_range?(range, {x.date, &1}))
 
       if length(meals) > 0 do
         changeset = build_changeset(x, meals, value)
@@ -161,37 +165,14 @@ defmodule Comiditas do
     Mealdate.changeset(day, change)
   end
 
-  def get_meals(date, date_from, meal_from, date_to, meal_to) do
-    case date do
-      ^date_from ->
-        get_meals(meal_from, :from)
-
-      ^date_to ->
-        get_meals(meal_to, :to)
-
-      d when d > date_from and d < date_to ->
-        [:breakfast, :lunch, :dinner]
-
-      _ ->
-        []
-    end
-  end
-
-  def get_meals(meal, from_to) do
-    list = [:breakfast, :lunch, :dinner]
-    ind = Enum.find_index(list, &(&1 == meal))
-
-    case from_to do
-      :from -> Enum.slice(list, ind, 10)
-      :to -> Enum.slice(list, 0, ind + 1)
-    end
-  end
-
   # Functions for changing multiple templates
 
   def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
+    range = {{day_from, meal_from}, {day_to, meal_to}}
     Enum.each(list, fn x ->
-      meals = get_meals(x.day, day_from, meal_from, day_to, meal_to)
+      meals =
+        ["breakfast", "lunch", "dinner"]
+        |> Enum.filter(&Selection.in_range?(range, {x.day, &1}))
 
       if length(meals) > 0 do
         change =
