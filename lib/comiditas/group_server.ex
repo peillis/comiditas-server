@@ -1,7 +1,7 @@
 defmodule Comiditas.GroupServer do
   use GenServer
 
-  alias Comiditas.{Template, Totals, Util}
+  alias Comiditas.{Totals, Util}
   alias ComiditasWeb.Endpoint
 
   def start_link(group_id) do
@@ -41,15 +41,8 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:templates_of_user, user_id})
   end
 
-  def change_template(pid, %{uid: uid} = info) do
-    GenServer.call(pid, {:change_template, info})
-    templates_of_user(pid, uid)
-    gen_days_of_user(pid, 15, uid)
-    totals(pid, today(pid))
-  end
-
-  def change_templates(pid, uid, day_from, meal_from, day_to, meal_to, value) do
-    GenServer.call(pid, {:change_templates, uid, day_from, meal_from, day_to, meal_to, value})
+  def change_templates(pid, uid, range, value) do
+    GenServer.call(pid, {:change_templates, uid, range, value})
     templates_of_user(pid, uid)
     totals(pid, today(pid))
   end
@@ -86,16 +79,6 @@ defmodule Comiditas.GroupServer do
     check_time_running()
 
     {:ok, state}
-  end
-
-  @impl true
-  def handle_cast(:refresh, state) do
-    state =
-      state.group_id
-      |> get_data()
-      |> update_timestamp()
-
-    {:noreply, state}
   end
 
   @impl true
@@ -150,31 +133,9 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call({:change_template, %{uid: uid, day: day, change: change}}, _from, state) do
-    tp =
-      state.users
-      |> find_user(uid)
-      |> Map.get(:tps)
-      |> Enum.find(& &1.day == day)
-      |> Template.changeset(change)
-      |> Comiditas.save_template()
-
-    state =
-      state
-      |> refresh_user(uid, :tps)
-      |> update_timestamp()
-
-    {:reply, tp, state}
-  end
-
-  @impl true
-  def handle_call(
-        {:change_templates, uid, day_from, meal_from, day_to, meal_to, value},
-        _from,
-        state
-      ) do
+  def handle_call({:change_templates, uid, range, value}, _from, state) do
     user = find_user(state.users, uid)
-    Comiditas.change_templates(user.tps, day_from, meal_from, day_to, meal_to, value)
+    Comiditas.change_templates(user.tps, range, value)
 
     state =
       state
@@ -218,6 +179,16 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call(:today, _from, state) do
     {:reply, get_today(state.timezone), state}
+  end
+
+  @impl true
+  def handle_cast(:refresh, state) do
+    state =
+      state.group_id
+      |> get_data()
+      |> update_timestamp()
+
+    {:noreply, state}
   end
 
   @impl true

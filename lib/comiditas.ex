@@ -167,8 +167,7 @@ defmodule Comiditas do
 
   # Functions for changing multiple templates
 
-  def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
-    range = {{day_from, meal_from}, {day_to, meal_to}}
+  def change_templates(list, range, value) do
     Enum.each(list, fn x ->
       meals =
         ["breakfast", "lunch", "dinner"]

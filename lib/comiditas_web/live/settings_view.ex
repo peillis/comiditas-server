@@ -64,18 +64,19 @@ defmodule ComiditasWeb.Live.SettingsView do
   end
 
   def handle_event("change", %{"val" => value}, socket) do
-    %{pid: pid, uid: uid, selected: {day, meal}, multi_select_from: msf, circles: circles} = socket.assigns
+    %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
+    range =
+      if is_nil(msf) do
+        {selected, selected}
+      else
+        {msf, selected}
+      end
 
-    if is_nil(msf) do
-      GroupServer.change_template(pid, %{uid: uid, day: day, change: %{meal => value}})
-    else
-      {day_from, meal_from} = msf
-      GroupServer.change_templates(pid, uid, day_from, meal_from, day, meal, value)
-    end
+    GroupServer.change_templates(pid, uid, range, value)
 
     socket =
       socket
-      |> assign(circles: put_in(circles, [day, meal], value))
+      |> assign(multi_select_from: nil)
       |> assign(selector: %Selector{})
 
     {:noreply, socket}
