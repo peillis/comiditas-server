@@ -1,4 +1,4 @@
-defmodule ComiditasWeb.Selection do
+defmodule Comiditas.Selection do
 
   def compare({day1, _}, {day2, _}) when is_integer(day1) and is_integer(day2) and day1 > day2, do: :gt
   def compare({day1, _}, {day2, _}) when is_integer(day1) and is_integer(day2) and day1 < day2, do: :lt

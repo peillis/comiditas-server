@@ -10,8 +10,7 @@ defmodule Comiditas do
 
   alias Comiditas.Groups.Group
   alias Comiditas.Accounts.User
-  alias Comiditas.{Frozen, Mealdate, Repo, Template}
-  alias ComiditasWeb.Selection
+  alias Comiditas.{Frozen, Mealdate, Repo, Selection, Template}
 
   def totals_topic(group_id, date) do
     "group:#{group_id}-day:#{date}"
@@ -27,10 +26,6 @@ defmodule Comiditas do
 
   def values() do
     ["pack", "1", "yes", "2"]
-  end
-
-  def values_all() do
-    values() ++ ["no"]
   end
 
   def find_mealdate(date, mealdates) do
@@ -63,7 +58,6 @@ defmodule Comiditas do
         md
     end
     |> Map.put(:weekday, Timex.weekday(date))
-    |> Map.put(:multi_select, false)
   end
 
   def template_to_mealdate(template, date) do
@@ -132,7 +126,6 @@ defmodule Comiditas do
     Template
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
-    |> Enum.map(&Map.put(&1, :multi_select, false))
   end
 
   def get_timezone(group_id) do

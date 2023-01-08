@@ -1,10 +1,9 @@
 defmodule ComiditasWeb.Live.SettingsView do
   use Phoenix.LiveView
 
-  alias Comiditas.{Accounts, GroupServer, Util}
+  alias Comiditas.{Accounts, GroupServer, Selection, Util}
   alias ComiditasWeb.Components.Selector
   alias ComiditasWeb.Endpoint
-  alias ComiditasWeb.Selection
 
   import ComiditasWeb.Components
 
@@ -54,15 +53,6 @@ defmodule ComiditasWeb.Live.SettingsView do
     {:noreply, assign_selected(socket, params)}
   end
 
-  defp assign_selected(socket, params) do
-    %{"meal" => meal, "day" => day, "left" => left, "top" => top} = params
-    selected = {String.to_integer(day), meal}
-
-    socket
-    |> assign(selected: selected)
-    |> assign(selector: %Selector{show: true, left: left, top: top})
-  end
-
   def handle_event("change", %{"val" => value}, socket) do
     %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
     range =
@@ -98,4 +88,14 @@ defmodule ComiditasWeb.Live.SettingsView do
       {:noreply, socket}
     end
   end
+
+  defp assign_selected(socket, params) do
+    %{"meal" => meal, "day" => day, "left" => left, "top" => top} = params
+    selected = {String.to_integer(day), meal}
+
+    socket
+    |> assign(selected: selected)
+    |> assign(selector: %Selector{show: true, left: left, top: top})
+  end
+
 end
