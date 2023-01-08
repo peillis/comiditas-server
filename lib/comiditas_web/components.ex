@@ -1,12 +1,6 @@
 defmodule ComiditasWeb.Components do
   use Phoenix.Component
 
-  alias Comiditas.Selection
-
-  defmodule Selector do
-    defstruct show: false, top: 0, left: 0
-  end
-
   def selector(assigns) do
     ~H"""
     <svg id="selector" display={if @selector.show, do: "inline-block", else: "none"} style={"left: #{@selector.left}px; top: #{@selector.top}px;"} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -44,12 +38,6 @@ defmodule ComiditasWeb.Components do
     end
   end
   def frozen(_, _, _), do: nil
-
-  def blink(range, r) do
-    if Selection.in_range?(range, r) do
-      "blink"
-    end
-  end
 
   defp color("yes"), do: "green"
   defp color("no"), do: "red"
