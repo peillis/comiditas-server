@@ -4,6 +4,21 @@ let hideSelector = () => {
     document.getElementById('selector').style.display = 'none'
   }, 100)
 }
+let showSelector = {
+  mounted() {
+    this.el.addEventListener('click', e => {
+      // Find the TD closest to the event to get its coordinates
+      td_parent = e.target
+      if (td_parent.tagName != 'TD') {
+        td_parent = td_parent.closest('.buttons')
+      }
+      rect = td_parent.lastElementChild.getBoundingClientRect()
+      td_parent.dataset.left = rect.left - 53
+      td_parent.dataset.top = rect.top - 44
+      this.pushEvent('select', td_parent.dataset)
+    })
+  }
+}
 
 export let Hooks = {}
 
@@ -26,6 +41,7 @@ switch (window.location.pathname) {
         window.onscroll = scrollfn
       }
     }
+    Hooks.ShowSelector = showSelector;
 
     let activateActions = () => {
       let notes = document.getElementsByClassName('notes')
@@ -77,27 +93,7 @@ switch (window.location.pathname) {
     break
 
   case '/app/settings':
-    Hooks.TableHook = {
-      mounted() {
-        console.log('mounted')
-      }
-    }
-
-    Hooks.ShowSelector = {
-      mounted() {
-        this.el.addEventListener('click', e => {
-          // Find the TD closest to the event to get its coordinates
-          td_parent = e.target
-          if (td_parent.tagName != 'TD') {
-            td_parent = td_parent.closest('.buttons')
-          }
-          rect = td_parent.lastElementChild.getBoundingClientRect()
-          td_parent.dataset.left = rect.left - 53
-          td_parent.dataset.top = rect.top - 44
-          this.pushEvent('select', td_parent.dataset)
-        })
-      }
-    }
+    Hooks.ShowSelector = showSelector;
 
     window.onscroll = function(ev) {
       hideSelector()

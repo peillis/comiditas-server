@@ -9,14 +9,27 @@
         <th>Notes</th>
       </tr>
     </thead>
-    <tbody id="my_table" phx-hook="TableHook">
+    <tbody id="my_table">
       <%= for day <- @list do %>
-        <.row day={day}, today={@today}, frozen={@frozen} />
+        <tr class={"weekday-#{day.weekday}"}>
+          <td class="day">
+            <%= Timex.day_shortname(day.weekday) %><br/>
+            <strong><%= day.date.day %></strong>
+          </td>
+          <%= for meal <- [:breakfast, :lunch, :dinner] do %>
+            <td class={"buttons #{blink({@multi_select_from, @selected}, {day, meal})} #{frozen(@frozen, day, @today)}"} id={"#{day.date}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={Date.to_gregorian_days(day.date)}>
+              <.circle value={Map.get(day, meal)} />
+            </td>
+          <% end %>
+          <td class={"notes #{frozen(@frozen, day, @today)}"} data-date={day.date} data-notes={day.notes}>
+            <i class={"material-icons #{if day.notes != nil, do: "red"}"}>description</i>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
 
-  <.selector />
+  <.selector selector={@selector} />
 
   <div id="modal-background"></div>
   <div id="modal">

@@ -2,6 +2,7 @@ defmodule ComiditasWeb.Live.ListView do
   use Phoenix.LiveView
 
   alias Comiditas.{Accounts, GroupServer, Mealdate, Util}
+  alias ComiditasWeb.Components.Selector
   alias ComiditasWeb.Endpoint
 
   import ComiditasWeb.Components
@@ -17,7 +18,7 @@ defmodule ComiditasWeb.Live.ListView do
     Endpoint.subscribe(Comiditas.user_topic(user.id))
     list = GroupServer.gen_days_of_user(pid, @items, user.id)
 
-    {:ok, assign(socket, pid: pid, user_id: user.id, list: list, frozen: false, today: today)}
+    {:ok, assign(socket, pid: pid, user_id: user.id, list: list, frozen: false, today: today, selector: %Selector{}, multi_select_from: nil, selected: nil)}
   end
 
   def handle_event("view_more", _value, socket) do
@@ -94,6 +95,29 @@ defmodule ComiditasWeb.Live.ListView do
     change_day(date, socket, %{notes: String.trim(notes)})
 
     {:noreply, socket}
+  end
+
+  def handle_event("select", %{"meal" => meal, "day" => day} = params, %{assigns: %{multi_select_from: msf}} = socket) when not is_nil(msf) do
+    selected = {String.to_integer(day), meal}
+    socket =
+      case Selection.compare(selected, msf) do
+        :gt -> socket
+        _ -> assign(socket, multi_select_from: nil)
+      end
+    {:noreply, assign_selected(socket, params)}
+  end
+
+  def handle_event("select", params, socket) do
+    {:noreply, assign_selected(socket, params)}
+  end
+
+  defp assign_selected(socket, params) do
+    %{"meal" => meal, "day" => day, "left" => left, "top" => top} = params
+    selected = {String.to_integer(day), meal}
+
+    socket
+    |> assign(selected: selected)
+    |> assign(selector: %Selector{show: true, left: left, top: top})
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do

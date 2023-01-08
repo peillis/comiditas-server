@@ -33,12 +33,6 @@ defmodule ComiditasWeb.Live.SettingsView do
     |> Enum.into(%{})
   end
 
-  def blink(range, r) do
-    if Selection.in_range?(range, r) do
-      "blink"
-    end
-  end
-
   def handle_event("select", %{"meal" => meal, "day" => day} = params, %{assigns: %{multi_select_from: msf}} = socket) when not is_nil(msf) do
     selected = {String.to_integer(day), meal}
     socket =
