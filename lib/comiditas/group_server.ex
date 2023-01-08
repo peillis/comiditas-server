@@ -27,12 +27,13 @@ defmodule Comiditas.GroupServer do
     totals(pid, Timex.shift(changeset.data.date, days: -1))
   end
 
-  def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
-    GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
+  def change_days(pid, uid, list, {{date_from, _}, {date_to, _}} = range, value) do
+    GenServer.call(pid, {:change_days, uid, list, range, value})
     gen_days_of_user(pid, length(list), uid)
-    ndays = Timex.diff(date_to, date_from, :days)
+    ndays = date_to - date_from
 
     for d <- -1..ndays do
+      date_from = Date.from_gregorian_days(date_from)
       totals(pid, Timex.shift(date_from, days: d))
     end
   end
@@ -107,13 +108,9 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call(
-        {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value},
-        _from,
-        state
-      ) do
+  def handle_call({:change_days, uid, list, range, value}, _from, state) do
     user = find_user(state.users, uid)
-    Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
+    Comiditas.change_days(list, user.tps, range, value)
 
     state =
       state

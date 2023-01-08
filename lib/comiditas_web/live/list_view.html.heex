@@ -9,7 +9,7 @@
         <th>Notes</th>
       </tr>
     </thead>
-    <tbody id="my_table">
+    <tbody id="my_table" phx-hook="TableHook">
       <%= for day <- @list do %>
         <tr class={"weekday-#{day.weekday}"}>
           <td class="day">

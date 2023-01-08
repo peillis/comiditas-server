@@ -134,12 +134,11 @@ defmodule Comiditas do
 
   # Functions for changing multiple days
 
-  def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
-    range = {{date_from, meal_from}, {date_to, meal_to}}
+  def change_days(list, templates, range, value) do
     Enum.each(list, fn x ->
       meals =
         ["breakfast", "lunch", "dinner"]
-        |> Enum.filter(&Selection.in_range?(range, {x.date, &1}))
+        |> Enum.filter(&Selection.in_range?(range, {Date.to_gregorian_days(x.date), &1}))
 
       if length(meals) > 0 do
         changeset = build_changeset(x, meals, value)

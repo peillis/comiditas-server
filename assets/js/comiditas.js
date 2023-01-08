@@ -94,9 +94,6 @@ switch (window.location.pathname) {
 
   case '/app/settings':
     Hooks.ShowSelector = showSelector;
-
-    window.onscroll = function(ev) {
-      hideSelector()
-    };
+    window.onscroll = hideSelector;
     break
 }
