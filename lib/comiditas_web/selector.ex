@@ -5,6 +5,7 @@ defmodule ComiditasWeb.Selector do
     quote do
       use Phoenix.LiveView
       alias ComiditasWeb.Selector
+      alias Comiditas.GroupServer
       alias Comiditas.Selection
 
       def handle_event("select", %{"meal" => meal, "day" => day} = params, %{assigns: %{multi_select_from: msf}} = socket) when not is_nil(msf) do
@@ -25,6 +26,28 @@ defmodule ComiditasWeb.Selector do
         socket =
           socket
           |> assign(multi_select_from: socket.assigns.selected)
+          |> assign(selector: %Selector{})
+
+        {:noreply, socket}
+      end
+
+      def handle_event("change", %{"val" => value}, socket) do
+        %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
+        range =
+          if is_nil(msf) do
+            {selected, selected}
+          else
+            {msf, selected}
+          end
+
+        case Map.get(socket.assigns, :list) do
+          nil -> GroupServer.change_templates(pid, uid, range, value)
+          list -> GroupServer.change_days(pid, uid, list, range, value)
+        end
+
+        socket =
+          socket
+          |> assign(multi_select_from: nil)
           |> assign(selector: %Selector{})
 
         {:noreply, socket}

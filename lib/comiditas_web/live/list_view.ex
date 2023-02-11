@@ -37,25 +37,6 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("change", %{"val" => value}, socket) do
-    %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
-    range =
-      if is_nil(msf) do
-        {selected, selected}
-      else
-        {msf, selected}
-      end
-
-    GroupServer.change_days(pid, uid, socket.assigns.list, range, value)
-
-    socket =
-      socket
-      |> assign(multi_select_from: nil)
-      |> assign(selector: %Selector{})
-
-    {:noreply, socket}
-  end
-
   def handle_event("notes", %{"date" => date, "notes" => notes}, socket) do
     change_day(date, socket, %{notes: String.trim(notes)})
 

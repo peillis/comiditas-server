@@ -34,25 +34,6 @@ defmodule ComiditasWeb.Live.SettingsView do
     |> Enum.into(%{})
   end
 
-  def handle_event("change", %{"val" => value}, socket) do
-    %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
-    range =
-      if is_nil(msf) do
-        {selected, selected}
-      else
-        {msf, selected}
-      end
-
-    GroupServer.change_templates(pid, uid, range, value)
-
-    socket =
-      socket
-      |> assign(multi_select_from: nil)
-      |> assign(selector: %Selector{})
-
-    {:noreply, socket}
-  end
-
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
       {:noreply, assign(socket, circles: build_circles(state.templates))}
