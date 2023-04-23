@@ -17,16 +17,16 @@ defmodule ComiditasWeb.Live.TotalsView do
     socket =
       socket
       |> assign(
-       pid: pid,
-       group_id: user.group_id,
-       date: date,
-       totals: totals,
-       people_to_show: [],
-       notes_to_show: [],
-       today: date,
-       power_user: user.power_user,
-       notes: notes,
-       packs: packs
+        pid: pid,
+        group_id: user.group_id,
+        date: date,
+        totals: totals,
+        people_to_show: [],
+        notes_to_show: [],
+        today: date,
+        power_user: user.power_user,
+        notes: notes,
+        packs: packs
       )
       |> set_freeze()
 
@@ -82,11 +82,13 @@ defmodule ComiditasWeb.Live.TotalsView do
       "true" -> GroupServer.unfreeze(socket.assigns.pid)
       "false" -> GroupServer.freeze(socket.assigns.pid)
     end
+
     {:noreply, set_freeze(socket)}
   end
 
   defp set_freeze(socket) do
     %{date: date, today: today, power_user: power_user, group_id: group_id} = socket.assigns
+
     freeze =
       if today == date and power_user do
         Comiditas.frozen?(group_id, date)
