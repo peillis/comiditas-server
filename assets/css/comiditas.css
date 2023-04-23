@@ -146,6 +146,8 @@ a, td, svg text::selection {
   border: 1px solid black;
   padding: 1em;
   display: none;
+  max-height: 90%;
+  overflow-y: scroll;
 }
 #modal button {
   float: right;

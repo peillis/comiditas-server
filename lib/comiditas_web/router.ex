@@ -80,7 +80,7 @@ defmodule ComiditasWeb.Router do
 
     live "/list", Live.ListView
     live "/settings", Live.SettingsView
-    #get "/totals", PageController, :totals
+    live "/totals", Live.TotalsView
     #get "/users", PageController, :users
     #get "/users/:uid/edit", PageController, :edit
     #put "/users/:uid", PageController, :update

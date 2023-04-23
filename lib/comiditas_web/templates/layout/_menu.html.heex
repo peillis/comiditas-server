@@ -12,5 +12,7 @@
         <a href="" class="tab-item person"><i class="material-icons">person</i></a>
       <% end %>
     <% end %>
-    <a href="" class="tab-item"><i class="material-icons">done_all</i></a>
+    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.TotalsView), class: "tab-item" do %>
+      <i class="material-icons">done_all</i>
+    <% end %>
   </div>
