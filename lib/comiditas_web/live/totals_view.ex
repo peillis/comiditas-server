@@ -33,18 +33,6 @@ defmodule ComiditasWeb.Live.TotalsView do
     {:ok, socket}
   end
 
-  def set_freeze(socket) do
-    %{date: date, today: today, power_user: power_user, group_id: group_id} = socket.assigns
-    freeze =
-      if today == date and power_user do
-        Comiditas.frozen?(group_id, date)
-      else
-        nil
-      end
-
-    assign(socket, freeze: freeze)
-  end
-
   def handle_info(%{topic: topic, payload: {totals, notes, packs}}, socket) do
     if topic == Comiditas.totals_topic(socket.assigns.group_id, socket.assigns.date) do
       {:noreply, assign(socket, totals: totals, notes: notes, packs: packs)}
@@ -95,6 +83,18 @@ defmodule ComiditasWeb.Live.TotalsView do
       "false" -> GroupServer.freeze(socket.assigns.pid)
     end
     {:noreply, set_freeze(socket)}
+  end
+
+  defp set_freeze(socket) do
+    %{date: date, today: today, power_user: power_user, group_id: group_id} = socket.assigns
+    freeze =
+      if today == date and power_user do
+        Comiditas.frozen?(group_id, date)
+      else
+        nil
+      end
+
+    assign(socket, freeze: freeze)
   end
 
   defp print_date(date) do
