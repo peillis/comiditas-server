@@ -15,7 +15,10 @@ let showSelector = {
       rect = td_parent.lastElementChild.getBoundingClientRect()
       td_parent.dataset.left = rect.left - 53
       td_parent.dataset.top = rect.top - 44
-      this.pushEvent('select', td_parent.dataset)
+      window.test = td_parent
+      if (!test.classList.contains("frozen")) {
+        this.pushEvent('select', td_parent.dataset)
+      }
     })
   }
 }

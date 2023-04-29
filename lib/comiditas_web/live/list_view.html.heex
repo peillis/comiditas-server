@@ -17,11 +17,11 @@
             <strong><%= day.date.day %></strong>
           </td>
           <%= for meal <- [:breakfast, :lunch, :dinner] do %>
-            <td class={"buttons #{blink({@multi_select_from, @selected}, {day, meal})} #{frozen(@frozen, day, @today)}"} id={"#{day.date}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={Date.to_gregorian_days(day.date)}>
+            <td class={"buttons #{blink({@multi_select_from, @selected}, {day, meal})} #{frozen(@frozen, day, meal, @today)}"} id={"#{day.date}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={Date.to_gregorian_days(day.date)}>
               <.circle value={Map.get(day, meal)} />
             </td>
           <% end %>
-          <td phx-click="show_notes" class={"notes #{frozen(@frozen, day, @today)}"} phx-value-date={day.date}>
+          <td phx-click="show_notes" class={"notes #{frozen(@frozen, day, :whatever, @today)}"} phx-value-date={day.date}>
             <i class={"material-icons #{if day.notes != nil, do: "red"}"}>description</i>
           </td>
         </tr>

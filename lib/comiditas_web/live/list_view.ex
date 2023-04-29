@@ -46,12 +46,17 @@ defmodule ComiditasWeb.Live.ListView do
 
   def handle_event("show_notes", %{"date" => date}, socket) do
     {:ok, d} = Date.from_iso8601(date)
-    notes =
-      socket.assigns.list
-      |> Enum.find(& &1.date == d)
-      |> Map.get(:notes)
 
-    {:noreply, assign(socket, notes: {date, notes})}
+    if socket.assigns.frozen and d == socket.assigns.today do
+      {:noreply, socket}
+    else
+      notes =
+        socket.assigns.list
+        |> Enum.find(& &1.date == d)
+        |> Map.get(:notes)
+
+      {:noreply, assign(socket, notes: {date, notes})}
+    end
   end
 
   def handle_event("hide_notes", _, socket) do

@@ -30,14 +30,14 @@ defmodule ComiditasWeb.Components do
     """
   end
 
-  def frozen(true, %{date: date}, today) when date == today, do: "frozen"
-  def frozen(true, %{meal: "breakfast"} = item, today) do
+  def frozen(true, %{date: date}, meal, today) when date == today, do: "frozen"
+  def frozen(true, day, :breakfast, today) do
     tomorrow = Timex.shift(today, days: 1)
-    if item.date == tomorrow do
+    if day.date == tomorrow do
       "frozen"
     end
   end
-  def frozen(_, _, _), do: nil
+  def frozen(_, _, _, _), do: nil
 
   defp color("yes"), do: "green"
   defp color("no"), do: "red"
