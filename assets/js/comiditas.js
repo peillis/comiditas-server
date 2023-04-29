@@ -25,13 +25,7 @@ export let Hooks = {}
 switch (window.location.pathname) {
   case '/app/list':
     Hooks.TableHook = {
-      updated() {
-        activateActions()
-      },
       mounted() {
-        activateActions()
-        let modal_bck = document.getElementById('modal-background')
-        modal_bck.addEventListener('click', hideModal)
         let scrollfn = (ev) => {
           if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
             this.pushEvent('view_more', null)
@@ -43,36 +37,6 @@ switch (window.location.pathname) {
     }
     Hooks.ShowSelector = showSelector;
 
-    let activateActions = () => {
-      let notes = document.getElementsByClassName('notes')
-      for (let e of notes) {
-        e.addEventListener('click', showModal)
-      }
-    }
-
-    let showModal = (event) => {
-      let elem = event.target
-      if (elem.tagName == "I") elem = elem.parentNode
-      if (elem.classList.contains('frozen')) {
-        return
-      }
-      let modal = document.getElementById('modal')
-      let modal_bck = document.getElementById('modal-background')
-      let notes = document.getElementById('notes')
-      let date = document.getElementById('date')
-      notes.value = elem.dataset.notes
-      date.value = elem.dataset.date
-      modal.style.display = 'block'
-      modal_bck.style.display = 'block'
-      notes.focus()
-    }
-
-    let hideModal = () => {
-      let modal = document.getElementById('modal')
-      let modal_bck = document.getElementById('modal-background')
-      modal.style.display = 'none'
-      modal_bck.style.display = 'none'
-    }
     break
 
   case '/app/totals':

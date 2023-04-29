@@ -145,7 +145,6 @@ a, td, svg text::selection {
   margin-right: auto;
   border: 1px solid black;
   padding: 1em;
-  display: none;
   max-height: 90%;
   overflow-y: scroll;
 }
@@ -166,7 +165,6 @@ a, td, svg text::selection {
   height: 100%;
   background-color: black;
   opacity: .5;
-  display: none;
 }
 
 /* settings */

@@ -21,7 +21,7 @@
               <.circle value={Map.get(day, meal)} />
             </td>
           <% end %>
-          <td class={"notes #{frozen(@frozen, day, @today)}"} data-date={day.date} data-notes={day.notes}>
+          <td phx-click="show_notes" class={"notes #{frozen(@frozen, day, @today)}"} phx-value-date={day.date}>
             <i class={"material-icons #{if day.notes != nil, do: "red"}"}>description</i>
           </td>
         </tr>
@@ -31,14 +31,16 @@
 
   <.selector selector={@selector} />
 
-  <div id="modal-background"></div>
-  <div id="modal">
-    <form phx-submit="notes" accept-charset="UTF-8" method="post" action="#">
-      <h2>Notes:</h2>
-      <input type="hidden" name="date" value="" id="date"/>
-      <textarea id="notes" rows="5" name="notes" maxlength="250"></textarea>
-      <button type="submit">Save</button>
-    </form>
-  </div>
+  <%= if not is_nil(@notes) do %>
+    <% {_date, notes} = @notes %>
+    <div id="modal-background" phx-click="hide_notes"></div>
+    <div id="modal">
+      <form phx-submit="save_notes" accept-charset="UTF-8" method="post" action="#">
+        <h2>Notes:</h2>
+        <textarea id="notes" rows="5" name="notes" maxlength="250"><%= notes %></textarea>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  <% end %>
 
 </div>

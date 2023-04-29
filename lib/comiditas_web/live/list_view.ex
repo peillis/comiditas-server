@@ -12,14 +12,21 @@ defmodule ComiditasWeb.Live.ListView do
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
     pid = Util.get_pid(user.group_id)
-    today = GroupServer.today(pid)
 
     Endpoint.subscribe(Comiditas.user_topic(user.id))
     list = GroupServer.gen_days_of_user(pid, @items, user.id)
 
-    socket = selector_initial_assign(socket)
+    socket =
+      socket
+      |> selector_initial_assign()
+      |> assign(pid: pid)
+      |> assign(uid: user.id)
+      |> assign(list: list)
+      |> assign(frozen: false)
+      |> assign(today: GroupServer.today(pid))
+      |> assign(notes: nil)
 
-    {:ok, assign(socket, pid: pid, uid: user.id, list: list, frozen: false, today: today)}
+    {:ok, socket}
   end
 
   def handle_event("view_more", _value, socket) do
@@ -37,10 +44,25 @@ defmodule ComiditasWeb.Live.ListView do
     {:noreply, socket}
   end
 
-  def handle_event("notes", %{"date" => date, "notes" => notes}, socket) do
+  def handle_event("show_notes", %{"date" => date}, socket) do
+    {:ok, d} = Date.from_iso8601(date)
+    notes =
+      socket.assigns.list
+      |> Enum.find(& &1.date == d)
+      |> Map.get(:notes)
+
+    {:noreply, assign(socket, notes: {date, notes})}
+  end
+
+  def handle_event("hide_notes", _, socket) do
+    {:noreply, assign(socket, notes: nil)}
+  end
+
+  def handle_event("save_notes", %{"notes" => notes}, socket) do
+    %{notes: {date, _notes}} = socket.assigns
     change_day(date, socket, %{notes: String.trim(notes)})
 
-    {:noreply, socket}
+    {:noreply, assign(socket, notes: nil)}
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
