@@ -45,34 +45,57 @@ defmodule ComiditasWeb.PageController do
 
   def edit(conn, %{"uid" => uid}) do
     user = Users.get_user!(uid)
-    changeset = Users.change_user(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+    power_user = conn.assigns.current_user
+    if power_user.group_id == user.group_id do
+      changeset = Users.change_user(user)
+      render(conn, "edit.html", user: user, changeset: changeset)
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
+    end
   end
 
   def update(conn, %{"uid" => uid, "user" => user_params}) do
     user = Users.get_user!(uid)
     power_user = conn.assigns.current_user
 
-    case Users.update_user(user, user_params) do
-      {:ok, _user} ->
-        conn
-        |> put_flash(:info, "User updated successfully.")
-        |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    if power_user.group_id == user.group_id do
+      case Users.update_user(user, user_params) do
+        {:ok, _user} ->
+          conn
+          |> put_flash(:info, "User updated successfully.")
+          |> redirect(to: Routes.page_path(conn, :users))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", user: user, changeset: changeset)
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, "edit.html", user: user, changeset: changeset)
+      end
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
     end
   end
 
   def delete(conn, %{"uid" => uid}) do
     user = Users.get_user!(uid)
     power_user = conn.assigns.current_user
-    {:ok, _user} = Users.delete_user(user)
-    pid = Util.get_pid(power_user.group_id)
-    GroupServer.refresh(pid)
 
-    conn
-    |> put_flash(:info, "User deleted successfully.")
-    |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    if power_user.group_id == user.group_id do
+      {:ok, _user} = Users.delete_user(user)
+      pid = Util.get_pid(power_user.group_id)
+      GroupServer.refresh(pid)
+
+      conn
+      |> put_flash(:info, "User deleted successfully.")
+      |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
+    end
   end
 end
