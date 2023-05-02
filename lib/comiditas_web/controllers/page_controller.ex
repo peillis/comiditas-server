@@ -46,6 +46,7 @@ defmodule ComiditasWeb.PageController do
   def edit(conn, %{"uid" => uid}) do
     user = Users.get_user!(uid)
     power_user = conn.assigns.current_user
+
     if power_user.group_id == user.group_id do
       changeset = Users.change_user(user)
       render(conn, "edit.html", user: user, changeset: changeset)

@@ -8,13 +8,20 @@ defmodule ComiditasWeb.Selector do
       alias Comiditas.GroupServer
       alias Comiditas.Selection
 
-      def handle_event("select", %{"meal" => meal, "day" => day} = params, %{assigns: %{multi_select_from: msf}} = socket) when not is_nil(msf) do
+      def handle_event(
+            "select",
+            %{"meal" => meal, "day" => day} = params,
+            %{assigns: %{multi_select_from: msf}} = socket
+          )
+          when not is_nil(msf) do
         selected = {String.to_integer(day), meal}
+
         socket =
           case Selection.compare(selected, msf) do
             :gt -> socket
             _ -> assign(socket, multi_select_from: nil)
           end
+
         {:noreply, assign_selected(socket, params)}
       end
 
@@ -33,6 +40,7 @@ defmodule ComiditasWeb.Selector do
 
       def handle_event("change", %{"val" => value}, socket) do
         %{pid: pid, uid: uid, selected: selected, multi_select_from: msf} = socket.assigns
+
         range =
           if is_nil(msf) do
             {selected, selected}
@@ -71,7 +79,6 @@ defmodule ComiditasWeb.Selector do
         |> assign(selected: selected)
         |> assign(selector: %Selector{show: true, left: left, top: top})
       end
-
     end
   end
 end

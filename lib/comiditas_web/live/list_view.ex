@@ -11,6 +11,7 @@ defmodule ComiditasWeb.Live.ListView do
 
   def mount(%{"uid" => uid}, %{"user_token" => user_token} = _session, socket) do
     power_user = Accounts.get_user_by_session_token(user_token)
+
     if power_user.power_user and uid != "" do
       user = Accounts.get_user!(uid)
       common_mount(user, socket)
@@ -65,7 +66,7 @@ defmodule ComiditasWeb.Live.ListView do
     else
       notes =
         socket.assigns.list
-        |> Enum.find(& &1.date == d)
+        |> Enum.find(&(&1.date == d))
         |> Map.get(:notes)
 
       {:noreply, assign(socket, notes: {date, notes})}

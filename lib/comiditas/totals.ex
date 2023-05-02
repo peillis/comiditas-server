@@ -13,7 +13,7 @@ defmodule Comiditas.Totals do
       %{
         lunch: get_meal_totals(:lunch, today),
         dinner: get_meal_totals(:dinner, today),
-        breakfast: get_meal_totals(:breakfast, tomorrow),
+        breakfast: get_meal_totals(:breakfast, tomorrow)
       },
       # notes
       %{

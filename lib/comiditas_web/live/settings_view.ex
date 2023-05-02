@@ -8,6 +8,7 @@ defmodule ComiditasWeb.Live.SettingsView do
 
   def mount(%{"uid" => uid}, %{"user_token" => user_token} = _session, socket) do
     power_user = Accounts.get_user_by_session_token(user_token)
+
     if power_user.power_user and uid != "" do
       user = Accounts.get_user!(uid)
       common_mount(user, socket)
@@ -38,11 +39,12 @@ defmodule ComiditasWeb.Live.SettingsView do
   defp build_circles(templates) do
     templates
     |> Enum.map(fn t ->
-      {t.day, %{
-        "breakfast" => t.breakfast,
-        "lunch" => t.lunch,
-        "dinner" => t.dinner
-      }}
+      {t.day,
+       %{
+         "breakfast" => t.breakfast,
+         "lunch" => t.lunch,
+         "dinner" => t.dinner
+       }}
     end)
     |> Enum.into(%{})
   end
