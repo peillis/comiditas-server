@@ -1,8 +1,16 @@
 defmodule ComiditasWeb.PageController do
   use ComiditasWeb, :controller
 
+  alias Comiditas.GroupServer
+  alias Comiditas.Users
+  alias Comiditas.Util
+  alias Comiditas.Accounts.User
+
   def index(conn, _params) do
-    render(conn, "index.html")
+    case conn.assigns.current_user do
+      nil -> redirect(conn, to: "/users/log_in")
+      _ -> redirect(conn, to: "/app/list")
+    end
   end
 
   #def list(conn, %{"uid" => uid}) do
@@ -22,16 +30,16 @@ defmodule ComiditasWeb.PageController do
     #live_render(conn, ComiditasWeb.Live.TotalsView, session: %{user: user})
   #end
 
-  #def users(conn, _) do
-    #user = Guardian.Plug.current_resource(conn)
-    #conn = assign(conn, :users, Comiditas.get_users(user.group_id))
-    #render(conn, "users.html")
-  #end
+  def users(conn, _) do
+    user = conn.assigns.current_user
+    conn = assign(conn, :users, Comiditas.get_users(user.group_id))
+    render(conn, "users.html")
+  end
 
-  #def new(conn, _params) do
-    #changeset = Admin.change_user(%User{})
-    #render(conn, "new.html", changeset: changeset)
-  #end
+  def new(conn, _params) do
+    changeset = Admin.change_user(%User{})
+    render(conn, "new.html", changeset: changeset)
+  end
 
   #def create(conn, %{"user" => user_params}) do
     ## Add the group_id to the user
@@ -52,36 +60,36 @@ defmodule ComiditasWeb.PageController do
     #end
   #end
 
-  #def edit(conn, %{"uid" => uid}) do
-    #user = Admin.get_user!(uid)
-    #changeset = Admin.change_user(user)
-    #render(conn, "edit.html", user: user, changeset: changeset)
-  #end
+  def edit(conn, %{"uid" => uid}) do
+    user = Users.get_user!(uid)
+    changeset = Users.change_user(user)
+    render(conn, "edit.html", user: user, changeset: changeset)
+  end
 
-  #def update(conn, %{"uid" => uid, "user" => user_params}) do
-    #user = Admin.get_user!(uid)
-    #power_user = Guardian.Plug.current_resource(conn)
+  def update(conn, %{"uid" => uid, "user" => user_params}) do
+    user = Users.get_user!(uid)
+    power_user = conn.assigns.current_user
 
-    #case Admin.update_user(user, user_params) do
-      #{:ok, _user} ->
-        #conn
-        #|> put_flash(:info, "User updated successfully.")
-        #|> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    case Users.update_user(user, user_params) do
+      {:ok, _user} ->
+        conn
+        |> put_flash(:info, "User updated successfully.")
+        |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
 
-      #{:error, %Ecto.Changeset{} = changeset} ->
-        #render(conn, "edit.html", user: user, changeset: changeset)
-    #end
-  #end
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, "edit.html", user: user, changeset: changeset)
+    end
+  end
 
-  #def delete(conn, %{"uid" => uid}) do
-    #user = Admin.get_user!(uid)
-    #power_user = Guardian.Plug.current_resource(conn)
-    #{:ok, _user} = Admin.delete_user(user)
-    #pid = Util.get_pid(power_user.group_id)
-    #GroupServer.refresh(pid)
+  def delete(conn, %{"uid" => uid}) do
+    user = Users.get_user!(uid)
+    power_user = conn.assigns.current_user
+    {:ok, _user} = Users.delete_user(user)
+    pid = Util.get_pid(power_user.group_id)
+    GroupServer.refresh(pid)
 
-    #conn
-    #|> put_flash(:info, "User deleted successfully.")
-    #|> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
-  #end
+    conn
+    |> put_flash(:info, "User deleted successfully.")
+    |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+  end
 end

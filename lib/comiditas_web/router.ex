@@ -81,12 +81,12 @@ defmodule ComiditasWeb.Router do
     live "/list", Live.ListView
     live "/settings", Live.SettingsView
     live "/totals", Live.TotalsView
-    #get "/users", PageController, :users
-    #get "/users/:uid/edit", PageController, :edit
-    #put "/users/:uid", PageController, :update
-    #get "/users/new", PageController, :new
-    #post "/users", PageController, :create
-    #delete "/users/:uid", PageController, :delete
+    get "/users", PageController, :users
+    get "/users/:uid/edit", PageController, :edit
+    put "/users/:uid", PageController, :update
+    get "/users/new", PageController, :new
+    post "/users", PageController, :create
+    delete "/users/:uid", PageController, :delete
   end
 
   scope "/admin", ComiditasWeb do

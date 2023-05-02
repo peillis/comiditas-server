@@ -1,18 +1,20 @@
-  <div class="tabs red">
-    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.ListView), class: "tab-item" do %>
-      <i class="material-icons">view_list</i>
-    <% end %>
-    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.SettingsView), class: "tab-item" do %>
-      <i class="material-icons">settings</i>
-    <% end %>
+<%= if not is_nil(@current_user) do %>
+<div class="tabs red">
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.ListView), class: "tab-item" do %>
+    <i class="material-icons">view_list</i>
+  <% end %>
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.SettingsView), class: "tab-item" do %>
+    <i class="material-icons">settings</i>
+  <% end %>
+  <%= if @current_user.power_user do %>
     <%= if true do %>
-      <%= if true do %>
-        <a href="" class="tab-item person"><i class="material-icons">person</i></a>
-      <% else %>
-        <a href="" class="tab-item person"><i class="material-icons">person</i></a>
-      <% end %>
+      <a href={Routes.page_path(@conn, :users)} class="tab-item person"><i class="material-icons">person</i></a>
+    <% else %>
+      <a href="" class="tab-item person"><i class="material-icons">person</i></a>
     <% end %>
-    <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.TotalsView), class: "tab-item" do %>
-      <i class="material-icons">done_all</i>
-    <% end %>
-  </div>
+  <% end %>
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.TotalsView), class: "tab-item" do %>
+    <i class="material-icons">done_all</i>
+  <% end %>
+</div>
+<% end %>
