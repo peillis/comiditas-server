@@ -6,10 +6,23 @@ defmodule ComiditasWeb.Live.SettingsView do
 
   import ComiditasWeb.Components
 
+  def mount(%{"uid" => uid}, %{"user_token" => user_token} = _session, socket) do
+    power_user = Accounts.get_user_by_session_token(user_token)
+    if power_user.power_user and uid != "" do
+      user = Accounts.get_user!(uid)
+      common_mount(user, socket)
+    else
+      mount(nil, %{"user_token" => user_token}, socket)
+    end
+  end
+
   def mount(_params, %{"user_token" => user_token} = _session, socket) do
     user = Accounts.get_user_by_session_token(user_token)
-    pid = Util.get_pid(user.group_id)
+    common_mount(user, socket)
+  end
 
+  defp common_mount(user, socket) do
+    pid = Util.get_pid(user.group_id)
     Endpoint.subscribe(Comiditas.templates_user_topic(user.id))
 
     circles =
