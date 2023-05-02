@@ -3,6 +3,9 @@
     <div class="header">
       <h3>Edit User</h3>
     </div>
+    <%= form_for @conn, Routes.page_path(@conn, :delete, @user.id), [method: "delete", onsubmit: "return confirm('Are you sure?');"], fn f -> %>
+      <%= submit "Delete", class: "delete button button-outline" %>&nbsp;&nbsp;
+    <% end %>
     <%= render "form.html", Map.put(assigns, :action, Routes.page_path(@conn, :update, @user)) %>
   </div>
 </div>
