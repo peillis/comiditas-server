@@ -36,6 +36,9 @@ body {
   font-size: 2.5em;
   display: block;
 }
+table {
+  display: inline-table;
+}
 td i.material-icons {
   font-size: 35px;
 }
