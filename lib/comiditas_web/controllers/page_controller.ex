@@ -15,10 +15,12 @@ defmodule ComiditasWeb.PageController do
 
   def users(conn, _) do
     user = conn.assigns.current_user
+
     conn =
       conn
       |> assign(:users, Comiditas.get_users(user.group_id))
       |> delete_session(:uid)
+
     render(conn, "users.html")
   end
 
