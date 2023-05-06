@@ -1,10 +1,24 @@
+export let Hooks = {}
 
-let hideSelector = () => {
-  setTimeout(() => {
-    document.getElementById('selector').style.display = 'none'
-  }, 100)
+Hooks.TableHook = {
+  mounted() {
+    let hideSelector = () => {
+      setTimeout(() => {
+        document.getElementById('selector').style.display = 'none'
+      }, 100)
+    }
+
+    let scrollfn = (ev) => {
+      if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
+        this.pushEvent('view_more', null)
+      }
+      hideSelector()
+    }
+    window.onscroll = scrollfn
+  }
 }
-let showSelector = {
+
+Hooks.ShowSelector = {
   mounted() {
     this.el.addEventListener('click', e => {
       // Find the TD closest to the event to get its coordinates
@@ -23,44 +37,17 @@ let showSelector = {
   }
 }
 
-export let Hooks = {}
-
-switch (window.location.pathname) {
-  case '/app/list':
-    Hooks.TableHook = {
-      mounted() {
-        let scrollfn = (ev) => {
-          if ((window.innerHeight + window.scrollY + 50) >= document.body.offsetHeight) {
-            this.pushEvent('view_more', null)
-          }
-          hideSelector()
-        }
-        window.onscroll = scrollfn
+Hooks.TotalsHook = {
+  mounted() {
+    var hammertime = new Hammer(document.body);
+    let change_day = (ev) => {
+      if (ev.offsetDirection == 2) {  // swipe to left
+        this.pushEvent('change_date', 1)
+      }
+      if (ev.offsetDirection == 4) {  // to right
+        this.pushEvent('change_date', -1)
       }
     }
-    Hooks.ShowSelector = showSelector;
-
-    break
-
-  case '/app/totals':
-    Hooks.TableHook = {
-      mounted() {
-        var hammertime = new Hammer(document.body);
-        let change_day = (ev) => {
-          if (ev.offsetDirection == 2) {  // swipe to left
-            this.pushEvent('change_date', 1)
-          }
-          if (ev.offsetDirection == 4) {  // to right
-            this.pushEvent('change_date', -1)
-          }
-        }
-        hammertime.on('swipe', change_day)
-      }
-    }
-    break
-
-  case '/app/settings':
-    Hooks.ShowSelector = showSelector;
-    window.onscroll = hideSelector;
-    break
+    hammertime.on('swipe', change_day)
+  }
 }

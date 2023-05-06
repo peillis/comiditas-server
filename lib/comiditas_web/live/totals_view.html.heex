@@ -13,7 +13,7 @@
         <% end %>
       </tr>
     </thead>
-    <tbody id="my_table" phx-hook="TableHook">
+    <tbody id="my_table" phx-hook="TotalsHook">
       <%= for meal <- [:lunch, :dinner, :breakfast] do %>
       <tr>
         <td class="td_meal"><%= String.capitalize("#{meal}") %></td>

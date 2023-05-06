@@ -1,6 +1,6 @@
 <div class="main users">
   <table>
-    <tbody id="my_table" phx-hook="TableHook">
+    <tbody id="my_table">
       <%= for u <- @users do %>
       <tr>
         <td><a href={Routes.page_path(@conn, :impersonate, u.id)}><div class={if (u.power_user), do: "red", else: ""} style="height:100%; width:100%"><%= u.name %></div></a></td>
