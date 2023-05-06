@@ -3,7 +3,7 @@
     <tbody id="my_table" phx-hook="TableHook">
       <%= for u <- @users do %>
       <tr>
-        <td><a href={Routes.live_path(@conn, ComiditasWeb.Live.ListView, uid: u.id)}><div class={if (u.power_user), do: "red", else: ""} style="height:100%; width:100%"><%= u.name %></div></a></td>
+        <td><a href={Routes.page_path(@conn, :impersonate, u.id)}><div class={if (u.power_user), do: "red", else: ""} style="height:100%; width:100%"><%= u.name %></div></a></td>
         <td><a href={Routes.page_path(@conn, :edit, u.id)}><i class="material-icons">edit</i></a></td>
       </tr>
       <% end %>

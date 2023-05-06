@@ -6,10 +6,10 @@ defmodule ComiditasWeb.Live.SettingsView do
 
   import ComiditasWeb.Components
 
-  def mount(%{"uid" => uid}, %{"user_token" => user_token} = _session, socket) do
+  def mount(_params, %{"user_token" => user_token, "uid" => uid} = _session, socket) do
     power_user = Accounts.get_user_by_session_token(user_token)
 
-    if power_user.power_user and uid != "" do
+    if power_user.power_user do
       user = Accounts.get_user!(uid)
       common_mount(user, socket)
     else

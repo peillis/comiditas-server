@@ -1,15 +1,15 @@
 <%= if not is_nil(@current_user) do %>
-  <div class={"tabs #{if @conn.params["uid"] != "" and not is_nil(@conn.params["uid"]) do "red" end}"}>
-  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.ListView, uid: @conn.params["uid"]), class: "tab-item" do %>
+  <div class={"tabs #{if Plug.Conn.get_session(@conn, :uid) do "red" end}"}>
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.ListView), class: "tab-item" do %>
     <i class="material-icons">view_list</i>
   <% end %>
-  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.SettingsView, uid: @conn.params["uid"]), class: "tab-item" do %>
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.SettingsView), class: "tab-item" do %>
     <i class="material-icons">settings</i>
   <% end %>
   <%= if @current_user.power_user do %>
     <a href={Routes.page_path(@conn, :users)} class="tab-item person"><i class="material-icons">person</i></a>
   <% end %>
-  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.TotalsView, uid: @conn.params["uid"]), class: "tab-item" do %>
+  <%= live_redirect to: Routes.live_path(@conn, ComiditasWeb.Live.TotalsView), class: "tab-item" do %>
     <i class="material-icons">done_all</i>
   <% end %>
 </div>

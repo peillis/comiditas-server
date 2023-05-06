@@ -15,7 +15,10 @@ defmodule ComiditasWeb.PageController do
 
   def users(conn, _) do
     user = conn.assigns.current_user
-    conn = assign(conn, :users, Comiditas.get_users(user.group_id))
+    conn =
+      conn
+      |> assign(:users, Comiditas.get_users(user.group_id))
+      |> delete_session(:uid)
     render(conn, "users.html")
   end
 
@@ -98,5 +101,11 @@ defmodule ComiditasWeb.PageController do
       |> render(ComiditasWeb.ErrorView, "404.html")
       |> halt()
     end
+  end
+
+  def impersonate(conn, %{"uid" => uid}) do
+    conn
+    |> put_session(:uid, uid)
+    |> redirect(to: Routes.live_path(conn, ComiditasWeb.Live.ListView))
   end
 end

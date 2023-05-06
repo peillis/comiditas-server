@@ -87,6 +87,7 @@ defmodule ComiditasWeb.Router do
     get "/users/new", PageController, :new
     post "/users", PageController, :create
     delete "/users/:uid", PageController, :delete
+    get "/users/impersonate/:uid", PageController, :impersonate
   end
 
   scope "/admin", ComiditasWeb do
