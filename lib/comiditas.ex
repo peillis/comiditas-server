@@ -6,11 +6,11 @@ defmodule Comiditas do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
-
   import Ecto.Query
 
-  alias Comiditas.Admin.{Group, User}
-  alias Comiditas.{Frozen, Mealdate, Repo, Template}
+  alias Comiditas.Groups.Group
+  alias Comiditas.Accounts.User
+  alias Comiditas.{Frozen, Mealdate, Repo, Selection, Template}
 
   def totals_topic(group_id, date) do
     "group:#{group_id}-day:#{date}"
@@ -26,10 +26,6 @@ defmodule Comiditas do
 
   def values() do
     ["pack", "1", "yes", "2"]
-  end
-
-  def values_all() do
-    values() ++ ["no"]
   end
 
   def find_mealdate(date, mealdates) do
@@ -62,7 +58,6 @@ defmodule Comiditas do
         md
     end
     |> Map.put(:weekday, Timex.weekday(date))
-    |> Map.put(:multi_select, false)
   end
 
   def template_to_mealdate(template, date) do
@@ -131,7 +126,6 @@ defmodule Comiditas do
     Template
     |> where([m], m.user_id in ^user_ids)
     |> Repo.all()
-    |> Enum.map(&Map.put(&1, :multi_select, false))
   end
 
   def get_timezone(group_id) do
@@ -140,9 +134,11 @@ defmodule Comiditas do
 
   # Functions for changing multiple days
 
-  def change_days(list, templates, date_from, meal_from, date_to, meal_to, value) do
+  def change_days(list, templates, range, value) do
     Enum.each(list, fn x ->
-      meals = get_meals(x.date, date_from, meal_from, date_to, meal_to)
+      meals =
+        ["breakfast", "lunch", "dinner"]
+        |> Enum.filter(&Selection.in_range?(range, {Date.to_gregorian_days(x.date), &1}))
 
       if length(meals) > 0 do
         changeset = build_changeset(x, meals, value)
@@ -161,37 +157,13 @@ defmodule Comiditas do
     Mealdate.changeset(day, change)
   end
 
-  def get_meals(date, date_from, meal_from, date_to, meal_to) do
-    case date do
-      ^date_from ->
-        get_meals(meal_from, :from)
-
-      ^date_to ->
-        get_meals(meal_to, :to)
-
-      d when d > date_from and d < date_to ->
-        [:breakfast, :lunch, :dinner]
-
-      _ ->
-        []
-    end
-  end
-
-  def get_meals(meal, from_to) do
-    list = [:breakfast, :lunch, :dinner]
-    ind = Enum.find_index(list, &(&1 == meal))
-
-    case from_to do
-      :from -> Enum.slice(list, ind, 10)
-      :to -> Enum.slice(list, 0, ind + 1)
-    end
-  end
-
   # Functions for changing multiple templates
 
-  def change_templates(list, day_from, meal_from, day_to, meal_to, value) do
+  def change_templates(list, range, value) do
     Enum.each(list, fn x ->
-      meals = get_meals(x.day, day_from, meal_from, day_to, meal_to)
+      meals =
+        ["breakfast", "lunch", "dinner"]
+        |> Enum.filter(&Selection.in_range?(range, {x.day, &1}))
 
       if length(meals) > 0 do
         change =

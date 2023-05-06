@@ -1,13 +1,14 @@
 defmodule ComiditasWeb.UserController do
   use ComiditasWeb, :controller
 
-  alias Comiditas.Admin
-  alias Comiditas.Admin.User
+  alias Comiditas.Users
+  alias Comiditas.Accounts.User
 
-  plug(:put_layout, {ComiditasWeb.LayoutView, "torch.html"})
+  plug(:put_root_layout, {ComiditasWeb.LayoutView, "torch.html"})
+  plug(:put_layout, false)
 
   def index(conn, params) do
-    case Admin.paginate_users(params) do
+    case Users.paginate_users(params) do
       {:ok, assigns} ->
         render(conn, "index.html", assigns)
 
@@ -19,12 +20,12 @@ defmodule ComiditasWeb.UserController do
   end
 
   def new(conn, _params) do
-    changeset = Admin.change_user(%User{})
+    changeset = Users.change_user(%User{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params}) do
-    case Admin.create_user(user_params) do
+    case Users.create_user(user_params) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "User created successfully.")
@@ -36,20 +37,20 @@ defmodule ComiditasWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Admin.get_user!(id)
+    user = Users.get_user!(id)
     render(conn, "show.html", user: user)
   end
 
   def edit(conn, %{"id" => id}) do
-    user = Admin.get_user!(id)
-    changeset = Admin.change_user(user)
+    user = Users.get_user!(id)
+    changeset = Users.change_user(user)
     render(conn, "edit.html", user: user, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Admin.get_user!(id)
+    user = Users.get_user!(id)
 
-    case Admin.update_user(user, user_params) do
+    case Users.update_user(user, user_params) do
       {:ok, user} ->
         conn
         |> put_flash(:info, "User updated successfully.")
@@ -61,8 +62,8 @@ defmodule ComiditasWeb.UserController do
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Admin.get_user!(id)
-    {:ok, _user} = Admin.delete_user(user)
+    user = Users.get_user!(id)
+    {:ok, _user} = Users.delete_user(user)
 
     conn
     |> put_flash(:info, "User deleted successfully.")

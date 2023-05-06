@@ -12,7 +12,7 @@ defmodule ComiditasWeb.ConnCase do
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
   by setting `use ComiditasWeb.ConnCase, async: true`, although
-  this option is not recommendded for other databases.
+  this option is not recommended for other databases.
   """
 
   use ExUnit.CaseTemplate
@@ -20,7 +20,10 @@ defmodule ComiditasWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
+      import ComiditasWeb.ConnCase
+
       alias ComiditasWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
@@ -29,12 +32,38 @@ defmodule ComiditasWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Comiditas.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Comiditas.Repo, {:shared, self()})
-    end
-
+    Comiditas.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  @doc """
+  Setup helper that registers and logs in users.
+
+      setup :register_and_log_in_user
+
+  It stores an updated connection and a registered user in the
+  test context.
+  """
+  def register_and_log_in_user(%{conn: conn}) do
+    user = Comiditas.AccountsFixtures.user_fixture()
+    %{conn: log_in_user(conn, user), user: user}
+  end
+
+  def register_and_log_in_root_user(%{conn: conn}) do
+    user = Comiditas.AccountsFixtures.root_user_fixture()
+    %{conn: log_in_user(conn, user), user: user}
+  end
+
+  @doc """
+  Logs the given `user` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_in_user(conn, user) do
+    token = Comiditas.Accounts.generate_user_session_token(user)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:user_token, token)
   end
 end

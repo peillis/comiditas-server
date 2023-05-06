@@ -1,13 +1,16 @@
 defmodule ComiditasWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :comiditas
 
-  socket "/live", Phoenix.LiveView.Socket,
-    websocket: [timeout: 45_000],
-    longpoll: false
+  # The session will be stored in the cookie and signed,
+  # this means its contents can be read but not tampered with.
+  # Set :encryption_salt if you would also like to encrypt it.
+  @session_options [
+    store: :cookie,
+    key: "_comiditas_key",
+    signing_salt: "wlaXNkNl"
+  ]
 
-  socket "/socket", ComiditasWeb.UserSocket,
-    websocket: true,
-    longpoll: false
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -17,15 +20,7 @@ defmodule ComiditasWeb.Endpoint do
     at: "/",
     from: :comiditas,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
-
-  # Code reloading can be explicitly enabled under the
-  # :code_reloader configuration of your endpoint.
-  if code_reloading? do
-    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-    plug Phoenix.LiveReloader
-    plug Phoenix.CodeReloader
-  end
+    only: ~w(assets fonts images favicon.ico robots.txt)
 
   plug Plug.Static,
     at: "/torch",
@@ -33,6 +28,19 @@ defmodule ComiditasWeb.Endpoint do
     gzip: true,
     cache_control_for_etags: "public, max-age=86400",
     headers: [{"access-control-allow-origin", "*"}]
+
+  # Code reloading can be explicitly enabled under the
+  # :code_reloader configuration of your endpoint.
+  if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
+    plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :comiditas
+  end
+
+  plug Phoenix.LiveDashboard.RequestLogger,
+    param_key: "request_logger",
+    cookie_key: "request_logger"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
@@ -44,16 +52,6 @@ defmodule ComiditasWeb.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
-
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_comiditas_key",
-    signing_salt: "7dyuAp3l",
-    # 1 year of cookie time
-    max_age: 365 * 24 * 60 * 60
-
+  plug Plug.Session, @session_options
   plug ComiditasWeb.Router
 end

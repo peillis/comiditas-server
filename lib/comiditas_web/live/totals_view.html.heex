@@ -1,0 +1,84 @@
+<div class="totals main">
+  <h2><%= if (@today == @date), do: "Today", else: print_date(@date) %></h2>
+  <table>
+    <thead>
+      <tr>
+        <%= if @notes.today != [] do %>
+        <th phx-click="show_notes" phx-value-which="today" class="notes"><i class="red material-icons">description</i></th>
+        <% else %>
+        <th></th>
+        <% end %>
+        <%= for i <- Comiditas.values() do %>
+          <th><.circle value={i} /></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody id="my_table" phx-hook="TotalsHook">
+      <%= for meal <- [:lunch, :dinner, :breakfast] do %>
+      <tr>
+        <td class="td_meal"><%= String.capitalize("#{meal}") %></td>
+        <%= for {people, index} <- Enum.with_index(@totals[meal]) do %>
+          <td phx-click="show_list" phx-value-meal={meal} phx-value-index={index}><%= display_length(people) %></td>
+        <% end %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= if any_pack?(@packs) do %>
+  <h2>Tomorrow Packs</h2>
+  <table>
+    <thead>
+      <tr>
+        <%= if @notes.tomorrow != [] do %>
+        <th phx-click="show_notes" phx-value-which="tomorrow" class="notes"><i class="red material-icons">description</i></th>
+        <% else %>
+        <th></th>
+        <% end %>
+        <th class="packs">Brk</th>
+        <th class="packs">Lch</th>
+        <th class="packs">Dnr</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td><%= display_length(@packs.breakfast) %></td>
+        <td><%= display_length(@packs.lunch) %></td>
+        <td><%= display_length(@packs.dinner) %></td>
+      </tr>
+    </tbody>
+  </table>
+  <% end %>
+
+  <%= if not is_nil(@freeze) do %>
+    <button phx-click="freeze" phx-value-val={"#{@freeze}"}><%= if @freeze, do: "Unfreeze", else: "Freeze" %></button>
+  <% end %>
+
+  <br/><br/>
+
+  <%= if @people_to_show != [] do %>
+  <div id="modal-background" phx-click="hide_list"></div>
+  <div id="modal" phx-click="hide_list">
+    <br/><br/>
+    <ul>
+      <%= for p <- @people_to_show do %>
+      <li><%= p %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <%= if @notes_to_show != [] do %>
+  <div id="modal-background" phx-click="hide_notes"></div>
+  <div id="modal" phx-click="hide_notes">
+    <br/><br/>
+    <ul>
+      <%= for {p, n} <- @notes_to_show do %>
+      <li><strong><%= p %>:</strong> <%= n %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+</div>

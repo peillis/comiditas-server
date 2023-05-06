@@ -4,7 +4,8 @@ defmodule <%= inspect context.web_module %>.<%= inspect Module.concat(schema.web
   alias <%= inspect context.module %>
   alias <%= inspect schema.module %>
 
-  plug(:put_layout, {<%= inspect context.web_module %>.LayoutView, "torch.html"})
+  plug(:put_root_layout, {<%= inspect context.web_module %>.LayoutView, "torch.html"})
+  plug(:put_layout, false)
 
   def index(conn, params) do
     case <%= inspect context.alias %>.paginate_<%= schema.plural %>(params) do

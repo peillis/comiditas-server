@@ -4,7 +4,7 @@ defmodule Comiditas.Frozen do
 
   schema "frozen" do
     field :date, :date
-    belongs_to :group, Comiditas.Admin.Group
+    belongs_to :group, Comiditas.Groups.Group
 
     timestamps()
   end

@@ -1,0 +1,29 @@
+<div class="main settings">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Brk</th>
+        <th>Lch</th>
+        <th>Dnr</th>
+      </tr>
+    </thead>
+    <tbody id="my_table">
+      <%= for {day, v} <- @circles do %>
+      <tr class={"weekday-#{day}"}>
+        <td class="day"><%= Timex.day_shortname(day) %></td>
+        <%= for meal <- ["breakfast", "lunch", "dinner"] do %>
+          <td class={"buttons #{blink({@multi_select_from, @selected}, {day, meal})}"} id={"#{day}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={day}>
+            <.circle value={v[meal]} />
+          </td>
+        <% end %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br/><br/>
+  <button onclick="window.location.href = '/users/log_out';">Logout</button>
+  <br/><br/>
+  <br/><br/>
+  <.selector selector={@selector} />
+</div>

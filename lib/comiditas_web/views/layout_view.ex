@@ -1,14 +1,7 @@
 defmodule ComiditasWeb.LayoutView do
   use ComiditasWeb, :view
 
-  def menu_class(conn) do
-    uid = String.to_integer(conn.params["uid"])
-    user = Guardian.Plug.current_resource(conn)
-
-    if uid == user.id or conn.private.phoenix_template == "edit.html" do
-      ""
-    else
-      "red"
-    end
-  end
+  # Phoenix LiveDashboard is available only in development by default,
+  # so we instruct Elixir to not warn if the dashboard route is missing.
+  @compile {:no_warn_undefined, {Routes, :live_dashboard_path, 2}}
 end

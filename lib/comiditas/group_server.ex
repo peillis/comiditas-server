@@ -27,12 +27,13 @@ defmodule Comiditas.GroupServer do
     totals(pid, Timex.shift(changeset.data.date, days: -1))
   end
 
-  def change_days(pid, uid, list, date_from, meal_from, date_to, meal_to, value) do
-    GenServer.call(pid, {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value})
+  def change_days(pid, uid, list, {{date_from, _}, {date_to, _}} = range, value) do
+    GenServer.call(pid, {:change_days, uid, list, range, value})
     gen_days_of_user(pid, length(list), uid)
-    ndays = Timex.diff(date_to, date_from, :days)
+    ndays = date_to - date_from
 
     for d <- -1..ndays do
+      date_from = Date.from_gregorian_days(date_from)
       totals(pid, Timex.shift(date_from, days: d))
     end
   end
@@ -41,15 +42,8 @@ defmodule Comiditas.GroupServer do
     GenServer.call(pid, {:templates_of_user, user_id})
   end
 
-  def change_template(pid, changeset) do
-    GenServer.call(pid, {:change_template, changeset})
-    templates_of_user(pid, changeset.data.user_id)
-    gen_days_of_user(pid, 15, changeset.data.user_id)
-    totals(pid, today(pid))
-  end
-
-  def change_templates(pid, uid, day_from, meal_from, day_to, meal_to, value) do
-    GenServer.call(pid, {:change_templates, uid, day_from, meal_from, day_to, meal_to, value})
+  def change_templates(pid, uid, range, value) do
+    GenServer.call(pid, {:change_templates, uid, range, value})
     templates_of_user(pid, uid)
     totals(pid, today(pid))
   end
@@ -81,22 +75,11 @@ defmodule Comiditas.GroupServer do
     state =
       group_id
       |> get_data()
-      |> Map.put(:start, Timex.now())
       |> Map.put(:last_op, Timex.now())
 
     check_time_running()
 
     {:ok, state}
-  end
-
-  @impl true
-  def handle_cast(:refresh, state) do
-    state =
-      state.group_id
-      |> get_data()
-      |> update_timestamp()
-
-    {:noreply, state}
   end
 
   @impl true
@@ -125,13 +108,9 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call(
-        {:change_days, uid, list, date_from, meal_from, date_to, meal_to, value},
-        _from,
-        state
-      ) do
+  def handle_call({:change_days, uid, list, range, value}, _from, state) do
     user = find_user(state.users, uid)
-    Comiditas.change_days(list, user.tps, date_from, meal_from, date_to, meal_to, value)
+    Comiditas.change_days(list, user.tps, range, value)
 
     state =
       state
@@ -151,25 +130,9 @@ defmodule Comiditas.GroupServer do
   end
 
   @impl true
-  def handle_call({:change_template, changeset}, _from, state) do
-    tp = Comiditas.save_template(changeset)
-
-    state =
-      state
-      |> refresh_user(changeset.data.user_id, :tps)
-      |> update_timestamp()
-
-    {:reply, tp, state}
-  end
-
-  @impl true
-  def handle_call(
-        {:change_templates, uid, day_from, meal_from, day_to, meal_to, value},
-        _from,
-        state
-      ) do
+  def handle_call({:change_templates, uid, range, value}, _from, state) do
     user = find_user(state.users, uid)
-    Comiditas.change_templates(user.tps, day_from, meal_from, day_to, meal_to, value)
+    Comiditas.change_templates(user.tps, range, value)
 
     state =
       state
@@ -213,6 +176,16 @@ defmodule Comiditas.GroupServer do
   @impl true
   def handle_call(:today, _from, state) do
     {:reply, get_today(state.timezone), state}
+  end
+
+  @impl true
+  def handle_cast(:refresh, state) do
+    state =
+      state.group_id
+      |> get_data()
+      |> update_timestamp()
+
+    {:noreply, state}
   end
 
   @impl true

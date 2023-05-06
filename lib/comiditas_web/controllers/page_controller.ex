@@ -1,48 +1,40 @@
 defmodule ComiditasWeb.PageController do
   use ComiditasWeb, :controller
-  import Phoenix.LiveView.Controller
 
-  alias Comiditas.{Admin, GroupServer, Util}
-  alias Comiditas.Admin.User
+  alias Comiditas.GroupServer
+  alias Comiditas.Users
+  alias Comiditas.Util
+  alias Comiditas.Accounts.User
 
   def index(conn, _params) do
-    render(conn, "index.html")
-  end
-
-  def list(conn, %{"uid" => uid}) do
-    user = Guardian.Plug.current_resource(conn)
-    uid = String.to_integer(uid)
-    live_render(conn, ComiditasWeb.Live.ListView, session: %{user: user, uid: uid})
-  end
-
-  def settings(conn, %{"uid" => uid}) do
-    user = Guardian.Plug.current_resource(conn)
-    uid = String.to_integer(uid)
-    live_render(conn, ComiditasWeb.Live.SettingsView, session: %{user: user, uid: uid})
-  end
-
-  def totals(conn, _) do
-    user = Guardian.Plug.current_resource(conn)
-    live_render(conn, ComiditasWeb.Live.TotalsView, session: %{user: user})
+    case conn.assigns.current_user do
+      nil -> redirect(conn, to: "/users/log_in")
+      _ -> redirect(conn, to: "/app/list")
+    end
   end
 
   def users(conn, _) do
-    user = Guardian.Plug.current_resource(conn)
-    conn = assign(conn, :users, Comiditas.get_users(user.group_id))
+    user = conn.assigns.current_user
+
+    conn =
+      conn
+      |> assign(:users, Comiditas.get_users(user.group_id))
+      |> delete_session(:uid)
+
     render(conn, "users.html")
   end
 
   def new(conn, _params) do
-    changeset = Admin.change_user(%User{})
+    changeset = Users.change_user(%User{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params}) do
     # Add the group_id to the user
-    power_user = Guardian.Plug.current_resource(conn)
+    power_user = conn.assigns.current_user
     user_params = Map.put(user_params, "group_id", power_user.group_id)
 
-    case Admin.create_user(user_params) do
+    case Users.create_user(user_params) do
       {:ok, _user} ->
         pid = Util.get_pid(power_user.group_id)
         GroupServer.refresh(pid)
@@ -57,35 +49,65 @@ defmodule ComiditasWeb.PageController do
   end
 
   def edit(conn, %{"uid" => uid}) do
-    user = Admin.get_user!(uid)
-    changeset = Admin.change_user(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+    user = Users.get_user!(uid)
+    power_user = conn.assigns.current_user
+
+    if power_user.group_id == user.group_id do
+      changeset = Users.change_user(user)
+      render(conn, "edit.html", user: user, changeset: changeset)
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
+    end
   end
 
   def update(conn, %{"uid" => uid, "user" => user_params}) do
-    user = Admin.get_user!(uid)
-    power_user = Guardian.Plug.current_resource(conn)
+    user = Users.get_user!(uid)
+    power_user = conn.assigns.current_user
 
-    case Admin.update_user(user, user_params) do
-      {:ok, _user} ->
-        conn
-        |> put_flash(:info, "User updated successfully.")
-        |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    if power_user.group_id == user.group_id do
+      case Users.update_user(user, user_params) do
+        {:ok, _user} ->
+          conn
+          |> put_flash(:info, "User updated successfully.")
+          |> redirect(to: Routes.page_path(conn, :users))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", user: user, changeset: changeset)
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, "edit.html", user: user, changeset: changeset)
+      end
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
     end
   end
 
   def delete(conn, %{"uid" => uid}) do
-    user = Admin.get_user!(uid)
-    power_user = Guardian.Plug.current_resource(conn)
-    {:ok, _user} = Admin.delete_user(user)
-    pid = Util.get_pid(power_user.group_id)
-    GroupServer.refresh(pid)
+    user = Users.get_user!(uid)
+    power_user = conn.assigns.current_user
 
+    if power_user.group_id == user.group_id do
+      {:ok, _user} = Users.delete_user(user)
+      pid = Util.get_pid(power_user.group_id)
+      GroupServer.refresh(pid)
+
+      conn
+      |> put_flash(:info, "User deleted successfully.")
+      |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    else
+      conn
+      |> put_status(404)
+      |> render(ComiditasWeb.ErrorView, "404.html")
+      |> halt()
+    end
+  end
+
+  def impersonate(conn, %{"uid" => uid}) do
     conn
-    |> put_flash(:info, "User deleted successfully.")
-    |> redirect(to: Routes.page_path(conn, :users, uid: power_user.id))
+    |> put_session(:uid, uid)
+    |> redirect(to: Routes.live_path(conn, ComiditasWeb.Live.ListView))
   end
 end

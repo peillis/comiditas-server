@@ -1,77 +1,57 @@
 defmodule ComiditasWeb.Live.SettingsView do
-  use Phoenix.LiveView
+  use ComiditasWeb.Selector
 
-  alias Comiditas.{GroupServer, Template, Util}
+  alias Comiditas.{Accounts, GroupServer, Selection, Util}
   alias ComiditasWeb.Endpoint
 
-  def render(assigns) do
-    ComiditasWeb.PageView.render("settings.html", assigns)
+  import ComiditasWeb.Components
+
+  def mount(_params, %{"user_token" => user_token, "uid" => uid} = _session, socket) do
+    power_user = Accounts.get_user_by_session_token(user_token)
+
+    if power_user.power_user do
+      user = Accounts.get_user!(uid)
+      common_mount(user, socket)
+    else
+      mount(nil, %{"user_token" => user_token}, socket)
+    end
   end
 
-  def mount(session, socket) do
-    pid = Util.get_pid(session.user.group_id)
-
-    Endpoint.subscribe(Comiditas.templates_user_topic(session.uid))
-    tps = GroupServer.templates_of_user(pid, session.uid)
-
-    {:ok, assign(socket, pid: pid, uid: session.uid, templates: tps)}
+  def mount(_params, %{"user_token" => user_token} = _session, socket) do
+    user = Accounts.get_user_by_session_token(user_token)
+    common_mount(user, socket)
   end
 
-  def handle_event("change", %{"date" => weekday, "meal" => meal, "val" => value}, socket) do
-    template = Enum.find(socket.assigns.templates, &(&1.day == String.to_integer(weekday)))
-    changeset = Template.changeset(template, Map.put(%{}, meal, value))
-    GroupServer.change_template(socket.assigns.pid, changeset)
+  defp common_mount(user, socket) do
+    pid = Util.get_pid(user.group_id)
+    Endpoint.subscribe(Comiditas.templates_user_topic(user.id))
 
-    {:noreply, socket}
+    circles =
+      pid
+      |> GroupServer.templates_of_user(user.id)
+      |> build_circles()
+
+    socket = selector_initial_assign(socket)
+
+    {:ok, assign(socket, pid: pid, uid: user.id, circles: circles)}
   end
 
-  def handle_event(
-        "change",
-        %{
-          "date-from" => day_from,
-          "meal-from" => meal_from,
-          "date-to" => day_to,
-          "meal-to" => meal_to,
-          "val" => value
-        },
-        socket
-      ) do
-    GroupServer.change_templates(
-      socket.assigns.pid,
-      socket.assigns.uid,
-      String.to_integer(day_from),
-      String.to_atom(meal_from),
-      String.to_integer(day_to),
-      String.to_atom(meal_to),
-      value
-    )
-
-    {:noreply, socket}
-  end
-
-  def handle_event("multi_select", %{"date" => date, "meal" => meal}, socket) do
-    tps =
-      Enum.map(socket.assigns.templates, fn x ->
-        if x.day == String.to_integer(date) do
-          Map.put(x, :multi_select, meal)
-        else
-          x
-        end
-      end)
-
-    {:noreply, assign(socket, templates: tps)}
-  end
-
-  def handle_event("multi_select", _data, socket) do
-    # multi_select clicked twice
-    GroupServer.templates_of_user(socket.assigns.pid, socket.assigns.uid)
-
-    {:noreply, socket}
+  defp build_circles(templates) do
+    templates
+    |> Enum.map(fn t ->
+      {t.day,
+       %{
+         "breakfast" => t.breakfast,
+         "lunch" => t.lunch,
+         "dinner" => t.dinner
+       }}
+    end)
+    |> Enum.into(%{})
   end
 
   def handle_info(%{topic: topic, payload: state}, socket) do
     if topic == Comiditas.templates_user_topic(socket.assigns.uid) do
-      {:noreply, assign(socket, templates: state.templates)}
+      {:noreply, assign(socket, circles: build_circles(state.templates))}
     else
       {:noreply, socket}
     end
