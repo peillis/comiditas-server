@@ -2,7 +2,7 @@ body {
   margin: 0;
 }
 .container {
-  padding: 0;
+  padding: 2em;
 }
 .login {
   max-width: 20em;
@@ -181,9 +181,6 @@ a, td, svg text::selection {
 }
 
 /* edit user */
-.edit {
-  padding: 2em;
-}
 .edit input {
   font-size: 1.3em;
 }
