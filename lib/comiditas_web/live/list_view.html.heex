@@ -14,10 +14,11 @@
         <tr class={"weekday-#{day.weekday}"}>
           <td class="day">
             <%= Timex.day_shortname(day.weekday) %><br/>
+            <% gregorian_days = Date.to_gregorian_days(day.date) %>
             <strong><%= day.date.day %></strong>
           </td>
           <%= for meal <- [:breakfast, :lunch, :dinner] do %>
-            <td class={"buttons #{blink({@multi_select_from, @selected}, {day, meal})} #{frozen(@frozen, day, meal, @today)}"} id={"#{day.date}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={Date.to_gregorian_days(day.date)}>
+            <td class={"buttons #{blink({@multi_select_from, @selected}, {gregorian_days, Atom.to_string(meal)})} #{frozen(@frozen, day, meal, @today)}"} id={"#{day.date}-#{meal}"} phx-hook="ShowSelector" data-meal={meal} data-day={gregorian_days}>
               <.circle value={Map.get(day, meal)} />
             </td>
           <% end %>
