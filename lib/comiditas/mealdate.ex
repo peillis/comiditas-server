@@ -8,7 +8,7 @@ defmodule Comiditas.Mealdate do
     field :lunch, :string
     field :dinner, :string
     field :notes, :binary
-    belongs_to :user, Comiditas.Admin.User
+    belongs_to :user, Comiditas.Accounts.User
 
     timestamps()
   end

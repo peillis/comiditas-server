@@ -30,7 +30,7 @@ defmodule ComiditasWeb.Components do
     """
   end
 
-  def frozen(true, %{date: date}, meal, today) when date == today, do: "frozen"
+  def frozen(true, %{date: date}, _meal, today) when date == today, do: "frozen"
 
   def frozen(true, day, :breakfast, today) do
     tomorrow = Timex.shift(today, days: 1)
