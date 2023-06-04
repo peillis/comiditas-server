@@ -14,6 +14,12 @@ config :comiditas, ComiditasWeb.Endpoint, cache_static_manifest: "priv/static/ca
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :comiditas, Comiditas.Repo,
+  ssl: true,
+  url: System.get_env("DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE")) || "10",
+  socket_options: if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
