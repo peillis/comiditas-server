@@ -14,11 +14,20 @@ config :comiditas, ComiditasWeb.Endpoint, cache_static_manifest: "priv/static/ca
 # Do not print debug messages in production
 config :logger, level: :info
 
+database_url =
+  System.get_env("DATABASE_URL") ||
+    raise """
+    environment variable DATABASE_URL is missing.
+    For example: ecto://USER:PASS@HOST/DATABASE
+    """
+
+maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+
 config :comiditas, Comiditas.Repo,
   ssl: true,
-  url: System.get_env("DATABASE_URL"),
+  url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE")) || "10",
-  socket_options: if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+  socket_options: maybe_ipv6
 
 # ## SSL Support
 #
