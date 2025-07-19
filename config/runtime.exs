@@ -49,6 +49,22 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  # ## Database configuration
+  database_url =
+    System.get_env("DATABASE_URL") ||
+      raise """
+      environment variable DATABASE_URL is missing.
+      For example: ecto://USER:PASS@HOST/DATABASE
+      """
+
+  maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+
+  config :comiditas, Comiditas.Repo,
+    ssl: false,
+    url: database_url,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    socket_options: maybe_ipv6
+
   # ## Configuring the mailer
   #
   # In production you need to configure the mailer to use a different adapter.
