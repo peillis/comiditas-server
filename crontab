@@ -1,2 +1,2 @@
-# Ejecutar función purge para limpiar datos antiguos cada día a las 2 AM
-0 2 * * * /app/bin/comiditas eval "Comiditas.Release.purge()"
+# Ejecutar función purge para limpiar datos antiguos cada hora
+0 * * * * /app/bin/comiditas eval "Comiditas.Release.purge()"
