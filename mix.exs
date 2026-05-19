@@ -34,7 +34,8 @@ defmodule Comiditas.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 3.0"},
-      {:ecto_sql, "~> 3.9"},
+      {:ecto, "~> 3.10"},
+      {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.6", runtime: Mix.env() == :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.18"},
@@ -46,8 +47,8 @@ defmodule Comiditas.MixProject do
       {:phoenix_live_reload, "~> 1.4", only: :dev},
       {:phoenix_live_view, "~> 0.18"},
       {:plug_cowboy, "~> 2.5"},
-      {:postgrex, ">= 0.0.0"},
-      {:swoosh, "~> 1.3"},
+      {:postgrex, "~> 0.17"},
+      {:swoosh, "~> 1.11"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:torch, "~> 4.2"}

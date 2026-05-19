@@ -1,13 +1,18 @@
-FROM elixir:1.13.3
+FROM elixir:1.15-otp-26
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
  postgresql-client \
- inotify-tools
+ inotify-tools \
+ curl
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+# Instalar Node.js 18.x y npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
  apt-get install -y nodejs
+
+# Verificar que npm esté disponible
+RUN npm --version
 
 RUN mix local.hex --force
 RUN mix local.rebar --force

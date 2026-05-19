@@ -1,0 +1,11 @@
+{
+  "name": "comiditas-assets",
+  "version": "1.0.0",
+  "description": "Assets for Comiditas Phoenix application",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+} 
